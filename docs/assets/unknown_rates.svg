@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="tokens.css"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 340" class="diagram" role="img" aria-labelledby="rateTitle rateDesc">
+  <title id="rateTitle">UNKNOWN rate by fault position</title>
+  <desc id="rateDesc">Observed under the selected seeded fault workload. Randomized suite, seed 1, watched transaction, FDI and AXI classification. Before target acceptance 48.8 percent, 21 of 43. After target acceptance 52.1 percent, 25 of 48. After architectural commit 69.4 percent, 25 of 36. After response generation 54.5 percent, 18 of 33. After response delivery 0 percent, 0 of 40. The same five rates are reported for UCIe 3.0. These are not intrinsic protocol probabilities.</desc>
+  <style>
+    .diagram text { font-family: Geist, ui-sans-serif, sans-serif; fill: var(--foreground); }
+    .diagram .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+    .diagram .muted { fill: var(--muted-foreground); }
+    .diagram .track { fill: var(--muted); }
+    .diagram .bar { fill: var(--primary); }
+  </style>
+  <text x="16" y="28" font-size="16" font-weight="500">UNKNOWN rate by fault position</text>
+  <text class="muted" x="16" y="50" font-size="13">Observed under the selected seeded fault workload. Not an intrinsic protocol probability.</text>
+
+  <!-- scale: 420 user units = 100%. Bars start at x=250 -->
+  <g font-size="13">
+    <text x="16" y="96">Before target acceptance</text>
+    <rect class="track" x="250" y="80" width="420" height="22" rx="4"/>
+    <rect class="bar" x="250" y="80" width="205" height="22" rx="4"/>
+    <text class="mono" x="680" y="96">48.8% · 21/43</text>
+
+    <text x="16" y="146">After target acceptance</text>
+    <rect class="track" x="250" y="130" width="420" height="22" rx="4"/>
+    <rect class="bar" x="250" y="130" width="219" height="22" rx="4"/>
+    <text class="mono" x="680" y="146">52.1% · 25/48</text>
+
+    <text x="16" y="196">After architectural commit</text>
+    <rect class="track" x="250" y="180" width="420" height="22" rx="4"/>
+    <rect class="bar" x="250" y="180" width="291" height="22" rx="4"/>
+    <text class="mono" x="680" y="196">69.4% · 25/36</text>
+
+    <text x="16" y="246">After response generation</text>
+    <rect class="track" x="250" y="230" width="420" height="22" rx="4"/>
+    <rect class="bar" x="250" y="230" width="229" height="22" rx="4"/>
+    <text class="mono" x="680" y="246">54.5% · 18/33</text>
+
+    <text x="16" y="296">After response delivery</text>
+    <rect class="track" x="250" y="280" width="420" height="22" rx="4"/>
+    <text class="mono" x="680" y="296">0.0% · 0/40</text>
+  </g>
+  <text class="muted" x="250" y="328" font-size="12">0%</text>
+  <text class="muted" x="650" y="328" font-size="12">100%</text>
+</svg>

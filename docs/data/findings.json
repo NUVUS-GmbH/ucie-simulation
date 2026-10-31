@@ -1,0 +1,99 @@
+{
+  "note": "Figures copied from the simulator reports. This file does not add measurements. Percentages are observed under the selected seeded fault workload and are not intrinsic protocol probabilities.",
+  "sources": [
+    "simulation/results/findings.md",
+    "simulation/results/findings_ucie3.md",
+    "simulation/results/comparison_ucie2_vs_ucie3.md"
+  ],
+  "workload": {
+    "seed": 1,
+    "random_injections": 200,
+    "label": "One systematic suite and one seeded random suite, replayed on both protocol models."
+  },
+  "ucie_2_0_baseline": {
+    "source": "simulation/results/findings.md",
+    "simulations": 289,
+    "systematic": 89,
+    "randomized": 200,
+    "fault_injections": 288,
+    "transparent_retries": 33,
+    "retrain_events": 76,
+    "linkreset_events": 11,
+    "linkerror_events": 158,
+    "fdi_axi_classification": {
+      "scope": "systematic + randomized transactions",
+      "COMPLETED": 158,
+      "NOT_COMPLETED": 10,
+      "UNKNOWN": 171
+    },
+    "duplicate_commit_violations": 1,
+    "false_safe_retry_violations": 1,
+    "liveness_failures": 17,
+    "credit_invariant_violations": 10,
+    "receiver_overflow_violations": 0
+  },
+  "unknown_rate_by_fault_position": {
+    "source": "simulation/results/findings.md",
+    "scope": "Randomized simulation, initiator class by fault position, watched transaction only. FDI/AXI.",
+    "rows": [
+      {"position": "Before target acceptance", "COMPLETED": 17, "NOT_COMPLETED": 5, "UNKNOWN": 21, "n": 43, "unknown_rate": "48.8%"},
+      {"position": "After target acceptance", "COMPLETED": 23, "NOT_COMPLETED": 0, "UNKNOWN": 25, "n": 48, "unknown_rate": "52.1%"},
+      {"position": "After architectural commit", "COMPLETED": 11, "NOT_COMPLETED": 0, "UNKNOWN": 25, "n": 36, "unknown_rate": "69.4%"},
+      {"position": "After response generation", "COMPLETED": 15, "NOT_COMPLETED": 0, "UNKNOWN": 18, "n": 33, "unknown_rate": "54.5%"},
+      {"position": "After response delivery", "COMPLETED": 40, "NOT_COMPLETED": 0, "UNKNOWN": 0, "n": 40, "unknown_rate": "0.0%"}
+    ],
+    "if_retry_disposition_latched": [
+      {"position": "Before target acceptance", "COMPLETED": 17, "NOT_COMPLETED": 21, "UNKNOWN": 5, "n": 43, "unknown_rate": "11.6%"},
+      {"position": "After target acceptance", "COMPLETED": 23, "NOT_COMPLETED": 0, "UNKNOWN": 25, "n": 48, "unknown_rate": "52.1%"},
+      {"position": "After architectural commit", "COMPLETED": 11, "NOT_COMPLETED": 0, "UNKNOWN": 25, "n": 36, "unknown_rate": "69.4%"},
+      {"position": "After response generation", "COMPLETED": 15, "NOT_COMPLETED": 0, "UNKNOWN": 18, "n": 33, "unknown_rate": "54.5%"},
+      {"position": "After response delivery", "COMPLETED": 40, "NOT_COMPLETED": 0, "UNKNOWN": 0, "n": 40, "unknown_rate": "0.0%"}
+    ]
+  },
+  "equivalent_workload": {
+    "source": "simulation/results/comparison_ucie2_vs_ucie3.md",
+    "simulations": {"UCIe 2.0": 289, "UCIe 3.0": 289},
+    "unknown_transactions": {"UCIe 2.0": 171, "UCIe 3.0": 171},
+    "unknown_reachable": {"UCIe 2.0": "Yes", "UCIe 3.0": "Yes"},
+    "duplicate_commit_reachable": {"UCIe 2.0": "Yes", "UCIe 3.0": "Yes"},
+    "false_safe_retry_reachable": {"UCIe 2.0": "Yes", "UCIe 3.0": "Yes"},
+    "liveness_failures": {"UCIe 2.0": 17, "UCIe 3.0": 17},
+    "recovery_traces_explored": {"UCIe 2.0": 204, "UCIe 3.0": 204},
+    "position_rates_match": true,
+    "ucie_3_0_eliminates_a_2_0_ambiguity_class": "No",
+    "unknown_count_reduced": "No"
+  },
+  "ambiguity_window_logical_events": {
+    "source": "simulation/results/comparison_ucie2_vs_ucie3.md",
+    "scope": "Equivalent workload, watched transaction, counted only after architectural commit, seed 1.",
+    "closed_windows": {"UCIe 2.0": 137, "UCIe 3.0": 137},
+    "open_windows": {"UCIe 2.0": 78, "UCIe 3.0": 78},
+    "minimum_closed": {"UCIe 2.0": 3, "UCIe 3.0": 3},
+    "maximum_closed": {"UCIe 2.0": 7, "UCIe 3.0": 7},
+    "average_closed": {"UCIe 2.0": 3.8, "UCIe 3.0": 3.8},
+    "minimum_open": {"UCIe 2.0": 2, "UCIe 3.0": 2},
+    "maximum_open": {"UCIe 2.0": 9, "UCIe 3.0": 9},
+    "average_open": {"UCIe 2.0": 5.4, "UCIe 3.0": 5.4},
+    "window_eliminated": {"UCIe 2.0": "No", "UCIe 3.0": "No"}
+  },
+  "ucie_3_0_systematic_transport": {
+    "source": "simulation/results/comparison_ucie2_vs_ucie3.md",
+    "transport_ack_with_commit_count_0": 9,
+    "commit_without_initiator_completion": 33
+  },
+  "policy_d_committed_loss": {
+    "source": "simulation/results/findings_ucie3.md",
+    "architectural_commit_count": 2,
+    "completion_received": true,
+    "classification": "COMPLETED",
+    "violations": 3
+  },
+  "counterexample": {
+    "committed_trace": "T17",
+    "uncommitted_trace": "T18",
+    "operation": "INCREMENT_COUNTER",
+    "address": "0x1000",
+    "counter_change_when_committed": "7 to 8",
+    "fdi_axi_classification_both": "UNKNOWN"
+  }
+}

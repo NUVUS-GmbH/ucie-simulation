@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="tokens.css"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" class="diagram" role="img" aria-labelledby="cmpTitle cmpDesc">
+  <title id="cmpTitle">UCIe 2.0 and UCIe 3.0 comparison</title>
+  <desc id="cmpDesc">CRC, retry, Retrain, and LinkError are present in both revisions. UCIe 3.0 adds link and management status, faster sideband scheduling, and optional emergency and power signaling. Neither revision provides architectural commit knowledge. UNKNOWN remains reachable, and blind retry is not always safe.</desc>
+  <style>
+    .diagram text { font-family: Geist, ui-sans-serif, sans-serif; fill: var(--foreground); }
+    .diagram .head { fill: var(--muted); }
+    .diagram .line { stroke: var(--border); }
+    .diagram .muted { fill: var(--muted-foreground); }
+    .diagram .panel { fill: var(--card); stroke: var(--border); }
+  </style>
+  <rect class="panel" x="16" y="16" width="948" height="528" rx="8"/>
+  <rect class="head" x="16" y="16" width="948" height="48" rx="8"/>
+  <rect class="head" x="16" y="48" width="948" height="16"/>
+  <text class="muted" x="32" y="46" font-size="14" font-weight="500">Capability</text>
+  <text class="muted" x="360" y="46" font-size="14" font-weight="500">UCIe 2.0</text>
+  <text class="muted" x="640" y="46" font-size="14" font-weight="500">UCIe 3.0</text>
+
+  <g font-size="14">
+    <text x="32" y="92">CRC / retry</text>
+    <text x="360" y="92">Yes</text>
+    <text x="640" y="92">Yes, retained</text>
+    <line class="line" x1="32" y1="106" x2="948" y2="106"/>
+
+    <text x="32" y="136">Retrain</text>
+    <text x="360" y="136">Yes</text>
+    <text x="640" y="136">Yes, retained</text>
+    <line class="line" x1="32" y1="150" x2="948" y2="150"/>
+
+    <text x="32" y="180">LinkError</text>
+    <text x="360" y="180">Yes</text>
+    <text x="640" y="180">Yes, retained</text>
+    <line class="line" x1="32" y1="194" x2="948" y2="194"/>
+
+    <text x="32" y="224">Fault signaling</text>
+    <text x="360" y="224">Link state; no AXI id</text>
+    <text x="640" y="224">More status; still no AXI id</text>
+    <line class="line" x1="32" y1="238" x2="948" y2="238"/>
+
+    <text x="32" y="268">Sideband scheduling</text>
+    <text x="360" y="268">Baseline</text>
+    <text x="640" y="268">Performant mode; optional priority</text>
+    <line class="line" x1="32" y1="282" x2="948" y2="282"/>
+
+    <text x="32" y="312">Emergency / power</text>
+    <text x="360" y="312">Not these 3.0 mechanisms</text>
+    <text x="640" y="312">Optional Fast Throttle and Shutdown</text>
+    <line class="line" x1="32" y1="326" x2="948" y2="326"/>
+
+    <text x="32" y="356">Architectural commit knowledge</text>
+    <text x="360" y="356">No</text>
+    <text x="640" y="356">No</text>
+    <line class="line" x1="32" y1="370" x2="948" y2="370"/>
+
+    <text x="32" y="400">UNKNOWN reachable</text>
+    <text x="360" y="400">Yes</text>
+    <text x="640" y="400">Yes (171 and 171)</text>
+    <line class="line" x1="32" y1="414" x2="948" y2="414"/>
+
+    <text x="32" y="444">Blind retry always safe</text>
+    <text x="360" y="444">No</text>
+    <text x="640" y="444">No (retry can commit twice)</text>
+  </g>
+  <text class="muted" x="32" y="492" font-size="13">Equivalent workload, seed 1. UCIe 3.0 improves link handling. The commit point stays outside recovery semantics.</text>
+  <text class="muted" x="32" y="516" font-size="13">Source: comparison_ucie2_vs_ucie3.md and the mechanism table in findings_ucie3.md.</text>
+</svg>

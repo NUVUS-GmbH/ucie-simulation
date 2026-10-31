@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="tokens.css"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 760" class="diagram" role="img" aria-labelledby="cxTitle cxDesc">
+  <title id="cxTitle">Two traces with the same initiator observation and different architectural outcomes</title>
+  <desc id="cxDesc">Trace A commits a non-idempotent MMIO increment and then loses the response. Trace B never delivers the request. After LinkError and recovery, both initiators have accepted the write and received no completion. FDI and AXI classification is UNKNOWN for both.</desc>
+  <style>
+    .diagram text { font-family: Geist, ui-sans-serif, sans-serif; fill: var(--foreground); }
+    .diagram .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+    .diagram .muted { fill: var(--muted-foreground); }
+    .diagram .panel { fill: var(--card); stroke: var(--border); }
+    .diagram .banner { fill: var(--muted); stroke: var(--warning); }
+  </style>
+
+  <rect class="panel" x="16" y="16" width="500" height="560" rx="8"/>
+  <text class="mono muted" x="36" y="48" font-size="13">Trace A · T17 · response lost after commit</text>
+  <text x="36" y="76" font-size="16" font-weight="500">Committed write, response lost</text>
+  <g class="mono" font-size="14">
+    <text x="36" y="112">1. AXI write accepted</text>
+    <text x="36" y="136">2. Request reaches the target</text>
+    <text x="36" y="160">3. Target commits</text>
+    <text x="36" y="184">4. Counter changes from 7 to 8</text>
+    <text x="36" y="208">5. Write response generated</text>
+    <text x="36" y="232">6. Response flit fails CRC on replay</text>
+    <text x="36" y="256">7. Retry threshold, then Retrain</text>
+    <text x="36" y="280">8. LinkError; response discarded</text>
+    <text x="36" y="304">9. Link returns to Active</text>
+    <text x="36" y="328">10. Initiator receives no completion</text>
+  </g>
+  <line x1="36" y1="356" x2="496" y2="356" stroke="var(--border)"/>
+  <g class="mono" font-size="14">
+    <text class="muted" x="36" y="388">Ground truth</text>
+    <text x="210" y="388">COMMITTED</text>
+    <text class="muted" x="36" y="412">architectural_commit_count</text>
+    <text x="300" y="412">1</text>
+    <text class="muted" x="36" y="444">Initiator observation</text>
+    <text x="210" y="444">NO COMPLETION</text>
+    <text class="muted" x="36" y="476">completion_received</text>
+    <text x="300" y="476">false</text>
+    <text class="muted" x="36" y="516">Classification</text>
+    <text x="210" y="516" font-weight="500">UNKNOWN</text>
+  </g>
+  <text class="muted" x="36" y="552" font-size="12">FDI/AXI. Safe automatic retry: NO</text>
+
+  <rect class="panel" x="584" y="16" width="500" height="560" rx="8"/>
+  <text class="mono muted" x="604" y="48" font-size="13">Trace B · T18 · request never accepted</text>
+  <text x="604" y="76" font-size="16" font-weight="500">Write never reaches the target</text>
+  <g class="mono" font-size="14">
+    <text x="604" y="112">1. AXI write accepted locally</text>
+    <text x="604" y="136">2. Request flit corrupted on every replay</text>
+    <text x="604" y="160">3. Request never reaches the target</text>
+    <text x="604" y="184">4. Retry threshold, then Retrain</text>
+    <text x="604" y="208">5. LinkError</text>
+    <text x="604" y="232">6. Unacknowledged request discarded</text>
+    <text x="604" y="256">7. Link returns to Active</text>
+    <text x="604" y="280">8. Initiator receives no completion</text>
+  </g>
+  <line x1="604" y1="356" x2="1064" y2="356" stroke="var(--border)"/>
+  <g class="mono" font-size="14">
+    <text class="muted" x="604" y="388">Ground truth</text>
+    <text x="778" y="388">NOT COMMITTED</text>
+    <text class="muted" x="604" y="412">architectural_commit_count</text>
+    <text x="868" y="412">0</text>
+    <text class="muted" x="604" y="444">Initiator observation</text>
+    <text x="778" y="444">NO COMPLETION</text>
+    <text class="muted" x="604" y="476">completion_received</text>
+    <text x="868" y="476">false</text>
+    <text class="muted" x="604" y="516">Classification</text>
+    <text x="778" y="516" font-weight="500">UNKNOWN</text>
+  </g>
+  <text class="muted" x="604" y="552" font-size="12">FDI/AXI. The effect is absent. The initiator cannot see that.</text>
+
+  <rect class="banner" x="16" y="596" width="1068" height="140" rx="8"/>
+  <text x="550" y="648" text-anchor="middle" font-size="22" font-weight="500">Same observation. Different reality.</text>
+  <text class="muted" x="550" y="682" text-anchor="middle" font-size="14">Both views: axi_accepted = true, completion_received = false, after LinkError and return to Active.</text>
+  <text class="muted" x="550" y="706" text-anchor="middle" font-size="14">Transaction fate cannot be uniquely reconstructed from that initiator-visible state.</text>
+</svg>

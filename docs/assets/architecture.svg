@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="tokens.css"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 460" class="diagram" role="img" aria-labelledby="archTitle archDesc">
+  <title id="archTitle">System model from AXI initiator to AXI target</title>
+  <desc id="archDesc">Request path from the AXI initiator through AoU endpoint A, UCIe adapter A, a fault-injection channel, UCIe adapter B, and AoU endpoint B to the AXI target. Architectural commit is at the target. The completion response travels back. Link recovery runs between the two UCIe adapters.</desc>
+  <style>
+    .diagram text { font-family: Geist, ui-sans-serif, sans-serif; fill: var(--foreground); }
+    .diagram .muted { fill: var(--muted-foreground); }
+    .diagram .box { fill: var(--card); stroke: var(--border); }
+    .diagram .fault-box { stroke: var(--warning); }
+    .diagram .commit-box { stroke: var(--primary); }
+    .diagram .request { stroke: var(--primary); fill: none; }
+    .diagram .response { stroke: var(--primary); fill: none; stroke-dasharray: 5 4; }
+    .diagram .recovery { stroke: var(--muted-foreground); fill: none; stroke-dasharray: 1 4; }
+    .diagram .commit-dot { fill: var(--primary); }
+    .diagram .fault-mark { fill: var(--warning); }
+  </style>
+  <defs>
+    <marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)"/>
+    </marker>
+    <marker id="arch-arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--muted-foreground)"/>
+    </marker>
+  </defs>
+
+  <text class="muted" x="24" y="28" font-size="13">Request path</text>
+  <line class="request" x1="108" y1="24" x2="148" y2="24" marker-end="url(#arch-arrow)"/>
+  <text class="muted" x="168" y="28" font-size="13">Commit point</text>
+  <circle class="commit-dot" cx="258" cy="24" r="4"/>
+  <text class="muted" x="276" y="28" font-size="13">Response path</text>
+  <line class="response" x1="372" y1="24" x2="412" y2="24" marker-end="url(#arch-arrow)"/>
+  <text class="muted" x="432" y="28" font-size="13">Fault location</text>
+  <rect class="fault-mark" x="528" y="18" width="10" height="10"/>
+  <text class="muted" x="550" y="28" font-size="13">Recovery path</text>
+  <line class="recovery" x1="648" y1="24" x2="688" y2="24" marker-end="url(#arch-arrow-muted)"/>
+
+  <!-- boxes: x = 24 + i * 152, width 136, y 56, height 96 -->
+  <rect class="box" x="24" y="56" width="136" height="96" rx="8"/>
+  <text x="92" y="98" text-anchor="middle" font-size="15" font-weight="500">AXI</text>
+  <text x="92" y="118" text-anchor="middle" font-size="15" font-weight="500">Initiator</text>
+
+  <rect class="box" x="176" y="56" width="136" height="96" rx="8"/>
+  <text x="244" y="98" text-anchor="middle" font-size="15" font-weight="500">AoU</text>
+  <text x="244" y="118" text-anchor="middle" font-size="15" font-weight="500">Endpoint A</text>
+
+  <rect class="box" x="328" y="56" width="136" height="96" rx="8"/>
+  <text x="396" y="98" text-anchor="middle" font-size="15" font-weight="500">UCIe</text>
+  <text x="396" y="118" text-anchor="middle" font-size="15" font-weight="500">Adapter A</text>
+
+  <rect class="box fault-box" x="480" y="56" width="136" height="96" rx="8"/>
+  <text x="548" y="92" text-anchor="middle" font-size="15" font-weight="500">Fault-injection</text>
+  <text x="548" y="112" text-anchor="middle" font-size="15" font-weight="500">channel</text>
+  <rect class="fault-mark" x="538" y="124" width="8" height="8"/>
+
+  <rect class="box" x="632" y="56" width="136" height="96" rx="8"/>
+  <text x="700" y="98" text-anchor="middle" font-size="15" font-weight="500">UCIe</text>
+  <text x="700" y="118" text-anchor="middle" font-size="15" font-weight="500">Adapter B</text>
+
+  <rect class="box" x="784" y="56" width="136" height="96" rx="8"/>
+  <text x="852" y="98" text-anchor="middle" font-size="15" font-weight="500">AoU</text>
+  <text x="852" y="118" text-anchor="middle" font-size="15" font-weight="500">Endpoint B</text>
+
+  <rect class="box commit-box" x="936" y="56" width="140" height="96" rx="8"/>
+  <text x="1006" y="92" text-anchor="middle" font-size="15" font-weight="500">AXI</text>
+  <text x="1006" y="112" text-anchor="middle" font-size="15" font-weight="500">Target</text>
+  <circle class="commit-dot" cx="1006" cy="132" r="4"/>
+
+  <!-- request arrows between boxes -->
+  <line class="request" x1="160" y1="104" x2="174" y2="104" marker-end="url(#arch-arrow)"/>
+  <line class="request" x1="312" y1="104" x2="326" y2="104" marker-end="url(#arch-arrow)"/>
+  <line class="request" x1="464" y1="104" x2="478" y2="104" marker-end="url(#arch-arrow)"/>
+  <line class="request" x1="616" y1="104" x2="630" y2="104" marker-end="url(#arch-arrow)"/>
+  <line class="request" x1="768" y1="104" x2="782" y2="104" marker-end="url(#arch-arrow)"/>
+  <line class="request" x1="920" y1="104" x2="934" y2="104" marker-end="url(#arch-arrow)"/>
+
+  <text class="muted" x="92" y="172" text-anchor="middle" font-size="12">accepts AXI</text>
+  <text class="muted" x="244" y="172" text-anchor="middle" font-size="12">pack, credits</text>
+  <text class="muted" x="396" y="172" text-anchor="middle" font-size="12">CRC, retry, FDI</text>
+  <text class="muted" x="548" y="172" text-anchor="middle" font-size="12">injected fault</text>
+  <text class="muted" x="700" y="172" text-anchor="middle" font-size="12">CRC, retry, FDI</text>
+  <text class="muted" x="852" y="172" text-anchor="middle" font-size="12">pack, credits</text>
+  <text class="muted" x="1006" y="172" text-anchor="middle" font-size="12">architectural commit</text>
+
+  <!-- recovery bracket under the two adapters and the channel -->
+  <path class="recovery" d="M 328 214 H 768" marker-end="url(#arch-arrow-muted)"/>
+  <path class="recovery" d="M 328 206 V 222 M 768 206 V 222"/>
+  <text class="muted" x="548" y="236" text-anchor="middle" font-size="13">Recovery path · Retrain, LinkError, reset, return to Active</text>
+
+  <!-- response path back to the initiator -->
+  <path class="response" d="M 1006 200 V 300 H 92 V 176" marker-end="url(#arch-arrow)"/>
+  <text class="muted" x="548" y="292" text-anchor="middle" font-size="13">Response path · completion travels back toward the initiator</text>
+
+  <text x="24" y="360" font-size="14">Commit is a target-local architectural effect. It is not the UCIe acknowledgement and not the AXI completion.</text>
+  <text class="muted" x="24" y="384" font-size="13">The device model commits a write only after the request and the write data have both been delivered.</text>
+  <text class="muted" x="24" y="408" font-size="13">A lost completion can leave architectural_commit_count = 1 while completion_received = false.</text>
+  <text class="muted" x="24" y="440" font-size="13">UCIe 2.0 and UCIe 3.0 use the same stack. Revision 3.0 adds link and management status; it does not move the commit point.</text>
+</svg>
