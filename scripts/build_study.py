@@ -110,11 +110,11 @@ problem_body = (
     + '<p class="question">Did the operation execute?</p></article>'
     + '</div>'
     + p('The study classifies interrupted transactions as <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, or <code class="unknown">UNKNOWN</code>. These are observer-dependent study labels, not UCIe-defined protocol states.')
-    + '<div class="formula"><span>different architectural outcome</span><b>+</b><span>same initiator-visible state</span><b>=</b><strong>transaction-fate ambiguity</strong></div>'
+    + '<div class="formula"><span>different architectural outcome</span><b>+</b><span>same implemented fate classification</span><b>=</b><strong>transaction-fate ambiguity</strong></div>'
 )
 sections.append(section('problem', 'The problem', problem_body, 'PROBLEM'))
 
-# --- 3. The Two Indistinguishable Traces ---
+# --- 3. Different ground truth, same classification ---
 trace_a = [
     'AXI accepted',
     'request transported',
@@ -144,17 +144,18 @@ traces = (
     )
     + '</div>'
     + '<div class="observer-box"><h3>Observer A / B / C</h3>'
-    + pre('request accepted\ncompletion absent\nrecovery observed', 'compact')
+    + pre('request accepted\ncompletion absent\nclassification: UNKNOWN', 'compact')
     + '</div>'
-    + '<div class="equivalence"><strong>Different reality. Same observation.</strong>'
-    + '<code>OBSERVATIONAL_EQUIVALENCE = true</code></div>'
+    + '<div class="equivalence"><strong>Different ground truth. Same fate classification.</strong>'
+    + '<p>The two traces collapse to the same transaction-fate classification for the implemented observer profile.</p></div>'
 )
 sections.append(
     section(
         'traces',
-        'The two indistinguishable traces',
+        'Two traces with the same fate classification',
         p('After destructive UCIe recovery, the initiator may be unable to determine whether an outstanding non-idempotent AXI/MMIO operation executed.')
         + traces
+        + p('The timed check compares fate labels and completion status. It does not compare complete observer-visible event histories, timing, status bits, retry counters, or error logs. Full observational equivalence has not been established by this check.')
         + p('These are schematic summaries of the reference-architecture runs. Blind software retry of a committed, indeterminate operation can produce a duplicate architectural effect; that is distinct from transport duplicate suppression.')
         + '<a href="data/reference_architecture_validation.json">Inspect the paired runs and blind-retry evidence ↗</a>',
     )
@@ -238,8 +239,8 @@ robust_map = {
     'UNKNOWN after architectural commit': 'UNKNOWN after commit',
     'Duplicate commit after blind retry': 'Blind-retry duplicate commit',
     'Pre-target UNKNOWN (observer A)': 'Pre-target UNKNOWN',
-    'ACK history reduces UNKNOWN (observer D)': 'ACK history → NOT_COMPLETED',
-    'OBSERVATIONAL_EQUIVALENCE (A/B/C)': 'Observational equivalence A/B/C',
+    'ACK history reduces UNKNOWN (observer D)': 'Retained ACK/NAK disposition → pre-target NOT_COMPLETED (D assumption)',
+    'OBSERVATIONAL_EQUIVALENCE (A/B/C)': 'Same fate labels and absent completion (A/B/C)',
     'Cross-client / cross-guest delay': 'Cross-client delay',
     'CREDIT_CONSERVATION under early return + recovery': 'Credit conservation',
 }
@@ -258,20 +259,20 @@ sections.append(
         'Robustness of the finding',
         p('To test whether the ambiguity depended on simplified transport assumptions, the model was refined with realistic buffering, credits, multiple outstanding flits, and go-back-N replay.')
         + table(['Property', 'Reference architecture result'], robust_rows)
-        + '<div class="callout">The transaction-fate ambiguity remains reachable under the reference architecture.</div>'
+        + '<div class="callout">UNKNOWN with different commit outcomes remains reachable under the reference configuration and implemented classification policy.</div>'
         + '<p class="caption">Source: <a href="data/reference_architecture_validation.csv">validation CSV</a>. This is reference-model validation, not silicon validation.</p>',
     )
 )
 
 # --- 7. UCIe 2.x vs 3.0 ---
 comp_body = (
-    p('For the property studied here — reconstructing the architectural fate of interrupted higher-layer transactions — the modeled UCIe 3.0 mechanisms did not eliminate the ambiguity.')
+    p('In the exercised UCIe 2.x and 3.0 reference scenarios, the implemented classifier returns UNKNOWN for the interrupted baseline operation. This does not establish that richer UCIe 3.0 diagnostics cannot resolve transaction fate.')
     + '<div class="pair">'
-    + '<article class="panel"><h3>UCIe 2.x</h3>'
-    + pre('CRC / Retry\nRetrain\nLinkError')
+    + '<article class="panel"><h3>Timed reference-model coverage</h3>'
+    + p('UCIe 2.x / 3.0: CRC/retry, Retrain and LinkError. The revision comparison exercises baseline fate, paired classifications, sideband, and diagnostic scenarios; the 3.0 extension is priority-sideband metadata.')
     + '</article>'
-    + '<article class="panel"><h3>UCIe 3.0</h3>'
-    + pre('same core recovery\n+ improved diagnostics\n+ priority sideband\n+ emergency / management mechanisms')
+    + '<article class="panel"><h3>Broader state-model coverage</h3>'
+    + p('Diagnostics, priority sideband, and emergency / management mechanisms are explored in a separate state-model survey. This is not evidence that every listed mechanism was tested in the timed reference model.')
     + '</article>'
     + '</div>'
     + '<div class="formula compact-formula"><span>Architectural AXI commit information?</span><strong>No standardized indication modeled</strong></div>'
@@ -286,7 +287,7 @@ comp_body = (
         ],
     )
     + p('The reference comparison reports identical baseline fate for the studied property. It does not claim identical implementations or universal performance.')
-    + '<details><summary>Broader mechanism survey (separate model)</summary><p>A separate state-model survey explored enhanced diagnostics, management, priority sideband, and emergency mechanisms under equivalent workloads. That broader coverage must not be attributed to the narrower timed reference mode. See the <a href="sources/comparison_ucie2_vs_ucie3.md">comparison report</a>; its workload percentages are not intrinsic protocol probabilities.</p></details>',
+    + '<p>See the <a href="sources/comparison_ucie2_vs_ucie3.md">state-model comparison report</a>; its workload percentages are not intrinsic protocol probabilities.</p>'
 )
 sections.append(section('comparison', 'UCIe 2.x vs UCIe 3.0', comp_body))
 
@@ -306,20 +307,20 @@ sections.append(
     section(
         'observers',
         'Diagnostics and observer knowledge',
-        p('Classification depends on what the observer can see.')
+        p('Classification depends on both observer visibility and which information the implemented classifier uses.')
         + table(
             ['Scenario', 'Ground truth', 'AXI only', 'AXI + FDI', 'UCIe status', 'Extra metadata'],
             obs,
         )
-        + '<div class="callout">More transport metadata can shrink the ambiguity region, but does not necessarily reveal post-commit architectural state.</div>'
-        + p('Error logging did not convert AXI-only UNKNOWN into COMPLETED or NOT_COMPLETED in the reference-model experiments.')
+        + '<div class="callout">The current classifier does not exploit all modeled diagnostic information. Therefore these experiments do not establish that richer diagnostics cannot resolve transaction fate.</div>'
+        + p('Under the currently implemented classification policy, adding the modeled diagnostic state does not change the fate classification. AXI-only profile A does not consume diagnostic logs. Profiles B/C record additional FDI/UCIe state, but those fields are not passed into the classification decision; their agreement with A is enforced by the implementation.')
         + p(
             badge('ASSUMPTION')
             + ' Profile D retains ACK/NAK history sufficient to distinguish the pre-target loss in this experiment. This is extra observer knowledge, not a standardized architectural commit indication.'
         )
         + p(
             badge('INTERPRETATION')
-            + ' Diagnostics expose transport state. They do not automatically provide target architectural-commit knowledge.'
+            + ' Profile D uses selected retained disposition metadata and separates the tested pre-target loss. Whether additional diagnostic information can determine other outcomes, including post-commit fate, remains an open question.'
         ),
     )
 )
@@ -461,10 +462,10 @@ sections.append(
 
 # --- 14 / 15. Claims / Non-claims ---
 claims = [
-    'Transaction-fate ambiguity is reachable in the executable model.',
-    'The ambiguity remains reachable under the provided reference architecture.',
+    'A committed operation with lost completion and a non-committed operation both receive UNKNOWN under the implemented observer/classifier.',
+    'These outcomes remain reachable with reference-configured FIFOs, retry buffering, credits and multiple outstanding flits, under the implemented classification policy.',
     'Blind retry of an indeterminate non-idempotent operation can duplicate its effect.',
-    'Transport diagnostics do not necessarily reveal architectural commit.',
+    'The current classifier leaves modeled diagnostic information unused; the experiments do not establish the limits of richer diagnostic classifiers.',
     'Some timing coupling between independent traffic sources remains under the reference configuration.',
     'Some simulator outcomes are implementation-dependent.',
 ]
@@ -482,7 +483,9 @@ sections.append(
     section(
         'claims',
         'What this study claims',
-        f'<article class="claim-box">{ul(claims)}</article>',
+        '<p><strong>Strongly supported:</strong> the measured commit counts, UNKNOWN classifications, and blind-retry duplicate execution. <strong>Supported with qualification:</strong> reachability persists under the reference configuration and current classifier.</p>'
+        + f'<article class="claim-box">{ul(claims)}</article>'
+        + '<div class="callout"><strong>Not yet established:</strong> full observational equivalence of the traces, or that richer UCIe diagnostics cannot resolve transaction fate.</div>',
         'INTERPRETATION',
     )
 )
@@ -513,6 +516,8 @@ sections.append(
                 'Format-6 optional bytes, electrical training, and FDI cycle accuracy are out of scope.',
                 'Diagnostic fields are study abstractions, not standardized or vendor register maps.',
                 'Finite scenarios establish reachability, not exhaustive absence of other outcomes.',
+                'The timed equivalence flag checks fate labels and completion status, not complete observer-visible histories.',
+                'Profiles B/C do not use all recorded diagnostic state for classification; a stronger diagnostic classifier has not been evaluated.',
             ]
         ),
         'ASSUMPTION / SCOPE',
@@ -543,6 +548,7 @@ sections.append(
         + '<div class="downloads">'
         + ''.join(f'<a href="{url}">{label} ↗</a>' for url, label in downloads)
         + '</div>'
+        + '<p class="caption">Stored reports and JSON retain historical terminology, including <code>observational_equivalence_abc</code>. In the timed checker this flag means matching fate labels and completion status; it is not a full-history equivalence test. Diagnostic claims in those reports must likewise be read subject to the classifier limitations above. Measurements have not been changed.</p>'
         + '<details><summary>Evidence notes and terminology</summary><p>Downloads preserve legacy machine keys such as <code>guest</code>; these denote traffic clients here, not modeled hypervisor guests. The exported reference report contains a generic caveat that coupling “may disappear” under multi-outstanding buffering. Its measured reference run instead reports 44 ns added delay and a deadline miss; this page follows those measurements. Whether other implementations eliminate the effect remains open.</p></details>',
         'REPRODUCIBILITY',
     )
@@ -572,7 +578,7 @@ sections.append(
     section(
         'conclusion',
         'Conclusion',
-        p('The study demonstrates that recovering a UCIe link and reconstructing the architectural fate of an interrupted higher-layer operation are different problems. In the reference-architecture model, a committed non-idempotent operation whose response is lost can remain observationally indistinguishable from an operation that never reached the target. Blind retry can therefore create duplicate architectural effects unless additional end-to-end recovery information is available.')
+        p('The study demonstrates that recovering a UCIe link and reconstructing the architectural fate of an interrupted higher-layer operation are different problems. In the reference-architecture model, a committed non-idempotent operation whose response is lost and an operation that never reached the target both receive UNKNOWN under the implemented observer/classifier. Blind retry of the committed case can create duplicate architectural effects. Full observer-history equivalence and the ability of richer diagnostics to resolve fate remain untested stronger claims.')
         + p('The reference configuration shows that this ambiguity is not dependent on a one-flit transport simplification. At the same time, model refinement exposed other behaviors as implementation-dependent. The next step is validation against a concrete UCIe controller implementation.'),
         'INTERPRETATION',
     )
@@ -590,7 +596,7 @@ nav = [
 summary_cards = [
     ('Transaction fate', 'Yes', 'UNKNOWN reachable', 'positive'),
     ('Blind retry', 'Reachable', 'Duplicate architectural effect', 'positive'),
-    ('UCIe 3.0', 'No', 'Eliminates this ambiguity in the modeled scenarios', ''),
+    ('UCIe 3.0', 'UNKNOWN', 'Baseline result under the implemented classifier', ''),
     (
         'Reference architecture',
         'Yes',
@@ -603,8 +609,8 @@ hero = (
     '<div class="hero">'
     '<div class="eyebrow">UCIe / AoU FAULT-INJECTION STUDY</div>'
     '<h1>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</h1>'
-    '<p class="lead">In the modeled UCIe recovery scenarios, a committed non-idempotent operation whose response is lost can be indistinguishable from one that never reached the target.</p>'
-    + p('A transaction that committed at the target but lost its response can be observationally indistinguishable from a transaction that never reached the target. The study uses the classifications <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. <code class="unknown">UNKNOWN</code> is a study classification, not a UCIe-defined protocol state.')
+    '<p class="lead">In the modeled UCIe recovery scenarios, a committed operation with lost completion and an operation that never reached the target both receive UNKNOWN under the implemented observer/classifier.</p>'
+    + p('The ground-truth outcomes differ; the implemented fate classifications match. This does not establish equality of the complete observer-visible histories or that richer diagnostics cannot determine fate. The study uses the classifications <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. <code class="unknown">UNKNOWN</code> is a study classification, not a UCIe-defined protocol state.')
     + '<div class="summary">'
     + ''.join(
         f'<div><span>{label}</span><small>{sub}</small><strong class="{cls}">{value}</strong></div>'
