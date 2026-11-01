@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page="results">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,6 +7,35 @@
   <meta name="description" content="Equivalent-workload counts, UNKNOWN rates, ambiguity windows, and observational-equivalence pairs from the UCIe fault-injection study.">
   <link rel="icon" href="assets/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="alternate" hreflang="de" href="de/results.html">
+  <link rel="alternate" hreflang="en" href="results.html">
+  <link rel="alternate" hreflang="x-default" href="results.html">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var here = root.getAttribute("lang") === "de" ? "de" : "en";
+      var page = root.getAttribute("data-page") || "index";
+      var key = "nuvus-lang";
+      var params = new URLSearchParams(location.search);
+      var q = params.get("lang");
+      var stored = null;
+      try { stored = localStorage.getItem(key); } catch (e) {}
+      if (q === "de" || q === "en") {
+        stored = q;
+        try { localStorage.setItem(key, q); } catch (e) {}
+      }
+      var primary = (navigator.languages && navigator.languages.length && navigator.languages[0]) || navigator.language || "";
+      var want = stored || (/^de\b/i.test(primary) ? "de" : "en");
+      var file = (page === "index" ? "index" : page) + ".html";
+      if (want !== here) {
+        location.replace((here === "de" ? "../" : "de/") + file + (location.hash || ""));
+        return;
+      }
+      if (q && window.history && history.replaceState) {
+        history.replaceState(null, "", location.pathname + location.hash);
+      }
+    })();
+  </script>
   <script>
     (function () {
       try {
@@ -33,10 +62,16 @@
         <a href="limitations.html">Limitations</a>
         <a href="index.html#reproduce">Reproduce</a>
       </nav>
-      <div class="theme" role="group" aria-label="Color theme">
-        <button type="button" data-theme-set="system">System</button>
-        <button type="button" data-theme-set="light">Light</button>
-        <button type="button" data-theme-set="dark">Dark</button>
+      <div class="header-tools">
+        <nav class="lang" aria-label="Language">
+          <a href="de/results.html?lang=de" hreflang="de" lang="de">DE</a>
+          <a href="results.html?lang=en" hreflang="en" lang="en" aria-current="page">EN</a>
+        </nav>
+        <div class="theme" role="group" aria-label="Color theme">
+          <button type="button" data-theme-set="system">System</button>
+          <button type="button" data-theme-set="light">Light</button>
+          <button type="button" data-theme-set="dark">Dark</button>
+        </div>
       </div>
     </div>
   </header>

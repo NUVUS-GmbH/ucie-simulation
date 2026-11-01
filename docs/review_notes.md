@@ -1,5 +1,7 @@
 # Review notes
 
+Language: [Deutsch](de/review_notes.md) · English
+
 Notes for a technical reader of the GitHub Pages site in `docs/`. The site is a presentation of the simulator output. It is not a new experiment.
 
 Canonical reports:

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="de" data-page="results">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gemessene Ergebnisse — UCIe 2.0 gegenüber UCIe 3.0</title>
+  <meta name="description" content="Zähler der äquivalenten Last, UNKNOWN-Raten, Ambiguitätsfenster und Paare der Beobachtungsäquivalenz aus der UCIe-Fehlerinjektionsstudie.">
+  <link rel="icon" href="../assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="alternate" hreflang="de" href="results.html">
+  <link rel="alternate" hreflang="en" href="../results.html">
+  <link rel="alternate" hreflang="x-default" href="../results.html">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var here = root.getAttribute("lang") === "de" ? "de" : "en";
+      var page = root.getAttribute("data-page") || "index";
+      var key = "nuvus-lang";
+      var params = new URLSearchParams(location.search);
+      var q = params.get("lang");
+      var stored = null;
+      try { stored = localStorage.getItem(key); } catch (e) {}
+      if (q === "de" || q === "en") {
+        stored = q;
+        try { localStorage.setItem(key, q); } catch (e) {}
+      }
+      var primary = (navigator.languages && navigator.languages.length && navigator.languages[0]) || navigator.language || "";
+      var want = stored || (/^de\b/i.test(primary) ? "de" : "en");
+      var file = (page === "index" ? "index" : page) + ".html";
+      if (want !== here) {
+        location.replace((here === "de" ? "../" : "de/") + file + (location.hash || ""));
+        return;
+      }
+      if (q && window.history && history.replaceState) {
+        history.replaceState(null, "", location.pathname + location.hash);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      try {
+        var choice = localStorage.getItem("nuvus-theme") || "system";
+        var dark = choice === "dark" || (choice !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute("data-theme-choice", choice);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme-choice", "system");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <a class="skip" href="#content">Zum Inhalt</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand brand-lockup" href="index.html"><span class="logo" role="img" aria-label="NUVUS"></span><span class="header-title">UCIe 2.0 / 3.0 Fehlerstudie</span></a>
+      <nav class="site-nav" aria-label="Website">
+        <a href="index.html#summary">Überblick</a>
+        <a href="methodology.html">Methode</a>
+        <a href="limitations.html">Grenzen</a>
+        <a href="index.html#reproduce">Reproduzieren</a>
+      </nav>
+      <div class="header-tools">
+        <nav class="lang" aria-label="Sprache">
+          <a href="results.html?lang=de" hreflang="de" lang="de" aria-current="page">DE</a>
+          <a href="../results.html?lang=en" hreflang="en" lang="en">EN</a>
+        </nav>
+        <div class="theme" role="group" aria-label="Farbschema">
+          <button type="button" data-theme-set="system">System</button>
+          <button type="button" data-theme-set="light">Hell</button>
+          <button type="button" data-theme-set="dark">Dunkel</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap hero">
+      <p class="kicker">Ergebnisse</p>
+      <h1 class="page-title">Gemessene Ergebnisse</h1>
+      <p class="lede">Jeder Zähler auf dieser Seite stammt aus den erzeugten Berichten. Die Erreichbarkeit ist die wissenschaftliche Schlussfolgerung. Ein Prozentsatz unten ist eine Beobachtung unter der Fehlerlast, Seed 1 — keine geschätzte Feldausfallwahrscheinlichkeit und kein allgemeiner Vergleich der Zuverlässigkeit von UCIe 2.0 und UCIe 3.0.</p>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2>Äquivalente Last</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>Eine systematische Suite und eine Zufallssuite, Seed 1, 200 Injektionen, auf beiden Modellen nachgespielt. Quelle, auf Englisch: comparison_ucie2_vs_ucie3.md.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Metrik</th>
+                <th scope="col" class="num">UCIe 2.0</th>
+                <th scope="col" class="num">UCIe 3.0</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Simulationen</th><td class="num">289</td><td class="num">289</td></tr>
+              <tr><th scope="row">Systematisch + zufällig</th><td class="num">89 + 200</td><td class="num">89 + 200</td></tr>
+              <tr><th scope="row">UNKNOWN-Transaktionen</th><td class="num">171</td><td class="num">171</td></tr>
+              <tr><th scope="row">UNKNOWN erreichbar</th><td class="num">Ja</td><td class="num">Ja</td></tr>
+              <tr><th scope="row">Doppelter Commit erreichbar</th><td class="num">Ja</td><td class="num">Ja</td></tr>
+              <tr><th scope="row">Falsch sicheres Retry erreichbar</th><td class="num">Ja</td><td class="num">Ja</td></tr>
+              <tr><th scope="row">Lebendigkeitsfehler</th><td class="num">17</td><td class="num">17</td></tr>
+              <tr><th scope="row">Untersuchte Recovery-Traces</th><td class="num">204</td><td class="num">204</td></tr>
+              <tr><th scope="row">UNKNOWN vor der Target-Annahme</th><td class="num">48.8% (21/43)</td><td class="num">48.8% (21/43)</td></tr>
+              <tr><th scope="row">UNKNOWN nach der Target-Annahme</th><td class="num">52.1% (25/48)</td><td class="num">52.1% (25/48)</td></tr>
+              <tr><th scope="row">UNKNOWN nach dem architektonischen Commit</th><td class="num">69.4% (25/36)</td><td class="num">69.4% (25/36)</td></tr>
+              <tr><th scope="row">UNKNOWN nach der Antwortgenerierung</th><td class="num">54.5% (18/33)</td><td class="num">54.5% (18/33)</td></tr>
+              <tr><th scope="row">UNKNOWN nach der Antwortzustellung</th><td class="num">0.0% (0/40)</td><td class="num">0.0% (0/40)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Für die hier untersuchte Eigenschaft — den architektonischen Ausgang einer unterbrochenen nicht-idempotenten Transaktion aus den modellierten standardisierten Beobachtungen zu rekonstruieren — haben die geprüften UCIe-3.0-Mechanismen die im UCIe-2.0-Modell gefundene Ambiguität nicht beseitigt. Kein Szenarioname verlässt die UNKNOWN-Menge, und keiner tritt ein. Das Ambiguitätsfenster in logischen Ereignissen ist nicht kürzer. Die Gleichheit dieser Zähler, einschließlich UNKNOWN 171 und 171, gilt nur für diese Last und diese Eigenschaft des Transaktionsausgangs. Sie ist keine Aussage, UCIe 3.0 sei nicht besser als UCIe 2.0, und kein allgemeiner Vergleich der Zuverlässigkeit.</p>
+        <p>UCIe 3.0 ergänzt nützliche Fähigkeiten für Link, Management, Sideband, Rekalibrierung und Notfallbehandlung. Der Sideband-Performant-Modus beseitigt eine Sideband-Lücke von 32 UI. Diese Lücke ist in diesem Modell kein Meilenstein des Transaktionsausgangs, und die Spezifikation definiert sie nicht als einen. Die ergänzten Mechanismen liefern für die hier untersuchten Fälle des Transaktionsausgangs allein kein Wissen über den architektonischen Commit.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Summen der UCIe-2.0-Baseline</h2>
+        <p>Aus <a href="../sources/findings.md">findings.md</a>, auf Englisch. FDI/<abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Klassifikationszähler umfassen systematische und zufällige Transaktionen. Sie sind keine Zerlegung der 289 Simulationen. Die berichteten Summen zu Lebendigkeit und Credit-Invariante sind Ergebnisse des Simulators. Die Studie schreibt sie derzeit keinen normativen UCIe-Mängeln zu. Das Modell enthält einen injizierten Credit-Fehler. Der erzeugte Bericht verzeichnet 10 Credit-Invariantenverletzungen und teilt sie nicht nach Ursache auf, daher werden sie auf dieser Seite nicht weiter untersucht.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Zähler</th><th scope="col" class="num">Wert</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Simulationen</th><td class="num">289</td></tr>
+              <tr><th scope="row">Systematisch</th><td class="num">89</td></tr>
+              <tr><th scope="row">Zufällig, Seed 1</th><td class="num">200</td></tr>
+              <tr><th scope="row">Fehlerinjektionen</th><td class="num">288</td></tr>
+              <tr><th scope="row">Erfolgreiche transparente Retries</th><td class="num">33</td></tr>
+              <tr><th scope="row">Retrain-Ereignisse</th><td class="num">76</td></tr>
+              <tr><th scope="row">LinkReset-Ereignisse</th><td class="num">11</td></tr>
+              <tr><th scope="row">LinkError-Ereignisse</th><td class="num">158</td></tr>
+              <tr><th scope="row">COMPLETED</th><td class="num">158</td></tr>
+              <tr><th scope="row">NOT_COMPLETED</th><td class="num">10</td></tr>
+              <tr><th scope="row">UNKNOWN</th><td class="num">171</td></tr>
+              <tr><th scope="row">Verletzungen durch doppelten Commit</th><td class="num">1</td></tr>
+              <tr><th scope="row">Verletzungen durch falsch sicheres Retry</th><td class="num">1</td></tr>
+              <tr><th scope="row">Deadlocks oder Lebendigkeitsfehler</th><td class="num">17</td></tr>
+              <tr><th scope="row">Credit-Invariantenverletzungen</th><td class="num">10</td></tr>
+              <tr><th scope="row">Empfängerüberlauf-Verletzungen</th><td class="num">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Fehlerposition, FDI / <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr></h2>
+        <p>Beobachtung unter der Fehlerlast, Seed 1 — keine geschätzte Feldausfallwahrscheinlichkeit. Zufallssimulation, nur die beobachtete Transaktion. <em>n</em> ist die Zahl der injizierten Fehler in diesem Eimer.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Fehlerposition</th>
+                <th scope="col" class="num">COMPLETED</th>
+                <th scope="col" class="num">NOT_COMPLETED</th>
+                <th scope="col" class="num">UNKNOWN</th>
+                <th scope="col" class="num">n</th>
+                <th scope="col" class="num">UNKNOWN-Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Vor der Target-Annahme</th><td class="num">17</td><td class="num">5</td><td class="num">21</td><td class="num">43</td><td class="num">48.8%</td></tr>
+              <tr><th scope="row">Nach der Target-Annahme</th><td class="num">23</td><td class="num">0</td><td class="num">25</td><td class="num">48</td><td class="num">52.1%</td></tr>
+              <tr><th scope="row">Nach dem architektonischen Commit</th><td class="num">11</td><td class="num">0</td><td class="num">25</td><td class="num">36</td><td class="num">69.4%</td></tr>
+              <tr><th scope="row">Nach der Antwortgenerierung</th><td class="num">15</td><td class="num">0</td><td class="num">18</td><td class="num">33</td><td class="num">54.5%</td></tr>
+              <tr><th scope="row">Nach der Antwortzustellung</th><td class="num">40</td><td class="num">0</td><td class="num">0</td><td class="num">40</td><td class="num">0.0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Dieselben Läufe, wenn die Retry-Disposition gelatcht ist</h3>
+        <p>Diese Tabelle ist die zweite Klassifikation des Berichts. Das Behalten der Transport-ACK/NAK-Historie kann die Klassifikation vor der Target-Annahme verbessern: UNKNOWN in diesem Eimer fällt von 48,8 % (21/43) auf 11,6 % (5/43). Sie belegt allein nicht den architektonischen Commit, nachdem die Anfrage die Transportgrenze überschritten hat. Die späteren Eimer ändern sich nicht. Dieses Latch ist eine angenommene Implementierungsverbesserung, kein standardisierter AXI-Mechanismus für den Transaktionsausgang.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Annahme: Die ACK/NAK-Historie übersteht das Leeren und ist für den Klassifikator sichtbar.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Fehlerposition</th>
+                <th scope="col" class="num">COMPLETED</th>
+                <th scope="col" class="num">NOT_COMPLETED</th>
+                <th scope="col" class="num">UNKNOWN</th>
+                <th scope="col" class="num">n</th>
+                <th scope="col" class="num">UNKNOWN-Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Vor der Target-Annahme</th><td class="num">17</td><td class="num">21</td><td class="num">5</td><td class="num">43</td><td class="num">11.6%</td></tr>
+              <tr><th scope="row">Nach der Target-Annahme</th><td class="num">23</td><td class="num">0</td><td class="num">25</td><td class="num">48</td><td class="num">52.1%</td></tr>
+              <tr><th scope="row">Nach dem architektonischen Commit</th><td class="num">11</td><td class="num">0</td><td class="num">25</td><td class="num">36</td><td class="num">69.4%</td></tr>
+              <tr><th scope="row">Nach der Antwortgenerierung</th><td class="num">15</td><td class="num">0</td><td class="num">18</td><td class="num">33</td><td class="num">54.5%</td></tr>
+              <tr><th scope="row">Nach der Antwortzustellung</th><td class="num">40</td><td class="num">0</td><td class="num">0</td><td class="num">40</td><td class="num">0.0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Ambiguitätsfenster</h2>
+        <p>Logische Protokollereignisse, äquivalente Last, beobachtete Transaktion, gezählt erst nach dem architektonischen Commit. UCIe-3.0-Benachrichtigungszeilen werden nicht gezählt, daher gilt ein längerer Trace-Ausdruck nicht als längeres Fenster. Das Fenster gilt nur als beseitigt, wenn kein offenes Fenster übrig ist.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Fenstermetrik</th>
+                <th scope="col" class="num">UCIe 2.0</th>
+                <th scope="col" class="num">UCIe 3.0</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Geschlossene Fenster (Completion eingetroffen)</th><td class="num">137</td><td class="num">137</td></tr>
+              <tr><th scope="row">Offene Fenster (Ausgang ungeklärt)</th><td class="num">78</td><td class="num">78</td></tr>
+              <tr><th scope="row">Kürzestes geschlossenes Fenster</th><td class="num">3</td><td class="num">3</td></tr>
+              <tr><th scope="row">Längstes geschlossenes Fenster</th><td class="num">7</td><td class="num">7</td></tr>
+              <tr><th scope="row">Mittleres geschlossenes Fenster</th><td class="num">3.8</td><td class="num">3.8</td></tr>
+              <tr><th scope="row">Kürzestes offenes Fenster</th><td class="num">2</td><td class="num">2</td></tr>
+              <tr><th scope="row">Längstes offenes Fenster</th><td class="num">9</td><td class="num">9</td></tr>
+              <tr><th scope="row">Mittleres offenes Fenster</th><td class="num">5.4</td><td class="num">5.4</td></tr>
+              <tr><th scope="row">Fenster beseitigt</th><td class="num">Nein</td><td class="num">Nein</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Im gedruckten UCIe-3.0-Replay von T17 ist das offene Fenster 9 logische Ereignisse ab dem architektonischen Commit lang. T18 hat kein solches Fenster: der Commit-Zähler ist 0, daher markiert der Bericht dieses Fenster als nicht anwendbar.</p>
+      </div>
+    </section>
+
+    <section id="pairs">
+      <div class="wrap">
+        <h2>Beobachtungsäquivalenz</h2>
+        <p>Zwei Ausführungen sind für einen Beobachter beobachtungsäquivalent, wenn ihre architektonische Grundwahrheit verschieden ist, aber jede ihm verfügbare Tatsache übereinstimmt. Ein Paar unten besteht diese Prüfung: die Commit-Zähler unterscheiden sich, und alle drei Beobachtungsprofile stimmen weiterhin überein. Der Vergleich berichtet vier Paare. Der modellierte Beobachter kann die beiden Ausführungen eines Paares nicht unterscheiden.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Sichten von Profil 3. axi_commit_bit ist false, weil die Spezifikation keines definiert. Quelle, auf Englisch: findings_ucie3.md.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Paar</th>
+                <th scope="col">Commit-Zähler</th>
+                <th scope="col">Gemeinsame Profil-3-Signale</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Äquivalenter LinkError-Verlust</th>
+                <td class="num">1 und 0</td>
+                <td><code>linkerror, crc_error, retrain, uncorrectable, remote_linkerror_sideband</code></td>
+              </tr>
+              <tr>
+                <th scope="row">Emergency Shutdown</th>
+                <td class="num">1 und 0</td>
+                <td><code>emergency_shutdown, endpoint_reset</code></td>
+              </tr>
+              <tr>
+                <th scope="row">Priority-Sideband plus Mainband-Verlust</th>
+                <td class="num">1 und 0</td>
+                <td><code>linkerror, crc_error, retrain, uncorrectable, remote_linkerror_sideband, priority_sideband_opcode_only</code></td>
+              </tr>
+              <tr>
+                <th scope="row">Endpoint-Reset</th>
+                <td class="num">1 und 0</td>
+                <td><code>linkerror, uncorrectable, remote_linkerror_sideband, endpoint_reset</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Jede committete und nicht committete Sicht hat außerdem <code>axi_accepted=true</code>, <code>completion_received=false</code> und <code>axi_commit_bit=false</code>. Emergency Shutdown ist kein weiterer CRC- oder Replay-Fall. Es hat einen anderen Systemzweck: die rasche Eingrenzung eines schweren Zustands. Das Paar zeigt, dass dieselbe Frage zum Transaktionsausgang entstehen kann, wenn die Kommunikation durch Endpoint- oder Power-Recovery zerstörend unterbrochen wird. Die Studie fragt, was Software über Transaktionen schließen kann, die unterwegs waren. Sie behandelt Emergency Shutdown nicht als mangelhaft, weil es die Transaktions-Completion nicht erhält.</p>
+        <h3>Nur-UCIe-3.0-Szenarien, deren beobachtete Transaktion UNKNOWN ist</h3>
+        <ul>
+          <li><code>ucie3_emergency_after_commit</code></li>
+          <li><code>ucie3_emergency_before_acceptance</code></li>
+          <li><code>ucie3_pspt_after_commit</code></li>
+          <li><code>ucie3_pspt_before_acceptance</code></li>
+          <li><code>ucie3_endpoint_reset_after_commit</code></li>
+          <li><code>ucie3_endpoint_reset_before_acceptance</code></li>
+          <li><code>ucie3_two_guests_shared_link</code></li>
+        </ul>
+        <p>In <code>ucie3_two_guests_shared_link</code> sind die Profil-3-Sichten identisch. Ein Recovery-Ereignis mit Link-Geltung kann das Wissen über den Transaktionsausgang für mehrere Clients beeinträchtigen, die denselben physischen Transport teilen. Dieses Szenario motiviert eine eigene Untersuchung der Rückwirkungsfreiheit. Es begründet für sich keine Verletzung der Rückwirkungsfreiheit nach ISO 26262.</p>
+        <ul>
+          <li>T70, axi_id 1: architectural_commit_count = 1, classification UNKNOWN, axi_accepted=true, completion_received=false, signals=linkerror, uncorrectable, remote_linkerror_sideband, axi_commit_bit=false</li>
+          <li>T71, axi_id 2: architectural_commit_count = 1, classification UNKNOWN, axi_accepted=true, completion_received=false, signals=linkerror, uncorrectable, remote_linkerror_sideband, axi_commit_bit=false</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Transportquittung und Retry</h2>
+        <p>In der modellierten Architektur sind die Quittung auf Transportebene und der architektonische Commit am Target verschiedene Ereignisse. In den systematischen UCIe-3.0-Läufen hatten 9 Transaktionen ein Transport-ACK bei architectural_commit_count 0, und 33 Transaktionen einen Commit ohne Completion beim Initiator. Diese Unterscheidung ist ein Ergebnis dieses Modells. Sie ist keine universelle Aussage über jedes Protokoll.</p>
+        <p>Automatisches Retry des committeten UCIe-3.0-Verlusts, Policy D:</p>
+        <div class="truth">
+          <div><span>Commit-Zähler</span><code>architectural_commit_count = 2</code></div>
+          <div><span>Abschluss</span><code>completion_received = true</code></div>
+          <div><span>Klassifikation</span><code>COMPLETED</code></div>
+          <div><span>Verletzungen</span><code>3</code></div>
+        </div>
+        <p>Der Policy-Vergleich von UCIe 2.0 berichtet dieselbe Form beim Verlust nach dem Commit: Initiator COMPLETED, Commit 2, Completion empfangen, Verletzungen 3. Beim Verlust vor der Annahme berichtet Policy D Initiator COMPLETED, Commit 1, Verletzungen 0. Der Effekt war dort noch nicht eingetreten, daher entspricht der eine Commit des Retries einer Ausführung.</p>
+        <h3>Mechanismen, die die Mainband-Transaktion nicht verwerfen</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>Diese Anzeigen sind so spezifiziert, dass sie einen gültigen Flit nicht von sich aus verwerfen.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Lauf</th>
+                <th scope="col">Klasse</th>
+                <th scope="col" class="num">Commit-Zähler</th>
+                <th scope="col">Abschluss</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">ucie3_fast_throttle_during_response</th><td>COMPLETED</td><td class="num">1</td><td>true</td></tr>
+              <tr><th scope="row">ucie3_recalibration_during_response</th><td>COMPLETED</td><td class="num">1</td><td>true</td></tr>
+              <tr><th scope="row">ucie3_parity_during_response</th><td>COMPLETED</td><td class="num">1</td><td>true</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Policy-Vergleich und Integrationsentscheidungen</h2>
+        <p>FDI/<abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Beobachtung, aus dem UCIe-2.0-Bericht. „Verletzungen 0“ heißt, dass der Invariantenprüfer für diesen gepaarten Lauf keine verzeichnet hat.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Policy</th>
+                <th scope="col">Verlust nach dem Commit</th>
+                <th scope="col">Verlust vor der Annahme</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">A · DISCARD</th>
+                <td>UNKNOWN, commit 1, completion false, explicit_unknown false</td>
+                <td>UNKNOWN, commit 0</td>
+              </tr>
+              <tr>
+                <th scope="row">B · PRESERVE_LOCAL</th>
+                <td>UNKNOWN, commit 1, completion false, explicit_unknown false</td>
+                <td>UNKNOWN, commit 0</td>
+              </tr>
+              <tr>
+                <th scope="row">C · EXPLICIT_UNKNOWN</th>
+                <td>UNKNOWN, commit 1, completion false, explicit_unknown true</td>
+                <td>UNKNOWN, commit 0</td>
+              </tr>
+              <tr>
+                <th scope="row">D · AUTO_RETRY</th>
+                <td>COMPLETED, commit 2, completion true, violations 3</td>
+                <td>COMPLETED, commit 1, violations 0</td>
+              </tr>
+              <tr>
+                <th scope="row">E · NO_AUTO_RETRY</th>
+                <td>UNKNOWN, commit 1, completion false, explicit_unknown false</td>
+                <td>UNKNOWN, commit 0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Policy C unterscheidet sich von Policy A, indem sie UNKNOWN ausdrücklich macht. Die Kennzeichnung des Ausgangs bleibt UNKNOWN. Policy D unterscheidet sich durch das Retry.</p>
+        <p>Retrain, während die Antwort noch unquittiert ist: Preserve-Retry endet als COMPLETED, Commit 1, Deadlock false. Reinitialize-Retry endet als UNKNOWN, Commit 1, Deadlock true. Das Modell benennt eine Integrationsambiguität, deren Ausgang von der Behandlung des Retry-Zustands abhängt. UCIe 2.0 §3.8 initialisiert die Retry-Variablen des IDLE-Handshakes bei Retrain neu, und §10.3.3.5 nennt ein Leeren für LinkReset, nicht für Retrain. Die Studie behandelt diesen Unterschied nicht als bestätigten normativen Mangel.</p>
+        <p>Eine Schreibantwort, die im initiierenden AoU liegt und auf <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr> noch nicht angenommen ist, dann LinkError: Policy A ist UNKNOWN mit Commit 1, und Policy B ist COMPLETED mit Commit 1. UCIe sagt nicht, ob eine bereits oberhalb des Adapters eingereihte Antwort das Aufräumen bei LinkError übersteht. Der Bericht nennt das eine Integrationsentscheidung, keinen festgestellten Codierfehler.</p>
+        <p><a href="../sources/findings.md">UCIe-2.0-Bericht</a> · <a href="../sources/findings_ucie3.md">UCIe-3.0-Bericht</a> · <a href="../sources/comparison_ucie2_vs_ucie3.md">Vergleich</a> · <a href="../data/findings.json">JSON</a>. Die Berichte bleiben englisch.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <nav class="footer-nav" aria-label="Website">
+        <a href="index.html">Überblick</a>
+        <a href="methodology.html">Methode</a>
+        <a href="results.html">Ergebnisse</a>
+        <a href="limitations.html">Grenzen</a>
+        <a href="review_notes.md">Prüfnotizen</a>
+      </nav>
+      <p>NUVUS · UCIe-Studie zum Transaktionsausgang. Die Zähler sind aus den Simulatorberichten kopiert.</p>
+    </div>
+  </footer>
+  <script src="../assets/theme.js"></script>
+</body>
+</html>

@@ -81,6 +81,8 @@ The device commits a write only after the write data has been delivered. That is
 
 The study is presented as a static site in `docs/` for a technical audience. It uses the NUVUS brand (tokens, Geist, and the wordmark). Those assets are copied into `docs/assets/` so GitHub Pages does not need a build or a secret.
 
+English pages stay at the current URLs. German pages are under `docs/de/`. A control in the header switches language. On the first visit the site follows the browser’s preferred language and stores the choice in `localStorage` (`nuvus-lang`). The generated reports under `docs/sources/` stay English.
+
 Figures on the site are taken from the three reports above. `docs/sources/` is a copy of those reports. `docs/review_notes.md` lists the claims, the assumptions, the metrics, and the places where the wording stays inside the evidence.
 
 ### Local preview

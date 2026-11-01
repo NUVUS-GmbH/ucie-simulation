@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="de" data-page="methodology">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulationsmethode — UCIe-Studie zum Transaktionsausgang</title>
+  <meta name="description" content="Ereignismodell, Beobachtungsprofile und die Policies, mit denen der AXI-Transaktionsausgang nach der UCIe-Recovery klassifiziert wird.">
+  <link rel="icon" href="../assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="alternate" hreflang="de" href="methodology.html">
+  <link rel="alternate" hreflang="en" href="../methodology.html">
+  <link rel="alternate" hreflang="x-default" href="../methodology.html">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var here = root.getAttribute("lang") === "de" ? "de" : "en";
+      var page = root.getAttribute("data-page") || "index";
+      var key = "nuvus-lang";
+      var params = new URLSearchParams(location.search);
+      var q = params.get("lang");
+      var stored = null;
+      try { stored = localStorage.getItem(key); } catch (e) {}
+      if (q === "de" || q === "en") {
+        stored = q;
+        try { localStorage.setItem(key, q); } catch (e) {}
+      }
+      var primary = (navigator.languages && navigator.languages.length && navigator.languages[0]) || navigator.language || "";
+      var want = stored || (/^de\b/i.test(primary) ? "de" : "en");
+      var file = (page === "index" ? "index" : page) + ".html";
+      if (want !== here) {
+        location.replace((here === "de" ? "../" : "de/") + file + (location.hash || ""));
+        return;
+      }
+      if (q && window.history && history.replaceState) {
+        history.replaceState(null, "", location.pathname + location.hash);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      try {
+        var choice = localStorage.getItem("nuvus-theme") || "system";
+        var dark = choice === "dark" || (choice !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute("data-theme-choice", choice);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme-choice", "system");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <a class="skip" href="#content">Zum Inhalt</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand brand-lockup" href="index.html"><span class="logo" role="img" aria-label="NUVUS"></span><span class="header-title">UCIe 2.0 / 3.0 Fehlerstudie</span></a>
+      <nav class="site-nav" aria-label="Website">
+        <a href="index.html#summary">Überblick</a>
+        <a href="results.html">Ergebnisse</a>
+        <a href="limitations.html">Grenzen</a>
+        <a href="index.html#reproduce">Reproduzieren</a>
+      </nav>
+      <div class="header-tools">
+        <nav class="lang" aria-label="Sprache">
+          <a href="methodology.html?lang=de" hreflang="de" lang="de" aria-current="page">DE</a>
+          <a href="../methodology.html?lang=en" hreflang="en" lang="en">EN</a>
+        </nav>
+        <div class="theme" role="group" aria-label="Farbschema">
+          <button type="button" data-theme-set="system">System</button>
+          <button type="button" data-theme-set="light">Hell</button>
+          <button type="button" data-theme-set="dark">Dunkel</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap hero">
+      <p class="kicker">Methode</p>
+      <h1 class="page-title">Wie das Modell architektonische Wahrheit von dem trennt, was der Initiator sehen kann</h1>
+      <p class="lede">Der Simulator ist ein <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>/AoU-inspiriertes Transaktionsmodell über spezifikationsabgeleitetem UCIe-Recovery-Verhalten. Es zeichnet den Commit-Zähler des Targets auf und, getrennt davon, die Completion, die der Initiator tatsächlich erhalten hat.</p>
+      <p class="caption">Der vollständige AoU-0.8-Text lag dem Arbeitsbereich zum Modellbau nicht vor. AoU-Packing und Credit-Verhalten sind ausdrückliche Abstraktionen. Die zitierte Link-down-Aktivierungsregel ist das normative AoU-Verhalten, das das Modell verwendet. Dies ist keine vollständige AoU-0.8-Konformitätsimplementierung.</p>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2>Ereignismodell</h2>
+        <p>Die Zeit ist eine Folge von Protokollereignissen. Das Replay-Timeout von 375 Flits, die Handshake-Grenze der Sequenznummer von 128 Flits, das Sideband-Timeout von 8 ms und die LinkError-Verweildauer von 16 ms sind im Modell einzelne Ereignisse. Sie sind keine Wanduhr-Verzögerungen. Das CRC-LFSR der Spezifikation wird nicht ausgeführt. Ein-, Zwei- und Drei-Bit-Kipper gelten als erkannt, weil UCIe §3.7 die Erkennung von bis zu drei Bits garantiert. Die Replay-Zählergrenze steht standardmäßig auf 3. Abschnitt 3.8 verweist für Geschwindigkeiten bis 32 GT/s auf die PCIe-Regeln und wiederholt diese Ganzzahl nicht, daher hält das Modell sie als Parameter.</p>
+        <p>Eine Transaktion durchläuft logische Phasen. Ein Fehler kann in einer davon scharf gemacht werden:</p>
+        <ol>
+          <li>Erzeugt, dann lokal angenommen auf <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>.</li>
+          <li>AoU-Anfrage gepackt und der Anfrage-Flit übertragen.</li>
+          <li>Anfrage vom entfernten Endpoint empfangen.</li>
+          <li>Schreibdaten lokal angenommen, gepackt, übertragen und entfernt empfangen. Lesezugriffe überspringen diese Phasen.</li>
+          <li>Das Target nimmt die Operation an.</li>
+          <li>Das Target committet. Das ist der architektonische Effekt.</li>
+          <li>Schreibantwort erzeugt, gepackt, übertragen und empfangen.</li>
+          <li>Transaktion beim Initiator abgeschlossen.</li>
+        </ol>
+        <p>Das Gerätemodell committet einen Schreibzugriff erst, nachdem Anfrage und Schreibdaten zugestellt wurden. Es committet nicht auf der Adresse allein. Eine frühe Schreibantwort ist aus, sofern ein Szenario sie nicht einschaltet. Beide Entscheidungen sind Annahmen des Gerätemodells. AoU und UCIe legen den Commit-Punkt des Geräts nicht fest.</p>
+        <p>Das Modell ist absichtlich ereignisgenau und nicht zyklusgenau, weil die zentrale Eigenschaft eine Frage der Beobachtbarkeit und Erreichbarkeit ist: ob zwei verschiedene architektonische Ausgänge denselben für den Beobachter sichtbaren Zustand erzeugen können. Zyklusgenaue Modellierung wäre nötig für quantitative Echtzeitaussagen wie Worst-Case-Recovery-Latenz, Deadline-Verletzungen, Arbitrierungseffekte oder eine Ambiguitätsdauer in Nanosekunden.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Linkpfade</h2>
+        <p>Das UCIe-Verhalten stammt aus Revision 2.0, Version 1.0 (6. August 2024) und, für das zweite Modell, aus Revision 3.0, Version 1.0 (5. August 2025). Eine 2.0-Regel wird im 3.0-Modell nur verwendet, wo der 3.0-Text sie noch ausspricht. Die implementierten Regeln sind in <code>simulation/model/ucie.py</code> und <code>simulation/model/spec30.py</code> benannt.</p>
+        <p>Die Pfade umfassen CRC-Fehler und Replay statt der Zustellung eines ungültigen Flits, die Retry-Schwelle hin zu Retrain, LinkReset und LinkError. Das Aufräumen bei LinkError leert Retry-Puffer und Pipelines. Die zitierte AoU-0.8-Regel §8.3.3 setzt die Aktivierungs-FSM bei FDI-Link-down auf DISABLED. Retrain ist dieses Ereignis nicht, und das Modell lässt AoU über Retrain hinweg aktiviert. Nach dem Reset kehrt der Link nach Active zurück, der Sequenznummern-Handshake schließt ab, die AoU-Aktivierung schließt ab, und Credits werden in jeder Richtung auf Tiefe 4 initialisiert.</p>
+        <p>UCIe-3.0-Mechanismen sind nur so weit modelliert, wie der 3.0-Text sie festlegt: Sideband-Performant-Modus, Priority-Sideband-Opcode, Fast Throttle, Emergency Shutdown, Runtime-Rekalibrierung und Runtime-Parität. Die Nutzlast des Priority-Pakets bleibt einem künftigen ECN überlassen, daher zeichnet das Modell nur den Opcode auf und erfindet keine Transaktionskodierung. Keiner dieser Mechanismen liefert, wie modelliert, eine standardisierte Anzeige des architektonischen Commit-Zustands der zugehörigen <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Transaktion. Der Klassifikator lehnt ein Commit-Bit ab, das der hier verwendete Spezifikationstext nicht definiert. Emergency Shutdown ist als rasche Eingrenzung eines schweren Zustands modelliert, nicht als Mechanismus zum Abschluss einer Transaktion.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Zwei Aufzeichnungen</h2>
+        <div class="truth">
+          <div><span>Grundwahrheit</span><code>architectural_commit_count = 1</code></div>
+          <div><span>Initiator</span><code>completion_received = false</code></div>
+          <div><span>Ergebnis</span><code>UNKNOWN</code></div>
+        </div>
+        <p>Die Grundwahrheit ist die Anzahl, wie oft das Target die Operation angewendet hat. Der Initiatorzustand ist, ob <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr> die Transaktion angenommen hat und ob eine OKAY-Completion zugestellt wurde. Die Kennzeichnung wird aus dem Initiatorzustand und dem Beobachtungsprofil berechnet. Der Commit-Zähler wird nur von den späteren Invariantenprüfungen gelesen.</p>
+        <p>COMPLETED verlangt OKAY beim Initiator. NOT_COMPLETED ist unter FDI und <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr> allein eine Transaktion, die der Manager nicht an den Endpoint übergeben hat. Nach der Übergabe ist eine fehlende Completion UNKNOWN. Eine ausdrückliche UNKNOWN-Antwort aus Policy C ist UNKNOWN. Sie ist nicht OKAY und keine Erlaubnis zum Retry.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Policies</h2>
+        <p>UCIe sagt nicht, welche <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Completion eine offene Transaktion nach LinkError erhält. Das Modell erfindet keine stille Antwort. <code>Policy</code> in <code>simulation/model/types.py</code> ist die Entscheidung.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Benannte Policies. Die Definitionen folgen der README des Repository.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Policy</th>
+                <th scope="col">Bedeutung</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">A · DISCARD</th>
+                <td>Offene AoU-Transaktionen verwerfen. Keine <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Completion.</td>
+              </tr>
+              <tr>
+                <th scope="row">B · PRESERVE_LOCAL</th>
+                <td>Wenn eine Completion bereits im initiierenden AoU lag, nach dem Aufräumen zustellen.</td>
+              </tr>
+              <tr>
+                <th scope="row">C · EXPLICIT_UNKNOWN</th>
+                <td>Ein ausdrückliches UNKNOWN an das Softwaremodell zurückgeben. Nicht OKAY und keine Erlaubnis zum Retry.</td>
+              </tr>
+              <tr>
+                <th scope="row">D · AUTO_RETRY</th>
+                <td>Dieselbe logische Transaktion automatisch wiederholen, nachdem der Link oben ist.</td>
+              </tr>
+              <tr>
+                <th scope="row">E · NO_AUTO_RETRY</th>
+                <td>Nicht automatisch wiederholen. In diesem Modell dasselbe für den Initiator sichtbare Ergebnis wie A.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Was der Klassifikator lesen darf</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>Beobachtungsprofile. Die Retry-Disposition ist eine Annahme, kein standardisiertes Profil.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Profil</th>
+                <th scope="col">Verfügbare Fakten</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1 · FDI / <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr></th>
+                <td><abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr> angenommen wurde, OKAY empfangen wurde oder nicht, und ein zerstörendes Linkereignis eintrat. Das ist die Recovery-Schnittstelle, die das Modell für die Protokollschicht als festgelegt behandelt: <code>pl_state_sts</code>, plus die <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Antwort, die bereits zugestellt wurde.</td>
+              </tr>
+              <tr>
+                <th scope="row">2 · Softwarefehler</th>
+                <td>Profil 1, plus Link- und D2D-Fehlerregister. Diese Register nennen CRC-, Retrain- und LinkError-Zustände. Sie nennen keine <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Transaktion.</td>
+              </tr>
+              <tr>
+                <th scope="row">3 · Management</th>
+                <td>Profil 2, plus Status des Management-Transports, Link Health Monitor und, auf UCIe 3.0, Fast Throttle, Emergency Shutdown und Priority-Sideband-Opcode. Keine der Strukturen, die dieses Modell liest, trägt eine standardisierte <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr> Anzeige des architektonischen Commits.</td>
+              </tr>
+              <tr>
+                <th scope="row">Retry-Disposition</th>
+                <td>ACK/NAK-Historie, gelatcht bevor der Retry-Puffer geleert wird. Die Abschnitte 3.8 und 10.3.3.5 verlangen nicht, dass diese Historie erhalten bleibt oder an eine <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Id gebunden wird. Sie zu verwenden ist eine Annahme.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Der Klassifikator darf den Profilen 2 und 3 nicht erlauben, eine andere FDI/<abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Kennzeichnung zu erfinden. Ein wahres Commit-Bit hieße, das Modell hätte ein Feld erfunden, das der hier verwendete Spezifikationstext nicht definiert. Auf den berichteten Äquivalenzpaaren stimmen alle drei standardisierten Profile überein. Diese Übereinstimmung ist ein Simulationsergebnis für diese Paare, kein Beweis, dass jedes ergänzte UCIe-3.0-Register für die Zuverlässigkeit belanglos ist.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Fehlerinjektion</h2>
+        <p>Die systematische Suite durchläuft benannte Szenarien, einschließlich eines Fehlers in jeder relevanten Phase der beobachteten Transaktion. Die Zufallssuite zieht 200 Injektionen mit Seed 1. Fehler umfassen Bitverfälschung, wiederholte Verfälschung eines Replays, Retry-Timeout und -Schwelle, erzwungenes Retrain, LinkReset und LinkError, verworfene Anfrage oder Antwort und die nur in UCIe 3.0 vorhandenen Anzeigen. Die Positionstabellen in den Ergebnissen nutzen die Phase, in der der Fehler der beobachteten Transaktion ausgelöst hat, gruppiert in fünf Eimer von „vor der Target-Annahme“ bis „nach der Antwortzustellung“.</p>
+        <p>Das AoU-Packing ist eine Nachricht je Flit. Credits sind einer je Nachricht, nicht je Granule. Der vollständige AoU-0.8-Text lag dem Arbeitsbereich zum Modellbau nicht vor, daher ist dies keine vollständige AoU-0.8-Konformitätsimplementierung. Diese Packing- und Credit-Entscheidungen sind in <code>simulation/model/aou.py</code> als Abstraktionen gekennzeichnet. Die zitierte Link-down-Regel §8.3.3 ist das normative AoU-Verhalten, das das Modell verwendet.</p>
+        <p><a href="index.html#method">Zurück zum Überblick</a> · <a href="results.html">Gemessene Ergebnisse</a> · <a href="limitations.html">Grenzen</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <nav class="footer-nav" aria-label="Website">
+        <a href="index.html">Überblick</a>
+        <a href="methodology.html">Methode</a>
+        <a href="results.html">Ergebnisse</a>
+        <a href="limitations.html">Grenzen</a>
+        <a href="review_notes.md">Prüfnotizen</a>
+      </nav>
+      <p>NUVUS · UCIe-Studie zum Transaktionsausgang. Die Methodenaussagen folgen der README des Repository und den oben zitierten Modellkommentaren.</p>
+    </div>
+  </footer>
+  <script src="../assets/theme.js"></script>
+</body>
+</html>

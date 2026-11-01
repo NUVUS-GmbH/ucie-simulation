@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de" data-page="limitations">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grenzen — UCIe-Studie zum Transaktionsausgang</title>
+  <meta name="description" content="Geltungsgrenzen des Fehlerinjektionsmodells für UCIe 2.0 und UCIe 3.0. Erreichbarkeit unter den genannten Annahmen, keine Aussage über jede Implementierung.">
+  <link rel="icon" href="../assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="alternate" hreflang="de" href="limitations.html">
+  <link rel="alternate" hreflang="en" href="../limitations.html">
+  <link rel="alternate" hreflang="x-default" href="../limitations.html">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var here = root.getAttribute("lang") === "de" ? "de" : "en";
+      var page = root.getAttribute("data-page") || "index";
+      var key = "nuvus-lang";
+      var params = new URLSearchParams(location.search);
+      var q = params.get("lang");
+      var stored = null;
+      try { stored = localStorage.getItem(key); } catch (e) {}
+      if (q === "de" || q === "en") {
+        stored = q;
+        try { localStorage.setItem(key, q); } catch (e) {}
+      }
+      var primary = (navigator.languages && navigator.languages.length && navigator.languages[0]) || navigator.language || "";
+      var want = stored || (/^de\b/i.test(primary) ? "de" : "en");
+      var file = (page === "index" ? "index" : page) + ".html";
+      if (want !== here) {
+        location.replace((here === "de" ? "../" : "de/") + file + (location.hash || ""));
+        return;
+      }
+      if (q && window.history && history.replaceState) {
+        history.replaceState(null, "", location.pathname + location.hash);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      try {
+        var choice = localStorage.getItem("nuvus-theme") || "system";
+        var dark = choice === "dark" || (choice !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute("data-theme-choice", choice);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme-choice", "system");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <a class="skip" href="#content">Zum Inhalt</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand brand-lockup" href="index.html"><span class="logo" role="img" aria-label="NUVUS"></span><span class="header-title">UCIe 2.0 / 3.0 Fehlerstudie</span></a>
+      <nav class="site-nav" aria-label="Website">
+        <a href="index.html#summary">Überblick</a>
+        <a href="methodology.html">Methode</a>
+        <a href="results.html">Ergebnisse</a>
+        <a href="index.html#reproduce">Reproduzieren</a>
+      </nav>
+      <div class="header-tools">
+        <nav class="lang" aria-label="Sprache">
+          <a href="limitations.html?lang=de" hreflang="de" lang="de" aria-current="page">DE</a>
+          <a href="../limitations.html?lang=en" hreflang="en" lang="en">EN</a>
+        </nav>
+        <div class="theme" role="group" aria-label="Farbschema">
+          <button type="button" data-theme-set="system">System</button>
+          <button type="button" data-theme-set="light">Hell</button>
+          <button type="button" data-theme-set="dark">Dunkel</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap hero">
+      <p class="kicker">Grenzen</p>
+      <h1 class="page-title">Geltung des Ergebnisses</h1>
+      <p class="lede">Die Studie zeigt, dass die Ambiguität des Transaktionsausgangs unter den modellierten Beobachtungsprofilen und dem spezifikationsabgeleiteten Recovery-Verhalten erreichbar ist. Sie misst keinen Silizium-Link. Ein Prozentsatz auf der Ergebnisseite ist eine Beobachtung unter der Fehlerlast, Seed 1 — keine geschätzte Feldausfallwahrscheinlichkeit.</p>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2>Modell und Spezifikationen</h2>
+        <ul>
+          <li>Die Simulation ist ein abstraktes Protokollmodell, keine Siliziumimplementierung. Sie ist keine PHY. Sie ist absichtlich ereignisgenau und nicht zyklusgenau, weil die zentrale Eigenschaft ist, ob zwei architektonische Ausgänge denselben für den Beobachter sichtbaren Zustand erzeugen können. Zyklusgenaue Modellierung wäre nötig für Worst-Case-Recovery-Latenz, Deadline-Verletzungen, Arbitrierungseffekte oder eine Ambiguitätsdauer in Nanosekunden.</li>
+          <li>Der vollständige AoU-0.8-Text lag dem Arbeitsbereich zum Modellbau nicht vor. Dies ist keine vollständige AoU-0.8-Konformitätsimplementierung. AoU-Packing und Credit-Verhalten sind ausdrückliche Abstraktionen. Die einzige als normativ behandelte AoU-Regel ist das öffentlich zitierte Verhalten von §8.3.3: FDI-Link-down setzt die Aktivierungs-FSM auf DISABLED und verwirft einen unterwegs befindlichen Activate- oder Deactivate-Handshake. Retrain tut das nicht. Wird die vollständige AoU-0.8-Spezifikation später ergänzt, sollte diese Aussage erst nach einem Abgleich der Implementierung mit ihr überarbeitet werden.</li>
+          <li>Manches Verhalten ist implementierungsdefiniert und als ausdrückliche Policy modelliert. Der <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Ausgang nach dem Aufräumen bei LinkError ist eine Policy. Der Schwellenalgorithmus für Retrain ist implementierungsspezifisch. Die Replay-Zähler-Ganzzahl ist ein Parameter, weil §3.8 auf die PCIe-Empfehlung verweist und die Ganzzahl nicht wiederholt.</li>
+          <li>Das Packing ist eine Nachricht je Flit. Credits sind einer je Nachricht, nicht je Granule. Die anfängliche Credit-Tiefe in den gedruckten Traces ist 4. Die Credit-Kodierung auf der Leitung ist nicht modelliert.</li>
+          <li>Das CRC-LFSR wird nicht ausgeführt. Die Erkennung von Ein-, Zwei- und Drei-Bit-Verfälschung folgt der Garantie von §3.7. Die Schwellen in Millisekunden und Flit-Zahl sind einzelne Ereignisse, keine Wanduhr-Verzögerungen.</li>
+          <li>UCIe-Linkverhalten und <abbr class="term" title="Advanced eXtensible Interface. Das On-Chip-Protokoll zwischen Initiator und Target. Der Initiator erfährt nur aus der Completion-Antwort, ob eine Transaktion abgeschlossen wurde, nicht aus der UCIe-Link-Recovery.">AXI</abbr>-Semantik des architektonischen Commits sind auf verschiedenen Abstraktionsebenen modelliert. Das Gerät committet einen Schreibzugriff erst, nachdem Anfrage und Schreibdaten zugestellt wurden. Das ist eine Annahme des Gerätemodells. Eine frühe Schreibantwort ist aus, sofern ein Szenario sie nicht einschaltet.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Was die Zahlen bedeuten</h2>
+        <ul>
+          <li>Zufällige Prozentsätze hängen von der Fehlerlast und vom Seed ab. Die veröffentlichte Zufallssuite nutzt Seed 1 und 200 Injektionen. Ein anderer Seed oder eine andere Mischung der Fehlerpositionen würde die Raten verschieben.</li>
+          <li>Die Erreichbarkeit ist die wissenschaftliche Schlussfolgerung. UNKNOWN ist in beiden Revisionen auf der äquivalenten Last erreichbar. Diese Aussage hängt nicht davon ab, 48,8 % oder 69,4 % als Eigenschaft von UCIe oder als Feldausfallwahrscheinlichkeit zu behandeln.</li>
+          <li>Die berichteten Summen zu Lebendigkeit und Credit-Invariante sind Ergebnisse des Simulators. Die Studie schreibt sie derzeit keinen normativen UCIe-Mängeln zu. Das Modell enthält einen injizierten Credit-Fehler. Der erzeugte Bericht verzeichnet 10 Credit-Invariantenverletzungen und teilt sie nicht nach Ursache auf.</li>
+          <li>Die Studie beweist nicht, dass jede Implementierung denselben Ausgang zeigt. Eine Implementierung kann mehr lokale Historie latchen, als UCIe verlangt, eine Antwort erhalten, die Policy A verwirft, oder ein Ende-zu-Ende-Commit-Log ergänzen. Das liegt außerhalb der standardisierten Fakten, die dieser Klassifikator lesen darf. UNKNOWN mit einem Reset oder einer Containment-Regel zu verbergen rekonstruiert für sich nicht, ob die ursprüngliche Operation committet wurde.</li>
+          <li>Die Studie zeigt, dass die Ambiguität unter den modellierten, spezifikationsverträglichen Annahmen erreichbar ist. Wo der Text schweigt, verwendet das Modell eine benannte Policy statt einer erfundenen Completion.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>UCIe-3.0-Mechanismen</h2>
+        <ul>
+          <li>Einzelheiten der Priority-Sideband-Nutzlast bleiben einem künftigen ECN überlassen. Das Modell zeichnet nur den Opcode auf. Es erfindet keine Transaktionskodierung in einem Priority-Paket.</li>
+          <li>Fast Throttle und Emergency Shutdown sind optional. Emergency Shutdown ist fatal und kann nur durch Reset verlassen werden. Es hat einen anderen Systemzweck: die rasche Eingrenzung eines schweren Zustands. Die Studie fragt, was Software über Transaktionen schließen kann, die unterwegs waren. Sie behandelt Emergency Shutdown nicht als mangelhaft, weil es die Transaktions-Completion nicht erhält. Die Spezifikation, wie hier verwendet, definiert kein Log offener Mainband-Transaktionen, daher fügt das Modell keines hinzu.</li>
+          <li>Der Sideband-Performant-Modus beseitigt eine Lücke von 32 UI. Dieses Modell zählt logische Protokollereignisse, nicht UI. Die kürzere Lücke wird nicht zu einem Ereignis des Transaktionsausgangs gemacht.</li>
+          <li>Höhere Leitungsraten, 48 GT/s und 64 GT/s, ergänzen im vom Modell verwendeten Text keine Ende-zu-Ende-Transaktionsquittung. Das Modell behandelt eine höhere Rate nicht als Änderung des Transaktionsausgangs.</li>
+        </ul>
+        <p>Diese Studie behauptet nicht, UCIe sei fehlerhaft. Sie benennt eine schichtübergreifende Recovery-Lücke zwischen der Recovery-Semantik der Linkschicht und dem architektonischen Wissen auf Transaktionsebene.</p>
+        <p><a href="index.html#limitations">Zurück zum Überblick</a> · <a href="methodology.html">Methode</a> · <a href="review_notes.md">Prüfnotizen</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <nav class="footer-nav" aria-label="Website">
+        <a href="index.html">Überblick</a>
+        <a href="methodology.html">Methode</a>
+        <a href="results.html">Ergebnisse</a>
+        <a href="limitations.html">Grenzen</a>
+        <a href="review_notes.md">Prüfnotizen</a>
+      </nav>
+      <p>NUVUS · UCIe-Studie zum Transaktionsausgang.</p>
+    </div>
+  </footer>
+  <script src="../assets/theme.js"></script>
+</body>
+</html>
