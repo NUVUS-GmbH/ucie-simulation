@@ -1,0 +1,388 @@
+{
+  "research_question": "Can a UCIe fault confined to one virtual ECU increase shared-resource occupancy enough to cause a safety-critical transaction from another, error-free virtual ECU to miss its deadline?",
+  "deadline": {
+    "method": "Option B \u2014 relative baseline budget",
+    "margin": 1.2,
+    "ns": 73.2,
+    "label": "experimental timing budget (not an automotive-standard deadline)"
+  },
+  "baselines": {
+    "guest_b_isolated": {
+      "latency_ns": 39.0,
+      "commit_count": 1,
+      "retry_count": 0,
+      "replay_count": 0,
+      "completion_received": true,
+      "crc_failures_run": 0,
+      "waits": {
+        "WAIT_ARBITRATION": 1.0,
+        "WAIT_GUEST_A_NORMAL_TRAFFIC": 0.0,
+        "WAIT_GUEST_A_REPLAY": 0.0,
+        "WAIT_OWN_REPLAY": 6.0,
+        "WAIT_CREDIT": 0.0
+      },
+      "sim_pass": true
+    },
+    "shared_quiet": {
+      "latency_ns": 61.0,
+      "commit_count": 1,
+      "retry_count": 0,
+      "replay_count": 0,
+      "completion_received": true,
+      "crc_failures_run": 0,
+      "waits": {
+        "WAIT_ARBITRATION": 1.0,
+        "WAIT_GUEST_A_NORMAL_TRAFFIC": 6.0,
+        "WAIT_GUEST_A_REPLAY": 0.0,
+        "WAIT_OWN_REPLAY": 6.0,
+        "WAIT_CREDIT": 0.0
+      },
+      "sim_pass": true
+    },
+    "guest_a_storm": {
+      "latency_ns": 106.0,
+      "commit_count": 1,
+      "retry_count": 0,
+      "replay_count": 0,
+      "completion_received": true,
+      "crc_failures_run": 36,
+      "waits": {
+        "WAIT_ARBITRATION": 1.0,
+        "WAIT_GUEST_A_NORMAL_TRAFFIC": 6.0,
+        "WAIT_GUEST_A_REPLAY": 16.0,
+        "WAIT_OWN_REPLAY": 6.0,
+        "WAIT_CREDIT": 0.0
+      },
+      "sim_pass": true
+    },
+    "guest_b_storm": {
+      "latency_ns": 117.0,
+      "commit_count": 1,
+      "retry_count": 6,
+      "replay_count": 6,
+      "completion_received": true,
+      "crc_failures_run": 6,
+      "waits": {
+        "WAIT_ARBITRATION": 1.0,
+        "WAIT_GUEST_A_NORMAL_TRAFFIC": 6.0,
+        "WAIT_GUEST_A_REPLAY": 0.0,
+        "WAIT_OWN_REPLAY": 14.0,
+        "WAIT_CREDIT": 0.0
+      },
+      "sim_pass": true
+    }
+  },
+  "guest_a": {
+    "shared_quiet": {
+      "count": 6,
+      "retries": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "latencies_ns": [
+        41.0,
+        81.0,
+        101.0,
+        121.0,
+        141.0,
+        159.0
+      ],
+      "max_latency_ns": 159.0,
+      "any_retry": false,
+      "all_commit_once": true
+    },
+    "guest_a_storm": {
+      "count": 6,
+      "retries": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "latencies_ns": [
+        96.0,
+        171.0,
+        227.0,
+        283.0,
+        339.0,
+        393.0
+      ],
+      "max_latency_ns": 393.0,
+      "any_retry": true,
+      "all_commit_once": true
+    },
+    "guest_b_storm": {
+      "count": 6,
+      "retries": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "latencies_ns": [
+        39.0,
+        127.0,
+        137.0,
+        157.0,
+        177.0,
+        195.0
+      ],
+      "max_latency_ns": 195.0,
+      "any_retry": false,
+      "all_commit_once": true
+    }
+  },
+  "decomposition": {
+    "intrinsic_ns": 39.0,
+    "normal_sharing_ns": 22.0,
+    "fault_induced_ns": 45.0,
+    "faulted_total_ns": 106.0
+  },
+  "resources": {
+    "shared_quiet": {
+      "retry_buffer_peak": 1,
+      "tx_slot_hold_ns": [
+        120.0,
+        20.0,
+        0.0
+      ],
+      "tx_slot_hold_replay_ns": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "guest_b_wait_arbitration_ns": 1.0,
+      "guest_b_wait_guest_a_normal_ns": 6.0,
+      "guest_b_wait_guest_a_replay_ns": 0.0,
+      "guest_b_wait_own_replay_ns": 6.0,
+      "guest_b_wait_credit_ns": 0.0,
+      "guest_b_wait_target_ns": 0.0,
+      "guest_b_wait_response_ns": 0.0,
+      "guest_b_wait_recovery_ns": 0.0,
+      "guest_a_replay_attempts": 0,
+      "reserved_slots_granted": 0,
+      "yield_events": 0
+    },
+    "guest_a_storm": {
+      "retry_buffer_peak": 1,
+      "tx_slot_hold_ns": [
+        336.0,
+        20.0,
+        0.0
+      ],
+      "tx_slot_hold_replay_ns": [
+        336.0,
+        0.0,
+        0.0
+      ],
+      "guest_b_wait_arbitration_ns": 1.0,
+      "guest_b_wait_guest_a_normal_ns": 6.0,
+      "guest_b_wait_guest_a_replay_ns": 16.0,
+      "guest_b_wait_own_replay_ns": 6.0,
+      "guest_b_wait_credit_ns": 0.0,
+      "guest_b_wait_target_ns": 0.0,
+      "guest_b_wait_response_ns": 0.0,
+      "guest_b_wait_recovery_ns": 0.0,
+      "guest_a_replay_attempts": 24,
+      "reserved_slots_granted": 0,
+      "yield_events": 0
+    }
+  },
+  "counterfactual": {
+    "baseline_latency_ns": 61.0,
+    "faulted_latency_ns": 106.0,
+    "absolute_increase_ns": 45.0,
+    "relative_increase": 0.7377049180327868,
+    "deadline_ns": 73.2,
+    "slack_before_ns": 12.200000000000003,
+    "slack_after_ns": -32.8
+  },
+  "criterion": {
+    "quiet_pass": true,
+    "faulted_pass": false,
+    "guest_b_crc_failures": 0,
+    "guest_b_replays": 0,
+    "guest_b_commit_count": 1,
+    "guest_b_completed": true,
+    "guest_a_only_injected_faults": true,
+    "FAULT_INDUCED_CROSS_GUEST_DEADLINE_VIOLATION": true
+  },
+  "deadline_sweep": {
+    "exact_interval": {
+      "quiet_pass_and_faulted_fail": "61.0 ns <= deadline < 106.0 ns",
+      "lower_inclusive_ns": 61.0,
+      "upper_exclusive_ns": 106.0
+    },
+    "sampled_interval": {
+      "first_ns": 61.0,
+      "last_ns": 105.0,
+      "note": "sampled on 1 ns grid with <= comparators"
+    }
+  },
+  "mitigations": {
+    "mit_safety_priority": {
+      "guest_b_latency_ns": 39.0,
+      "deadline_result": "PASS",
+      "guest_a_max_latency_ns": 393.0,
+      "guest_a_completion_ok": true,
+      "throughput_cost_guest_a_max_delta_ns": 0.0,
+      "fairness_impact": "Guest A similar or faster",
+      "notes": "strict priority for safety-critical Guest B at the shared AXI port",
+      "pass": true
+    },
+    "mit_per_guest_slots": {
+      "guest_b_latency_ns": 71.0,
+      "deadline_result": "PASS",
+      "guest_a_max_latency_ns": 369.0,
+      "guest_a_completion_ok": true,
+      "throughput_cost_guest_a_max_delta_ns": -24.0,
+      "fairness_impact": "Guest A similar or faster",
+      "notes": "per-guest outstanding TX slots with per-guest sequence spaces",
+      "pass": true
+    },
+    "mit_replay_budget": {
+      "guest_b_latency_ns": 59.0,
+      "deadline_result": "PASS",
+      "guest_a_max_latency_ns": 432.0,
+      "guest_a_completion_ok": true,
+      "throughput_cost_guest_a_max_delta_ns": 39.0,
+      "fairness_impact": "Guest A delayed",
+      "notes": "per-guest TX slot + yield Guest A replay after first recovery attempt",
+      "pass": true
+    },
+    "mit_reserved_bw": {
+      "guest_b_latency_ns": 71.0,
+      "deadline_result": "PASS",
+      "guest_a_max_latency_ns": 369.0,
+      "guest_a_completion_ok": true,
+      "throughput_cost_guest_a_max_delta_ns": -24.0,
+      "fairness_impact": "Guest A similar or faster",
+      "notes": "weighted RR (B weight 4) plus per-guest TX slots",
+      "pass": true
+    },
+    "mit_virtual_channels": {
+      "guest_b_latency_ns": 71.0,
+      "deadline_result": "PASS",
+      "guest_a_max_latency_ns": 369.0,
+      "guest_a_completion_ok": true,
+      "throughput_cost_guest_a_max_delta_ns": -24.0,
+      "fairness_impact": "Guest A similar or faster",
+      "notes": "separated per-guest resource state / VC sequence spaces",
+      "pass": true
+    }
+  },
+  "traces": {
+    "guest_a_storm": [
+      "2000.000 ns  g0  create  Guest A creates T1 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T2 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T3 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T4 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T5 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T6 MEMORY_WRITE",
+      "2000.000 ns  g1  create  Guest B creates T7 INCREMENT_COUNTER",
+      "2002.000 ns  g0  phase  AXI accepts T1",
+      "2003.000 ns  g1  phase  AXI accepts T7",
+      "2004.000 ns  g0  phase  AoU packet ready",
+      "2004.000 ns  g0  phase  AXI accepts T2",
+      "2004.000 ns  g0  phase  queued for the link",
+      "2004.000 ns  g0  phase  UCIe TX begins",
+      "2004.000 ns  g0  fault  fault 3 at TRANSMITTING",
+      "2005.000 ns  g0  phase  AXI accepts T3",
+      "2006.000 ns  g1  phase  AoU packet ready",
+      "2006.000 ns  g0  phase  AXI accepts T4",
+      "2007.000 ns  g0  phase  AXI accepts T5",
+      "2008.000 ns  g0  phase  AoU packet ready",
+      "2008.000 ns  g0  phase  AXI accepts T6",
+      "2010.000 ns  g0  phase  AoU packet ready",
+      "2012.000 ns  g0  phase  AoU packet ready",
+      "2013.000 ns  g0  crc  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 1",
+      "2014.000 ns  g0  phase  AoU packet ready",
+      "2016.000 ns  g0  phase  AoU packet ready",
+      "2022.000 ns  g0  crc  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 2",
+      "2029.000 ns  g0  phase  remote endpoint receives the request",
+      "2032.000 ns  g0  phase  queued for the link",
+      "2032.000 ns  g0  wdata_tx  write-data TX begins",
+      "2041.000 ns  g0  crc  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 1",
+      "2050.000 ns  g0  crc  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 2",
+      "2059.000 ns  g0  phase  target accepts T1",
+      "2060.000 ns  g1  phase  queued for the link",
+      "2060.000 ns  g1  phase  UCIe TX begins",
+      "2063.000 ns  g0  phase  ARCHITECTURAL COMMIT",
+      "2065.000 ns  g0  phase  response created",
+      "2067.000 ns  g0  phase  response queued",
+      "2067.000 ns  g1  phase  remote endpoint receives the request",
+      "2069.000 ns  g0  phase  queued for the link",
+      "2069.000 ns  g0  phase  response TX"
+    ],
+    "shared_quiet": [
+      "2000.000 ns  g0  create  Guest A creates T1 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T2 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T3 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T4 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T5 MEMORY_WRITE",
+      "2000.000 ns  g0  create  Guest A creates T6 MEMORY_WRITE",
+      "2000.000 ns  g1  create  Guest B creates T7 INCREMENT_COUNTER",
+      "2002.000 ns  g0  phase  AXI accepts T1",
+      "2003.000 ns  g1  phase  AXI accepts T7",
+      "2004.000 ns  g0  phase  AoU packet ready",
+      "2004.000 ns  g0  phase  AXI accepts T2",
+      "2004.000 ns  g0  phase  queued for the link",
+      "2004.000 ns  g0  phase  UCIe TX begins",
+      "2005.000 ns  g0  phase  AXI accepts T3",
+      "2006.000 ns  g1  phase  AoU packet ready",
+      "2006.000 ns  g0  phase  AXI accepts T4",
+      "2007.000 ns  g0  phase  AXI accepts T5",
+      "2008.000 ns  g0  phase  AoU packet ready",
+      "2008.000 ns  g0  phase  AXI accepts T6",
+      "2010.000 ns  g0  phase  AoU packet ready",
+      "2011.000 ns  g0  phase  remote endpoint receives the request",
+      "2012.000 ns  g0  phase  AoU packet ready",
+      "2014.000 ns  g0  phase  AoU packet ready",
+      "2014.000 ns  g0  phase  queued for the link",
+      "2014.000 ns  g0  wdata_tx  write-data TX begins",
+      "2016.000 ns  g0  phase  AoU packet ready",
+      "2023.000 ns  g0  phase  target accepts T1",
+      "2024.000 ns  g1  phase  queued for the link",
+      "2024.000 ns  g1  phase  UCIe TX begins",
+      "2027.000 ns  g0  phase  ARCHITECTURAL COMMIT",
+      "2029.000 ns  g0  phase  response created",
+      "2031.000 ns  g0  phase  response queued",
+      "2031.000 ns  g1  phase  remote endpoint receives the request",
+      "2033.000 ns  g0  phase  queued for the link",
+      "2033.000 ns  g0  phase  response TX",
+      "2034.000 ns  g1  phase  queued for the link",
+      "2034.000 ns  g1  wdata_tx  write-data TX begins",
+      "2040.000 ns  g0  phase  response received by the initiating AoU",
+      "2041.000 ns  g0  complete  initiator completion, observer A COMPLETED",
+      "2043.000 ns  g1  phase  target accepts T7"
+    ]
+  },
+  "interpretation": "A fault confined to Guest A caused an otherwise deadline-compliant Guest B transaction to violate its real-time requirement through contention for a shared UCIe transmission resource. Guest B experienced no CRC errors and no replay, committed exactly once, and completed successfully, but exceeded its experimental timing budget because Guest A\u2019s replay traffic retained the shared transmit resource. Functional isolation did not imply temporal isolation in this shared UCIe-based virtualized configuration.",
+  "negative_result_note": "",
+  "figure": {
+    "bars": [
+      {
+        "label": "Guest B isolated",
+        "latency_ns": 39.0
+      },
+      {
+        "label": "Guest B shared / quiet",
+        "latency_ns": 61.0
+      },
+      {
+        "label": "Guest B shared / Guest A faulty",
+        "latency_ns": 106.0
+      }
+    ],
+    "deadline_ns": 73.2,
+    "desired_pattern_observed": true
+  }
+}

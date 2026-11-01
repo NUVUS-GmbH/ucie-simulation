@@ -1,0 +1,10 @@
+time_ns,queue,occupancy
+2004.000,tx_a,1
+2004.000,tx_a,2
+2004.000,retry_0,1
+2004.000,queue_guest_1,0
+2014.000,retry_0,1
+2014.000,queue_guest_1,0
+2031.000,tx_b,1
+2031.000,retry_1,1
+2031.000,queue_guest_1,0

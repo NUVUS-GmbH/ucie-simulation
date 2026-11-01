@@ -1,0 +1,129 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_WRITE
+2000.000 ns  Guest A creates T2 MEMORY_WRITE
+2000.000 ns  Guest A creates T3 MEMORY_WRITE
+2000.000 ns  Guest A creates T4 MEMORY_WRITE
+2000.000 ns  Guest A creates T5 MEMORY_WRITE
+2000.000 ns  Guest A creates T6 MEMORY_WRITE
+2000.000 ns  Guest B creates T7 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2003.000 ns  AXI accepts T7
+2004.000 ns  AoU packet ready
+2004.000 ns  AXI accepts T2
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2005.000 ns  AXI accepts T3
+2006.000 ns  AoU packet ready
+2006.000 ns  AXI accepts T4
+2007.000 ns  AXI accepts T5
+2008.000 ns  AoU packet ready
+2008.000 ns  AXI accepts T6
+2010.000 ns  AoU packet ready
+2011.000 ns  remote endpoint receives the request
+2012.000 ns  AoU packet ready
+2014.000 ns  AoU packet ready
+2014.000 ns  queued for the link
+2014.000 ns  write-data TX begins
+2016.000 ns  AoU packet ready
+2023.000 ns  target accepts T1
+2024.000 ns  queued for the link
+2024.000 ns  UCIe TX begins
+2024.000 ns  fault 3 at TRANSMITTING
+2027.000 ns  ARCHITECTURAL COMMIT
+2027.000 ns  memory write
+2029.000 ns  response created
+2031.000 ns  response queued
+2031.000 ns  queued for the link
+2031.000 ns  response TX
+2033.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 1
+2038.000 ns  response received by the initiating AoU
+2039.000 ns  initiator completion, observer A COMPLETED
+2042.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 2
+2049.000 ns  remote endpoint receives the request
+2052.000 ns  queued for the link
+2052.000 ns  write-data TX begins
+2061.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 1
+2070.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 2
+2079.000 ns  target accepts T7
+2080.000 ns  queued for the link
+2080.000 ns  UCIe TX begins
+2083.000 ns  ARCHITECTURAL COMMIT
+2083.000 ns  counter 7 -> 8
+2085.000 ns  response created
+2087.000 ns  response queued
+2087.000 ns  remote endpoint receives the request
+2089.000 ns  queued for the link
+2089.000 ns  response TX
+2090.000 ns  queued for the link
+2090.000 ns  write-data TX begins
+2098.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 1
+2099.000 ns  target accepts T2
+2100.000 ns  queued for the link
+2100.000 ns  UCIe TX begins
+2103.000 ns  ARCHITECTURAL COMMIT
+2103.000 ns  memory write
+2105.000 ns  response created
+2107.000 ns  response queued
+2107.000 ns  remote endpoint receives the request
+2108.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 2
+2110.000 ns  queued for the link
+2110.000 ns  write-data TX begins
+2116.000 ns  response received by the initiating AoU
+2117.000 ns  initiator completion, observer A COMPLETED
+2119.000 ns  target accepts T3
+2119.000 ns  queued for the link
+2119.000 ns  response TX
+2120.000 ns  queued for the link
+2120.000 ns  UCIe TX begins
+2123.000 ns  ARCHITECTURAL COMMIT
+2123.000 ns  memory write
+2125.000 ns  response created
+2126.000 ns  response received by the initiating AoU
+2127.000 ns  response queued
+2127.000 ns  initiator completion, observer A COMPLETED
+2127.000 ns  remote endpoint receives the request
+2129.000 ns  queued for the link
+2129.000 ns  response TX
+2130.000 ns  queued for the link
+2130.000 ns  write-data TX begins
+2136.000 ns  response received by the initiating AoU
+2137.000 ns  initiator completion, observer A COMPLETED
+2139.000 ns  target accepts T4
+2140.000 ns  queued for the link
+2140.000 ns  UCIe TX begins
+2143.000 ns  ARCHITECTURAL COMMIT
+2143.000 ns  memory write
+2145.000 ns  response created
+2147.000 ns  response queued
+2147.000 ns  remote endpoint receives the request
+2149.000 ns  queued for the link
+2149.000 ns  response TX
+2150.000 ns  queued for the link
+2150.000 ns  write-data TX begins
+2156.000 ns  response received by the initiating AoU
+2157.000 ns  initiator completion, observer A COMPLETED
+2159.000 ns  target accepts T5
+2160.000 ns  queued for the link
+2160.000 ns  UCIe TX begins
+2163.000 ns  ARCHITECTURAL COMMIT
+2163.000 ns  memory write
+2165.000 ns  response created
+2167.000 ns  response queued
+2167.000 ns  remote endpoint receives the request
+2169.000 ns  queued for the link
+2169.000 ns  response TX
+2170.000 ns  queued for the link
+2170.000 ns  write-data TX begins
+2176.000 ns  response received by the initiating AoU
+2177.000 ns  initiator completion, observer A COMPLETED
+2179.000 ns  target accepts T6
+2183.000 ns  ARCHITECTURAL COMMIT
+2183.000 ns  memory write
+2185.000 ns  response created
+2187.000 ns  response queued
+2187.000 ns  queued for the link
+2187.000 ns  response TX
+2194.000 ns  response received by the initiating AoU
+2195.000 ns  initiator completion, observer A COMPLETED

@@ -1,0 +1,12 @@
+finding,old_model,reference_model,classification,cause,why
+UNKNOWN after architectural commit,Yes,Yes,REPRODUCED,general UCIe/AoU recovery semantics + Discard policy,Post-commit response loss under LinkError still leaves observers A–C at UNKNOWN; ground truth commit=1.
+Duplicate commit after blind retry,Yes,Yes,REPRODUCED,"policy AutoRetry, not buffer depth",Auto-retry policy still reissues a committed write when the initiator sees no completion.
+Pre-target UNKNOWN (observer A),Yes,Yes,REPRODUCED,observer visibility limits,AXI-only observer still cannot distinguish pre-target loss from post-commit loss.
+ACK history reduces UNKNOWN (observer D),Yes,Yes,REPRODUCED,ASSUMPTION: retained ACK/NAK history,Latched NAK-only disposition still maps pre-target loss to NOT_COMPLETED for observer D.
+OBSERVATIONAL_EQUIVALENCE (A/B/C),true,true,REPRODUCED,general recovery semantics,Committed+lost-response vs never-arrived still look identical to observers A–C.
+Retry buffer peak,1,3,MODEL_ARTIFACT,removal of single_inflight_slot + retry buffer depth 16,"Under reference multi-outstanding transport, retry occupancy peaked at 3 (capacity 16). The previous peak=1 was an artifact of single_inflight_slot mode."
+Cross-client / cross-guest delay,45 ns,44.0 ns,REPRODUCED,shared retry/replay path under go-back-N,"Client B quiet=46.0 ns, faulted=90.0 ns, delta=44.0 ns. Interference magnitude similar to the old single-slot result despite multi-outstanding flits."
+Deadline miss under Client-A replay,Yes,Yes,REPRODUCED,shared-link replay / retrain contention,Client B misses Option B deadline 55.20 ns (= quiet×1.20) under Client A CRC/replay storm (latency 90.0 ns).
+transport delivery knowledge != architectural commit,Yes,Yes,REPRODUCED,UCIe status / FDI observability limits,Reference config still has no end-to-end commit bit; flit ACK does not imply AXI completion.
+Diagnostics turn UNKNOWN into determined fate (A),n/a (hypothesis),No,NOT_REPRODUCED,diagnostics are not bound to AXI transaction fate,Error log recorded 8 entries but observer A fate remained UNKNOWN. Implementation diagnostics do not synthesize an AXI completion or commit bit.
+CREDIT_CONSERVATION under early return + recovery,Yes (old model),Yes,REPRODUCED,credit accounting,Early credit return with threshold=2 did not break conservation absent injected credit faults.

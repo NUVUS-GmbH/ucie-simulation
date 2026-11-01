@@ -1,0 +1,73 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2008.000 ns  queued for the link
+2008.000 ns  write-data TX begins
+2011.000 ns  remote endpoint receives the request
+2017.000 ns  target accepts T1
+2021.000 ns  ARCHITECTURAL COMMIT
+2021.000 ns  counter 7 -> 8
+2023.000 ns  response created
+2025.000 ns  response queued
+2025.000 ns  queued for the link
+2025.000 ns  response TX
+2025.000 ns  fault 2 at RESPONSE_TRANSMITTING
+2034.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+2043.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 2
+2052.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 3
+2052.000 ns  Retry threshold exceeded
+2052.000 ns  RETRAIN
+2052.000 ns  UCIe enters Retrain
+2052.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+7052.000 ns  Recovery fails
+7052.000 ns  LINK_ERROR
+7052.000 ns  LinkError entered
+7052.000 ns  Retrain did not restore the link
+7052.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+7072.000 ns  priority sideband delivered (LinkError)
+7072.000 ns  safety manager received LinkError and records the configured action
+16007052.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+16007052.000 ns  [SPEC] pipelines and retry buffers flushed
+16007052.000 ns  Response is discarded during cleanup
+16007052.000 ns  no AXI completion, observer A UNKNOWN, observer D UNKNOWN
+16007052.000 ns  RECOVERING
+16007052.000 ns  [MODEL] link reactivation
+16009052.000 ns  ACTIVE
+16009052.000 ns  link is Active again
+16009052.000 ns  Guest A creates T2 INCREMENT_COUNTER
+16009054.000 ns  AXI accepts T2
+16009056.000 ns  AoU packet ready
+16009056.000 ns  queued for the link
+16009056.000 ns  UCIe TX begins
+16009056.000 ns  fault 2 at TRANSMITTING
+16009060.000 ns  queued for the link
+16009060.000 ns  write-data TX begins
+16009065.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 1
+16009067.000 ns  [MODEL] discard flit ahead of expected seq (awaiting go-back-N replay)
+16009074.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 2
+16009076.000 ns  [MODEL] discard flit ahead of expected seq (awaiting go-back-N replay)
+16009083.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 3
+16009083.000 ns  Retry threshold exceeded
+16009083.000 ns  RETRAIN
+16009083.000 ns  UCIe enters Retrain
+16009083.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+16009085.000 ns  [MODEL] discard flit ahead of expected seq (awaiting go-back-N replay)
+16014083.000 ns  Recovery fails
+16014083.000 ns  LINK_ERROR
+16014083.000 ns  LinkError entered
+16014083.000 ns  Retrain did not restore the link
+16014083.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+16014103.000 ns  priority sideband delivered (LinkError)
+16014103.000 ns  safety manager received LinkError and records the configured action
+32014083.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+32014083.000 ns  [SPEC] pipelines and retry buffers flushed
+32014083.000 ns  no AXI completion, observer A UNKNOWN, observer D NOT_COMPLETED
+32014083.000 ns  RECOVERING
+32014083.000 ns  [MODEL] link reactivation
+32016083.000 ns  ACTIVE
+32016083.000 ns  link is Active again

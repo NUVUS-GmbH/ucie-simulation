@@ -1,0 +1,56 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2008.000 ns  queued for the link
+2008.000 ns  write-data TX begins
+2011.000 ns  remote endpoint receives the request
+2017.000 ns  target accepts T1
+2021.000 ns  ARCHITECTURAL COMMIT
+2021.000 ns  counter 7 -> 8
+2023.000 ns  response created
+2025.000 ns  response queued
+2025.000 ns  queued for the link
+2025.000 ns  response TX
+2025.000 ns  fault 2 at RESPONSE_TRANSMITTING
+2034.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+2043.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 2
+2052.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 3
+2052.000 ns  Retry threshold exceeded
+2052.000 ns  RETRAIN
+2052.000 ns  UCIe enters Retrain
+2052.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+7052.000 ns  Recovery fails
+7052.000 ns  LINK_ERROR
+7052.000 ns  LinkError entered
+7052.000 ns  Retrain did not restore the link
+7052.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+7072.000 ns  priority sideband delivered (LinkError)
+7072.000 ns  safety manager received LinkError and records the configured action
+16007052.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+16007052.000 ns  [SPEC] pipelines and retry buffers flushed
+16007052.000 ns  [POLICY] same logical transaction will be reissued after the link is up
+16007052.000 ns  RECOVERING
+16007052.000 ns  [MODEL] link reactivation
+16009052.000 ns  ACTIVE
+16009052.000 ns  link is Active again
+16009052.000 ns  automatic retry of the same logical transaction
+16009054.000 ns  AXI accepts T1
+16009056.000 ns  AoU packet ready
+16009056.000 ns  queued for the link
+16009056.000 ns  UCIe TX begins
+16009060.000 ns  queued for the link
+16009060.000 ns  write-data TX begins
+16009069.000 ns  target accepts T1
+16009073.000 ns  ARCHITECTURAL COMMIT
+16009073.000 ns  counter 8 -> 9
+16009075.000 ns  response created
+16009077.000 ns  response queued
+16009077.000 ns  queued for the link
+16009077.000 ns  response TX
+16009084.000 ns  response received by the initiating AoU
+16009085.000 ns  initiator completion, observer A COMPLETED

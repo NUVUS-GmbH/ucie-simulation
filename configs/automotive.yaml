@@ -1,0 +1,61 @@
+# Example timing for the timed SystemC model.
+# These numbers are not normative UCIe values unless the key sits under spec:.
+# spec.replay_timeout_flits, spec.link_error_residency_ns, and
+# spec.sideband_timeout_ns are the UCIe 2.0 counts and durations the
+# transaction-level study already uses (375 flits, 16 ms, 8 ms).
+
+clock_period_ns: 1.0
+cycle_mode: false
+trace: transactions
+sim_timeout_ns: 200000000
+
+axi:
+  handshake_cycles: 1
+  arbitration_cycles: 1
+  request_queue: 8
+  response_queue: 8
+
+aou:
+  pack_cycles: 2
+  credit_depth: 4
+  request_queue: 8
+  partition_credits: false
+
+ucie:
+  # Explicit single-inflight mode preserves the older cross-guest FFI study.
+  # The Torsten reference configs set this to false.
+  single_inflight_slot: true
+  tx_buffer_entries: 16
+  retry_buffer_entries: 32
+  rx_buffer_entries: 16
+  serialization_cycles: 4
+  propagation_cycles: 2
+  buffer_cycles: 1
+  retrain_ns: 5000
+  link_reset_ns: 10000
+  reactivation_ns: 2000
+  early_credit_return: true
+  credit_update_threshold: 1
+
+spec:
+  replay_timeout_flits: 375
+  link_error_residency_ns: 16000000
+  sideband_timeout_ns: 8000000
+
+policy:
+  recovery: discard
+  replay_limit: 3
+  retrain_preserves_retry: true
+
+target:
+  accept_cycles: 2
+  commit_cycles: 4
+  response_cycles: 2
+  completion_cycles: 1
+
+sideband:
+  message_ns: 50
+  priority_ns: 20
+
+virt:
+  guest_queue: 8

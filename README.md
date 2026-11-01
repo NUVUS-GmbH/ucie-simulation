@@ -8,6 +8,74 @@ into exactly one of `COMPLETED`, `NOT_COMPLETED`, or `UNKNOWN`.
 It is not a PHY and not a cycle-accurate UCIe model. Time is a sequence of
 protocol events.
 
+## Timed SystemC simulator
+
+`ucie_sim` is a separate timed model of the same fate question. It is not a
+line-by-line port of the Python event loop. Time is `sc_time`. Handshake,
+pack, serialization, buffer, arbitration, and target delays are an integer
+number of `clock_period_ns`. Replay uses the UCIe flit count of 375 against
+that modeled flit time. LinkError residency defaults to 16 ms and the sideband
+timeout to 8 ms (UCIe 2.0 §10.3.3.7 and §10.3.3.8). Retrain length, reactivation,
+and throttle ratios are configuration, not specification literals. The PHY is
+not cycle-accurate.
+
+Ground truth (`architectural_commit_count`, the target counter) is not an input
+to classification. Observer A reads AXI only, B adds the fact of a destructive
+FDI state, C adds standardized UCIe status with no AXI id and no commit bit,
+and D may also read ACK/NAK history latched before a retry-buffer flush. That
+last input is an assumption.
+
+### SystemC
+
+The build uses Accellera SystemC via pkg-config. On macOS:
+
+```bash
+brew install systemc cmake pkg-config
+pkg-config --modversion systemc
+```
+
+The SystemC version used while writing this tree was 3.0.2. A 2.3.x library
+that provides pkg-config `systemc` should also work. No vendor simulator is
+required.
+
+```bash
+cmake -S . -B build
+cmake --build build -j
+ctest --test-dir build --output-on-failure
+./build/ucie_sim --config configs/automotive.yaml --experiment baseline_unknown --seed 1 --output timed_results/run_1
+```
+
+Python orchestration shells out to that binary. Bindings are not required:
+
+```bash
+python -m simulation.timed_campaign --experiment baseline_unknown --seed 1
+```
+
+Cross-guest fault-interference campaign (Option B experimental deadline,
+deadline sweep, and mitigation comparison):
+
+```bash
+python -m simulation.experiments.cross_guest_ffi
+```
+
+Writes `simulation/results/cross_guest_fault_interference.md` plus CSV/JSON.
+
+Torsten / Swissbit-style reference-architecture validation (multi-outstanding
+flits, TX=32 / RX=64 / retry=16, early credits, L1, diagnostics):
+
+```bash
+python -m simulation.experiments.reference_architecture_validation
+```
+
+Uses `configs/torsten_reference_ucie2x.yaml` and
+`configs/torsten_reference_ucie3.yaml`. Writes
+`simulation/results/reference_architecture_validation.{md,json,csv}`.
+
+`baseline_unknown` must report commit count 1, counter 8, and observer A
+`UNKNOWN`. `precommit` must report commit count 0 with the same AXI view.
+`observational_equivalence` must report `OBSERVATIONAL_EQUIVALENCE = true`
+for observers A–C.
+
 ## Run
 
 From this directory:

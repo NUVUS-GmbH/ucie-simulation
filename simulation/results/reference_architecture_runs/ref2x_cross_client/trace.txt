@@ -1,0 +1,240 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_WRITE
+2000.000 ns  Guest A creates T2 MEMORY_WRITE
+2000.000 ns  Guest A creates T3 MEMORY_WRITE
+2000.000 ns  Guest A creates T4 MEMORY_WRITE
+2000.000 ns  Guest A creates T5 MEMORY_WRITE
+2000.000 ns  Guest A creates T6 MEMORY_WRITE
+2000.000 ns  Guest B creates T7 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2003.000 ns  AXI accepts T7
+2004.000 ns  AoU packet ready
+2004.000 ns  AXI accepts T2
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2004.000 ns  fault 3 at TRANSMITTING
+2005.000 ns  AXI accepts T3
+2006.000 ns  AoU packet ready
+2006.000 ns  AXI accepts T4
+2007.000 ns  AXI accepts T5
+2008.000 ns  AoU packet ready
+2008.000 ns  AXI accepts T6
+2008.000 ns  queued for the link
+2008.000 ns  write-data TX begins
+2010.000 ns  AoU packet ready
+2012.000 ns  AoU packet ready
+2012.000 ns  queued for the link
+2012.000 ns  UCIe TX begins
+2013.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 1
+2014.000 ns  AoU packet ready
+2016.000 ns  AoU packet ready
+2017.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 2
+2019.000 ns  [MODEL] discard flit ahead of expected seq (awaiting go-back-N replay)
+2025.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 3
+2029.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 4
+2031.000 ns  [MODEL] discard flit ahead of expected seq (awaiting go-back-N replay)
+2035.000 ns  remote endpoint receives the request
+2041.000 ns  target accepts T1
+2043.000 ns  remote endpoint receives the request
+2045.000 ns  ARCHITECTURAL COMMIT
+2045.000 ns  memory write
+2047.000 ns  response created
+2047.000 ns  duplicate request suppressed
+2049.000 ns  response queued
+2049.000 ns  queued for the link
+2049.000 ns  response TX
+2051.000 ns  duplicate wdata suppressed
+2055.000 ns  duplicate request suppressed
+2059.000 ns  duplicate request suppressed
+2060.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+2064.000 ns  duplicate wdata suppressed
+2065.000 ns  queued for the link
+2065.000 ns  write-data TX begins
+2068.000 ns  duplicate request suppressed
+2070.000 ns  queued for the link
+2070.000 ns  UCIe TX begins
+2073.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 2
+2074.000 ns  queued for the link
+2074.000 ns  write-data TX begins
+2074.000 ns  target accepts T7
+2078.000 ns  queued for the link
+2078.000 ns  UCIe TX begins
+2078.000 ns  ARCHITECTURAL COMMIT
+2078.000 ns  counter 7 -> 8
+2080.000 ns  response created
+2082.000 ns  response queued
+2082.000 ns  response received by the initiating AoU
+2082.000 ns  queued for the link
+2082.000 ns  response TX
+2083.000 ns  queued for the link
+2083.000 ns  write-data TX begins
+2083.000 ns  initiator completion, observer A COMPLETED
+2083.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 4 flit(s), streak 1
+2085.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 4 flit(s), streak 2
+2089.000 ns  response received by the initiating AoU
+2090.000 ns  initiator completion, observer A COMPLETED
+2090.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 4 flit(s), streak 3
+2092.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 4 flit(s), streak 4
+2096.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 4 flit(s), streak 5
+2104.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 4 flit(s), streak 6
+2104.000 ns  Retry threshold exceeded
+2104.000 ns  RETRAIN
+2104.000 ns  UCIe enters Retrain
+2104.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+7104.000 ns  Retrain completes and both adapters return to Active
+7104.000 ns  ACTIVE
+7104.000 ns  [SPEC] replay timeout reached (REPLAY_TIMEOUT_FLIT_COUNT >= 375, UCIe 2.0 3.8)
+7107.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 4 flit(s), streak 2
+7109.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 4 flit(s), streak 3
+7111.000 ns  remote endpoint receives the request
+7117.000 ns  target accepts T2
+7119.000 ns  remote endpoint receives the request
+7121.000 ns  ARCHITECTURAL COMMIT
+7121.000 ns  memory write
+7123.000 ns  response created
+7125.000 ns  response queued
+7126.000 ns  queued for the link
+7126.000 ns  response TX
+7127.000 ns  target accepts T3
+7127.000 ns  duplicate request suppressed
+7131.000 ns  ARCHITECTURAL COMMIT
+7131.000 ns  memory write
+7131.000 ns  duplicate wdata suppressed
+7133.000 ns  response created
+7135.000 ns  response queued
+7135.000 ns  duplicate request suppressed
+7136.000 ns  queued for the link
+7136.000 ns  response TX
+7139.000 ns  duplicate wdata suppressed
+7140.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 1
+7144.000 ns  duplicate request suppressed
+7148.000 ns  duplicate wdata suppressed
+7149.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 2
+7153.000 ns  duplicate request suppressed
+7154.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 3
+7158.000 ns  duplicate wdata suppressed
+7158.000 ns  response received by the initiating AoU
+7159.000 ns  initiator completion, observer A COMPLETED
+7159.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 1
+7163.000 ns  response received by the initiating AoU
+7163.000 ns  duplicate request suppressed
+7164.000 ns  initiator completion, observer A COMPLETED
+7168.000 ns  duplicate response suppressed
+7168.000 ns  duplicate wdata suppressed
+7173.000 ns  duplicate response suppressed
+7176.000 ns  duplicate request suppressed
+7178.000 ns  duplicate response suppressed
+7180.000 ns  duplicate wdata suppressed
+7182.000 ns  duplicate response suppressed
+7185.000 ns  duplicate request suppressed
+7191.000 ns  duplicate wdata suppressed
+7195.000 ns  duplicate request suppressed
+7199.000 ns  duplicate wdata suppressed
+7203.000 ns  duplicate wdata suppressed
+7207.000 ns  duplicate request suppressed
+7211.000 ns  duplicate wdata suppressed
+7215.000 ns  duplicate request suppressed
+7219.000 ns  duplicate wdata suppressed
+7223.000 ns  duplicate request suppressed
+7227.000 ns  duplicate wdata suppressed
+7231.000 ns  duplicate request suppressed
+7232.000 ns  queued for the link
+7232.000 ns  UCIe TX begins
+7235.000 ns  duplicate wdata suppressed
+7236.000 ns  queued for the link
+7236.000 ns  write-data TX begins
+7240.000 ns  queued for the link
+7240.000 ns  UCIe TX begins
+7241.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 1
+7245.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 2
+7249.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 3
+7253.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 4
+7257.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 5
+7261.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 6
+7261.000 ns  Retry threshold exceeded
+7261.000 ns  RETRAIN
+7261.000 ns  UCIe enters Retrain
+7261.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+7263.000 ns  remote endpoint receives the request
+7269.000 ns  target accepts T4
+7273.000 ns  ARCHITECTURAL COMMIT
+7273.000 ns  memory write
+7275.000 ns  response created
+7277.000 ns  response queued
+12261.000 ns  Retrain completes and both adapters return to Active
+12261.000 ns  ACTIVE
+12261.000 ns  [SPEC] replay timeout reached (REPLAY_TIMEOUT_FLIT_COUNT >= 375, UCIe 2.0 3.8)
+12265.000 ns  queued for the link
+12265.000 ns  response TX
+12268.000 ns  remote endpoint receives the request
+12272.000 ns  duplicate request suppressed
+12276.000 ns  duplicate wdata suppressed
+12277.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+12281.000 ns  duplicate request suppressed
+12285.000 ns  duplicate request suppressed
+12289.000 ns  duplicate wdata suppressed
+12290.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 2
+12294.000 ns  duplicate request suppressed
+12297.000 ns  response received by the initiating AoU
+12298.000 ns  initiator completion, observer A COMPLETED
+12298.000 ns  duplicate request suppressed
+12302.000 ns  duplicate wdata suppressed
+12307.000 ns  duplicate request suppressed
+12311.000 ns  duplicate request suppressed
+12315.000 ns  duplicate wdata suppressed
+12319.000 ns  duplicate request suppressed
+12320.000 ns  queued for the link
+12320.000 ns  write-data TX begins
+12323.000 ns  duplicate wdata suppressed
+12324.000 ns  queued for the link
+12324.000 ns  UCIe TX begins
+12328.000 ns  queued for the link
+12328.000 ns  write-data TX begins
+12329.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 1
+12333.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 2
+12337.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 3
+12341.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 4
+12345.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 5
+12349.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 6
+12349.000 ns  Retry threshold exceeded
+12349.000 ns  RETRAIN
+12349.000 ns  UCIe enters Retrain
+12349.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+12353.000 ns  target accepts T5
+12355.000 ns  remote endpoint receives the request
+12357.000 ns  ARCHITECTURAL COMMIT
+12357.000 ns  memory write
+12359.000 ns  response created
+12361.000 ns  response queued
+17349.000 ns  Retrain completes and both adapters return to Active
+17349.000 ns  ACTIVE
+17349.000 ns  [SPEC] replay timeout reached (REPLAY_TIMEOUT_FLIT_COUNT >= 375, UCIe 2.0 3.8)
+17353.000 ns  queued for the link
+17353.000 ns  response TX
+17358.000 ns  target accepts T6
+17360.000 ns  duplicate wdata suppressed
+17362.000 ns  ARCHITECTURAL COMMIT
+17362.000 ns  memory write
+17364.000 ns  response created
+17364.000 ns  duplicate request suppressed
+17365.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+17366.000 ns  response queued
+17369.000 ns  queued for the link
+17369.000 ns  response TX
+17369.000 ns  duplicate wdata suppressed
+17373.000 ns  duplicate wdata suppressed
+17377.000 ns  duplicate request suppressed
+17378.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 2
+17382.000 ns  duplicate wdata suppressed
+17383.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 2 flit(s), streak 3
+17385.000 ns  response received by the initiating AoU
+17386.000 ns  initiator completion, observer A COMPLETED
+17387.000 ns  duplicate wdata suppressed
+17391.000 ns  duplicate request suppressed
+17394.000 ns  duplicate response suppressed
+17398.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+17400.000 ns  response received by the initiating AoU
+17401.000 ns  initiator completion, observer A COMPLETED
+17401.000 ns  duplicate wdata suppressed

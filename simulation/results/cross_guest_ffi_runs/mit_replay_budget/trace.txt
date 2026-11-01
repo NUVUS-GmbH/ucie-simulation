@@ -1,0 +1,172 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_WRITE
+2000.000 ns  Guest A creates T2 MEMORY_WRITE
+2000.000 ns  Guest A creates T3 MEMORY_WRITE
+2000.000 ns  Guest A creates T4 MEMORY_WRITE
+2000.000 ns  Guest A creates T5 MEMORY_WRITE
+2000.000 ns  Guest A creates T6 MEMORY_WRITE
+2000.000 ns  Guest B creates T7 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2003.000 ns  AXI accepts T7
+2004.000 ns  AoU packet ready
+2004.000 ns  AXI accepts T2
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2004.000 ns  fault 3 at TRANSMITTING
+2005.000 ns  AXI accepts T3
+2006.000 ns  AoU packet ready
+2006.000 ns  AXI accepts T4
+2007.000 ns  AXI accepts T5
+2008.000 ns  AoU packet ready
+2008.000 ns  AXI accepts T6
+2010.000 ns  AoU packet ready
+2012.000 ns  AoU packet ready
+2013.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 1
+2014.000 ns  AoU packet ready
+2016.000 ns  AoU packet ready
+2017.000 ns  queued for the link
+2017.000 ns  UCIe TX begins
+2022.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 2
+2024.000 ns  remote endpoint receives the request
+2027.000 ns  waiting for an AoU credit
+2029.000 ns  remote endpoint receives the request
+2032.000 ns  waiting for an AoU credit
+2034.000 ns  queued for the link
+2034.000 ns  write-data TX begins
+2038.000 ns  waiting for an AoU credit
+2043.000 ns  target accepts T7
+2046.000 ns  queued for the link
+2046.000 ns  write-data TX begins
+2047.000 ns  ARCHITECTURAL COMMIT
+2047.000 ns  counter 7 -> 8
+2049.000 ns  response created
+2051.000 ns  response queued
+2051.000 ns  queued for the link
+2051.000 ns  response TX
+2058.000 ns  response received by the initiating AoU
+2059.000 ns  initiator completion, observer A COMPLETED
+2059.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 1
+2069.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 2
+2078.000 ns  target accepts T1
+2079.000 ns  waiting for an AoU credit
+2081.000 ns  queued for the link
+2081.000 ns  UCIe TX begins
+2082.000 ns  ARCHITECTURAL COMMIT
+2082.000 ns  memory write
+2084.000 ns  response created
+2086.000 ns  response queued
+2086.000 ns  queued for the link
+2086.000 ns  response TX
+2094.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 1
+2095.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 1
+2103.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 2
+2104.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 2
+2110.000 ns  remote endpoint receives the request
+2111.000 ns  response received by the initiating AoU
+2112.000 ns  initiator completion, observer A COMPLETED
+2113.000 ns  waiting for an AoU credit
+2115.000 ns  queued for the link
+2115.000 ns  write-data TX begins
+2124.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 1
+2133.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 2
+2142.000 ns  target accepts T2
+2143.000 ns  waiting for an AoU credit
+2145.000 ns  queued for the link
+2145.000 ns  UCIe TX begins
+2146.000 ns  ARCHITECTURAL COMMIT
+2146.000 ns  memory write
+2148.000 ns  response created
+2150.000 ns  response queued
+2150.000 ns  queued for the link
+2150.000 ns  response TX
+2158.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 1
+2159.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 1
+2167.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 2
+2168.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 2
+2174.000 ns  remote endpoint receives the request
+2175.000 ns  response received by the initiating AoU
+2176.000 ns  initiator completion, observer A COMPLETED
+2177.000 ns  waiting for an AoU credit
+2179.000 ns  queued for the link
+2179.000 ns  write-data TX begins
+2188.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 1
+2197.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 2
+2206.000 ns  target accepts T3
+2207.000 ns  waiting for an AoU credit
+2209.000 ns  queued for the link
+2209.000 ns  UCIe TX begins
+2210.000 ns  ARCHITECTURAL COMMIT
+2210.000 ns  memory write
+2212.000 ns  response created
+2214.000 ns  response queued
+2214.000 ns  queued for the link
+2214.000 ns  response TX
+2222.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 1
+2223.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 1
+2231.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 2
+2232.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 2
+2238.000 ns  remote endpoint receives the request
+2239.000 ns  response received by the initiating AoU
+2240.000 ns  initiator completion, observer A COMPLETED
+2241.000 ns  waiting for an AoU credit
+2243.000 ns  queued for the link
+2243.000 ns  write-data TX begins
+2252.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 1
+2261.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 2
+2270.000 ns  target accepts T4
+2271.000 ns  waiting for an AoU credit
+2273.000 ns  queued for the link
+2273.000 ns  UCIe TX begins
+2274.000 ns  ARCHITECTURAL COMMIT
+2274.000 ns  memory write
+2276.000 ns  response created
+2278.000 ns  response queued
+2278.000 ns  queued for the link
+2278.000 ns  response TX
+2286.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 1
+2287.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 1
+2295.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 2
+2296.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 2
+2302.000 ns  remote endpoint receives the request
+2303.000 ns  response received by the initiating AoU
+2304.000 ns  initiator completion, observer A COMPLETED
+2305.000 ns  waiting for an AoU credit
+2307.000 ns  queued for the link
+2307.000 ns  write-data TX begins
+2316.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 1
+2325.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 2
+2334.000 ns  target accepts T5
+2335.000 ns  waiting for an AoU credit
+2337.000 ns  queued for the link
+2337.000 ns  UCIe TX begins
+2338.000 ns  ARCHITECTURAL COMMIT
+2338.000 ns  memory write
+2340.000 ns  response created
+2342.000 ns  response queued
+2342.000 ns  queued for the link
+2342.000 ns  response TX
+2350.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 1
+2351.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 1
+2359.000 ns  UCIe CRC failure on the request flit (1-bit corruption); replay requested, streak 2
+2360.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 2
+2366.000 ns  remote endpoint receives the request
+2367.000 ns  response received by the initiating AoU
+2368.000 ns  initiator completion, observer A COMPLETED
+2369.000 ns  waiting for an AoU credit
+2371.000 ns  queued for the link
+2371.000 ns  write-data TX begins
+2380.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 1
+2389.000 ns  UCIe CRC failure on the wdata flit (1-bit corruption); replay requested, streak 2
+2398.000 ns  target accepts T6
+2402.000 ns  ARCHITECTURAL COMMIT
+2402.000 ns  memory write
+2404.000 ns  response created
+2406.000 ns  response queued
+2406.000 ns  queued for the link
+2406.000 ns  response TX
+2415.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 1
+2424.000 ns  UCIe CRC failure on the response flit (1-bit corruption); replay requested, streak 2
+2431.000 ns  response received by the initiating AoU
+2432.000 ns  initiator completion, observer A COMPLETED

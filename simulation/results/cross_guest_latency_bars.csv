@@ -1,0 +1,4 @@
+label,latency_ns,deadline_ns
+Guest B isolated,39.0,73.2
+Guest B shared / quiet,61.0,73.2
+Guest B shared / Guest A faulty,106.0,73.2

@@ -1,179 +1,230 @@
 <!doctype html><html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Transaction-Fate Ambiguity Survives Reference-Architecture Validation</title><meta name="description" content="Timed SystemC reference-model validation of UCIe/AoU transaction fate: reproduced ambiguity, cross-client timing, and an identified model artifact."><link rel="icon" href="assets/favicon.png"><script src="assets/theme-init.js"></script><link rel="stylesheet" href="assets/tokens.css"><link rel="stylesheet" href="assets/study.css"><script src="assets/theme.js" defer></script>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</title><meta name="description" content="Technical study of UCIe/AoU recovery and AXI transaction-fate ambiguity: evidence, reference architecture, robustness, and limits."><link rel="icon" href="assets/favicon.png"><script src="assets/theme-init.js"></script><link rel="stylesheet" href="assets/tokens.css"><link rel="stylesheet" href="assets/study.css"><script src="assets/theme.js" defer></script>
 </head>
 <body><a class="skip" href="#content">Skip to content</a>
 <header><a class="brand" href="index.html"><span class="wordmark" role="img" aria-label="NUVUS"></span><span class="brand-caption">/ UCIe · AoU research</span></a>
-<nav aria-label="Study sections"><a href="#counterexample">Counterexample</a><a href="#validation">Validation</a><a href="#architecture">Architecture</a><a href="#timing">Timing</a><a href="#claims">Scope</a><a href="#reproducibility">Evidence</a>
+<nav aria-label="Study sections"><a href="#problem">Problem</a><a href="#traces">Traces</a><a href="#architecture">Architecture</a><a href="#robustness">Robustness</a><a href="#claims">Claims</a><a href="#reproducibility">Evidence</a>
 </nav>
 <div class="theme" role="group" aria-label="Colour theme"><button type="button" data-theme-set="light" aria-pressed="false">Light</button><button type="button" data-theme-set="dark" aria-pressed="false">Dark</button><button type="button" data-theme-set="system" aria-pressed="true">System</button>
 </div>
 </header>
 <main id="content">
 <div class="hero">
-<div class="eyebrow">FAULT-INJECTION STUDY / REFERENCE-MODEL VALIDATION</div>
-<h1>Transaction-Fate Ambiguity Survives Reference-Architecture Validation</h1>
-<p class="lead">A timed SystemC model with reference-configured buffering, credits, retry state, and multiple outstanding flits reproduces the original AXI transaction-fate ambiguity.</p>
-<p>We first identified an AXI transaction-fate ambiguity in an abstract fault model. We then removed major transport simplifications and re-ran the experiments using the provided UCIe D2D reference configuration. The central ambiguity remained reachable.</p>
+<div class="eyebrow">UCIe / AoU FAULT-INJECTION STUDY</div>
+<h1>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</h1>
+<p class="lead">In the modeled UCIe recovery scenarios, a committed non-idempotent operation whose response is lost can be indistinguishable from one that never reached the target.</p>
+<p>A transaction that committed at the target but lost its response can be observationally indistinguishable from a transaction that never reached the target. The study uses the classifications <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. <code class="unknown">UNKNOWN</code> is a study classification, not a UCIe-defined protocol state.</p>
 <div class="summary">
-<div><span>UNKNOWN after commit</span><strong class="positive">REPRODUCED</strong><small>Core result</small>
+<div><span>Transaction fate</span><small>UNKNOWN reachable</small><strong class="positive">Yes</strong>
 </div>
-<div><span>Blind retry</span><strong class="positive">REPRODUCED</strong><small>Duplicate architectural effect</small>
+<div><span>Blind retry</span><small>Duplicate architectural effect</small><strong class="positive">Reachable</strong>
 </div>
-<div><span>Single-in-flight dependency</span><strong class="">NO</strong><small>For the central counterexample</small>
+<div><span>UCIe 3.0</span><small>Eliminates this ambiguity in the modeled scenarios</small><strong class="">No</strong>
 </div>
-<div><span>Retry-buffer peak = 1</span><strong class="">ARTIFACT</strong><small>Yes — old-model artifact</small>
+<div><span>Reference architecture</span><small>Ambiguity remains with realistic FIFOs, credits, retry buffer, and multiple outstanding flits</small><strong class="positive">Yes</strong>
 </div>
 </div>
-<p class="takeaway">The strongest finding survived the removal of the original one-flit transport simplification.</p>
+<p class="takeaway">This study separates link recovery from transaction recovery.</p>
 <details class="legend">
 <summary>How to read the evidence labels</summary>
 <p>SPEC: specification-derived fact · REFERENCE: supplied architecture parameter · CONFIG: simulation configuration · POLICY: implementation choice · ASSUMPTION: model abstraction · RESULT: measured simulation outcome · INTERPRETATION: inference from results · OPEN QUESTION: unresolved research.</p>
 </details>
 </div>
-<section id="counterexample">
+<section id="problem">
+<div class="section-label"><span class="tag">PROBLEM</span>
+</div>
+<h2>The problem</h2>
+<p>UCIe can detect and recover from communication failures. However, a higher-layer transaction may already have changed architectural state before its completion response becomes visible to the initiator.</p>
+<div class="pair">
+<article class="panel">
+<h3>Nominal path</h3>
+<ol class="flow">
+<li>AXI request</li>
+<li>transport</li>
+<li>target accepts</li>
+<li>architectural commit</li>
+<li>response</li>
+</ol>
+</article>
+<article class="panel danger-panel">
+<h3>Ambiguity window</h3>
+<ol class="flow">
+<li>architectural commit</li>
+<li class="danger">FAULT</li>
+<li>response not observed</li>
+</ol>
+<p class="question">Did the operation execute?</p>
+</article>
+</div>
+<p>The study classifies interrupted transactions as <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, or <code class="unknown">UNKNOWN</code>. These are observer-dependent study labels, not UCIe-defined protocol states.</p>
+<div class="formula"><span>different architectural outcome</span><b>+</b><span>same initiator-visible state</span><b>=</b><strong>transaction-fate ambiguity</strong>
+</div>
+</section>
+<section id="traces">
 <div class="section-label"><span class="tag">RESULT</span>
 </div>
-<h2>One observation. Two architectural outcomes.</h2>
-<p>After destructive UCIe recovery, can the initiator always determine whether an outstanding non-idempotent AXI/MMIO operation executed?</p>
+<h2>The two indistinguishable traces</h2>
+<p>After destructive UCIe recovery, the initiator may be unable to determine whether an outstanding non-idempotent AXI/MMIO operation executed.</p>
 <div class="pair">
 <article class="trace">
-<h3>Trace A · committed</h3>
+<h3>Trace A — committed, response lost</h3>
 <ol>
-<li>AXI request accepted</li>
+<li>AXI accepted</li>
 <li>request transported</li>
 <li>target accepted</li>
 <li><strong class="commit">ARCHITECTURAL COMMIT</strong>
 </li>
-<li>response created</li>
-<li><span class="fault">fault / recovery</span>
+<li>response generated</li>
+<li><span class="fault">fault / destructive recovery</span>
 </li>
-<li>response not observed</li>
+<li>no completion observed</li>
 </ol>
-<div class="verdict">Ground truth <code>commit_count = 1</code><br>Observer A/B/C <strong class="unknown">UNKNOWN</strong>
+<div class="verdict">Ground truth <code>commit_count = 1</code>
 </div>
 </article>
 <article class="trace">
-<h3>Trace B · not committed</h3>
+<h3>Trace B — never committed</h3>
 <ol>
-<li>AXI request accepted</li>
-<li>request fails before target</li>
-<li><strong>no commit</strong>
-</li>
+<li>AXI accepted</li>
+<li>request does not reach target</li>
+<li>no architectural commit</li>
 <li><span class="fault">fault / recovery</span>
 </li>
-<li>no completion</li>
+<li>no completion observed</li>
 </ol>
-<div class="verdict">Ground truth <code>commit_count = 0</code><br>Observer A/B/C <strong class="unknown">UNKNOWN</strong>
+<div class="verdict">Ground truth <code>commit_count = 0</code>
 </div>
 </article>
 </div>
-<div class="equivalence"><strong>Different ground truth. Same observable state.</strong><code>OBSERVATIONAL_EQUIVALENCE = true</code>
+<div class="observer-box">
+<h3>Observer A / B / C</h3><pre class="compact"><code>request accepted
+completion absent
+recovery observed</code></pre>
 </div>
-<p>These are schematic summaries of the reference runs. <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code> are observer-dependent study classifications, not UCIe-defined states. Blind software retry of the committed, indeterminate operation reproduces a duplicate architectural effect; this is distinct from transport duplicate suppression.</p><a href="data/reference_architecture_validation.json">Inspect the paired runs and blind-retry evidence ↗</a>
+<div class="equivalence"><strong>Different reality. Same observation.</strong><code>OBSERVATIONAL_EQUIVALENCE = true</code>
+</div>
+<p>These are schematic summaries of the reference-architecture runs. Blind software retry of a committed, indeterminate operation can produce a duplicate architectural effect; that is distinct from transport duplicate suppression.</p><a href="data/reference_architecture_validation.json">Inspect the paired runs and blind-retry evidence ↗</a>
 </section>
-<section id="validation">
-<div class="section-label"><span class="tag">RESULT</span>
+<section id="why">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
 </div>
-<h2>What survived the model refinement</h2>
-<p>The central findings survive buffering, credits, and multiple outstanding flits. One occupancy result does not. This is reference-model validation, not silicon validation.</p>
-<div class="table-wrap">
-<table>
-<thead>
-<tr><th scope="col">Finding</th><th scope="col">Original model</th><th scope="col">Reference model</th><th scope="col">Status</th>
-</tr>
-</thead>
-<tbody>
-<tr><td>UNKNOWN after architectural commit</td><td>Yes</td><td>Yes</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-<tr><td>Duplicate commit after blind retry</td><td>Yes</td><td>Yes</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-<tr><td>Pre-target UNKNOWN (observer A)</td><td>Yes</td><td>Yes</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-<tr><td>Retained ACK/NAK history reduces UNKNOWN (observer D)</td><td>Yes</td><td>Yes</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-<tr><td>OBSERVATIONAL_EQUIVALENCE (A/B/C)</td><td>true</td><td>true</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-<tr><td>Retry buffer peak</td><td>1</td><td>3</td><td><span class="artifact">MODEL ARTIFACT</span></td>
-</tr>
-<tr><td>Cross-client delay</td><td>45 ns</td><td>44.0 ns</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-<tr><td>Deadline miss under Client-A replay</td><td>Yes</td><td>Yes</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-<tr><td>transport delivery knowledge != architectural commit</td><td>Yes</td><td>Yes</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-<tr><td>Diagnostics turn UNKNOWN into determined fate (A)</td><td>n/a (hypothesis)</td><td>No</td><td><span class="">NOT REPRODUCED</span></td>
-</tr>
-<tr><td>CREDIT_CONSERVATION under early return + recovery</td><td>Yes (old model)</td><td>Yes</td><td><span class="positive">REPRODUCED</span></td>
-</tr>
-</tbody>
-</table>
+<h2>Why this matters</h2>
+<p>Consider a non-idempotent write that increments a shared counter:</p><pre><code>counter = 7
+
+write increments counter</code></pre>
+<div class="pair">
+<article class="panel">
+<h3>If the operation committed</h3><pre><code>7 → 8</code></pre>
+<p>but the response was lost, blind retry can produce:</p><pre><code>8 → 9</code></pre>
+</article>
+<article class="panel danger-panel">
+<h3>Outcome</h3><pre><code>expected commits = 1
+actual commits = 2</code></pre>
+</article>
 </div>
-<p class="caption">Source: <a href="data/reference_architecture_validation.csv">validation CSV</a>. Credit conservation holds in the tested early-return/recovery runs without injected credit faults.</p>
+<div class="callout">Blind retry can convert uncertainty into duplicate execution.</div>
+<p>This applies to non-idempotent operations, including doorbells, DMA start, accelerator start, FIFO push, interrupt acknowledge, and actuator-related commands.</p>
 </section>
 <section id="architecture">
 <div class="section-label"><span class="tag">REFERENCE</span>
 </div>
-<h2>The reference architecture</h2>
+<h2>Reference architecture</h2>
+<p>The executable model is exercised against a provided UCIe D2D reference configuration before interpreting robustness.</p>
 <div class="architecture"><svg class="architecture-diagram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" role="img" aria-labelledby="title desc"><title id="title">Provided UCIe D2D reference architecture</title><desc id="desc">Two chiplets connect AXI Streaming through FDI, D2D controllers, RDI and PHY over mainband and sideband.</desc><style>.architecture-diagram text{font:16px var(--font-sans);fill:var(--foreground)}.architecture-diagram rect{fill:var(--muted);stroke:var(--border)}.architecture-diagram path{stroke:var(--primary);stroke-width:2;fill:none}</style><text x="200" y="30" text-anchor="middle" font-weight="500">Chiplet A</text><rect x="25" y="50" width="350" height="42" rx="8"/><text x="200" y="76" text-anchor="middle">AXI Streaming</text><path d="M200 92v18"/><rect x="25" y="110" width="350" height="42" rx="8"/><text x="200" y="136" text-anchor="middle">Streaming / FDI</text><path d="M200 152v18"/><rect x="25" y="170" width="350" height="42" rx="8"/><text x="200" y="196" text-anchor="middle">UCIe D2D Controller</text><path d="M200 212v18"/><rect x="25" y="230" width="350" height="42" rx="8"/><text x="200" y="256" text-anchor="middle">RDI</text><path d="M200 272v18"/><rect x="25" y="290" width="350" height="42" rx="8"/><text x="200" y="316" text-anchor="middle">UCIe PHY</text><text x="680" y="30" text-anchor="middle" font-weight="500">Chiplet B</text><rect x="505" y="50" width="350" height="42" rx="8"/><text x="680" y="76" text-anchor="middle">AXI Streaming</text><path d="M680 92v18"/><rect x="505" y="110" width="350" height="42" rx="8"/><text x="680" y="136" text-anchor="middle">Streaming / FDI</text><path d="M680 152v18"/><rect x="505" y="170" width="350" height="42" rx="8"/><text x="680" y="196" text-anchor="middle">UCIe D2D Controller</text><path d="M680 212v18"/><rect x="505" y="230" width="350" height="42" rx="8"/><text x="680" y="256" text-anchor="middle">RDI</text><path d="M680 272v18"/><rect x="505" y="290" width="350" height="42" rx="8"/><text x="680" y="316" text-anchor="middle">UCIe PHY</text><path d="M200 332v38h480v-38"/><rect x="320" y="348" width="240" height="42" rx="8"/><text x="440" y="374" text-anchor="middle">Mainband + Sideband</text></svg>
 <div class="table-wrap">
 <table>
 <thead>
-<tr><th scope="col">Parameter</th><th scope="col">Reference value</th>
+<tr><th scope="col">Parameter</th><th scope="col">Value</th>
 </tr>
 </thead>
 <tbody>
-<tr><td>Link / protocol</td><td>x16 · Streaming</td>
+<tr><td>Link width</td><td>x16</td>
 </tr>
-<tr><td>FDI / flit format</td><td>512 bit · Format 6</td>
+<tr><td>Protocol</td><td>Streaming</td>
 </tr>
-<tr><td>CRC / retry</td><td>enabled / enabled</td>
+<tr><td>FDI width</td><td>512 bit</td>
 </tr>
-<tr><td>TX / RX FIFO</td><td>32 / 64 flits</td>
+<tr><td>Flit format</td><td>Format 6</td>
+</tr>
+<tr><td>CRC</td><td>enabled</td>
+</tr>
+<tr><td>Retry</td><td>enabled</td>
+</tr>
+<tr><td>TX FIFO</td><td>32 flits</td>
+</tr>
+<tr><td>RX FIFO</td><td>64 flits</td>
 </tr>
 <tr><td>Retry buffer</td><td>16 flits</td>
 </tr>
-<tr><td>Credit return</td><td>early · threshold 2 flits</td>
+<tr><td>Credit return</td><td>early</td>
+</tr>
+<tr><td>Credit threshold</td><td>2 flits</td>
 </tr>
 <tr><td>Sideband FIFO</td><td>8 flits</td>
 </tr>
-<tr><td>L1 / error logging</td><td>enabled / enabled</td>
+<tr><td>L1</td><td>enabled</td>
+</tr>
+<tr><td>Error logging</td><td>enabled</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>Reference architecture parameters supplied for the PoC. These are not universal UCIe requirements. The diagram is a generic redraw; no original slide or third-party branding is reproduced.</p>
-<p>Streaming, Format 6, x16, and FDI-512 are configuration metadata. The model does not implement PHY bit timing, Format-6 byte packing, or FDI cycle accuracy.</p>
+<p class="caption">Reference configuration used for model validation. These values are not universal UCIe requirements.</p>
+<p>Streaming, Format 6, x16, and FDI-512 are configuration metadata. The model does not implement PHY bit timing, Format-6 byte packing, or FDI cycle accuracy. The diagram is a generic redraw; no original slide or third-party branding is reproduced.</p>
 </section>
-<section id="artifact">
+<section id="robustness">
 <div class="section-label"><span class="tag">RESULT</span>
 </div>
-<h2>Not every original result survived refinement.</h2>
-<div class="pair">
-<article class="panel muted">
-<h3>Original model</h3>
-<p>Single in-flight payload<br>Simplified buffers<br>Abstract credits</p>
-<div class="big">1 <small>flit peak</small>
+<h2>Robustness of the finding</h2>
+<p>To test whether the ambiguity depended on simplified transport assumptions, the model was refined with realistic buffering, credits, multiple outstanding flits, and go-back-N replay.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Property</th><th scope="col">Reference architecture result</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>UNKNOWN after commit</td><td><span class="positive">REPRODUCED</span></td>
+</tr>
+<tr><td>Blind-retry duplicate commit</td><td><span class="positive">REPRODUCED</span></td>
+</tr>
+<tr><td>Pre-target UNKNOWN</td><td><span class="positive">REPRODUCED</span></td>
+</tr>
+<tr><td>ACK history → NOT_COMPLETED</td><td><span class="positive">REPRODUCED</span></td>
+</tr>
+<tr><td>Observational equivalence A/B/C</td><td><span class="positive">REPRODUCED</span></td>
+</tr>
+<tr><td>Cross-client delay</td><td><span class="positive">REPRODUCED</span></td>
+</tr>
+<tr><td>Credit conservation</td><td><span class="positive">REPRODUCED</span></td>
+</tr>
+</tbody>
+</table>
 </div>
-</article>
-<article class="panel">
-<h3>Reference model</h3>
-<p>Multiple outstanding flits · TX 32 / RX 64<br>Retry 16 · early credits / threshold 2<br>Sideband 8 · L1 · error logging · go-back-N replay</p>
-<div class="big">3 <small>flits peak / capacity 16</small>
-</div>
-</article>
-</div>
-<p>The previous retry-buffer occupancy result was caused by the simplified single-in-flight transport model. The measured peak of three is workload-specific, not a new capacity limit.</p>
-<div class="callout">Core transaction-fate result survived. The occupancy result changed.</div>
+<div class="callout">The transaction-fate ambiguity remains reachable under the reference architecture.</div>
+<p class="caption">Source: <a href="data/reference_architecture_validation.csv">validation CSV</a>. This is reference-model validation, not silicon validation.</p>
 </section>
 <section id="comparison">
 <div class="section-label"><span class="tag">RESULT</span>
 </div>
-<h2>UCIe 2.x vs UCIe 3.0: a scoped comparison</h2>
+<h2>UCIe 2.x vs UCIe 3.0</h2>('<p>For the property studied here — reconstructing the architectural fate of interrupted higher-layer transactions — the modeled UCIe 3.0 mechanisms did not eliminate the ambiguity.</p>
+<div class="pair">
+<article class="panel">
+<h3>UCIe 2.x</h3><pre><code>CRC / Retry\nRetrain\nLinkError</code></pre>
+</article>
+<article class="panel">
+<h3>UCIe 3.0</h3><pre><code>same core recovery\n+ improved diagnostics\n+ priority sideband\n+ emergency / management mechanisms</code></pre>
+</article>
+</div>
+<div class="formula compact-formula"><span>Architectural AXI commit information?</span><strong>No standardized indication modeled</strong>
+</div>
+<div class="equivalence"><strong>UNKNOWN remains reachable</strong>
+</div>
 <div class="table-wrap">
 <table>
 <thead>
-<tr><th scope="col">Modeled mechanisms</th><th scope="col">UCIe 2.x</th><th scope="col">UCIe 3.0</th>
+<tr><th scope="col">Modeled aspect</th><th scope="col">UCIe 2.x</th><th scope="col">UCIe 3.0</th>
 </tr>
 </thead>
 <tbody>
@@ -188,79 +239,81 @@
 </tbody>
 </table>
 </div>
-<p>For reconstructing the architectural fate of interrupted higher-layer operations, the modeled UCIe 3.0 mechanisms did not eliminate the ambiguity. The reference comparison reports identical baseline fate, not identical implementations or universal performance.</p>
+<p>The reference comparison reports identical baseline fate for the studied property. It does not claim identical implementations or universal performance.</p>
 <details>
-<summary>Earlier Python comparison: broader mechanism coverage</summary>
-<p>The earlier state model explored enhanced diagnostics, management, priority sideband, and emergency mechanisms. That coverage must not be attributed to the narrower timed reference mode. See the <a href="sources/comparison_ucie2_vs_ucie3.md">equivalent-workload report</a>; its workload percentages are not intrinsic protocol probabilities.</p>
-</details>
+<summary>Broader mechanism survey (separate model)</summary>
+<p>A separate state-model survey explored enhanced diagnostics, management, priority sideband, and emergency mechanisms under equivalent workloads. That broader coverage must not be attributed to the narrower timed reference mode. See the <a href="sources/comparison_ucie2_vs_ucie3.md">comparison report</a>; its workload percentages are not intrinsic protocol probabilities.</p>
+</details>',)</section>
+<section id="observers">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Diagnostics and observer knowledge</h2>
+<p>Classification depends on what the observer can see.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Scenario</th><th scope="col">Ground truth</th><th scope="col">AXI only</th><th scope="col">AXI + FDI</th><th scope="col">UCIe status</th><th scope="col">Extra metadata</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Commit + response lost</td><td>COMMITTED</td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td>
+</tr>
+<tr><td>Request lost pre-target</td><td>NOT_COMMITTED</td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="positive">NOT_COMPLETED</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout">More transport metadata can shrink the ambiguity region, but does not necessarily reveal post-commit architectural state.</div>
+<p>Error logging did not convert AXI-only UNKNOWN into COMPLETED or NOT_COMPLETED in the reference-model experiments.</p>
+<p><span class="tag">ASSUMPTION</span> Profile D retains ACK/NAK history sufficient to distinguish the pre-target loss in this experiment. This is extra observer knowledge, not a standardized architectural commit indication.</p>
+<p><span class="tag">INTERPRETATION</span> Diagnostics expose transport state. They do not automatically provide target architectural-commit knowledge.</p>
 </section>
 <section id="timed">
 <div class="section-label"><span class="tag">RESULT</span>
 </div>
-<h2>Timed SystemC results</h2>
-<div class="ladder"><span>Deductive argument</span><b>→</b><span>Python state model</span><b>→</b><span>Timed SystemC</span><b>→</b><strong>Reference architecture</strong>
+<h2>Timed SystemC findings</h2>
+<p>Transaction fate and timing are separate properties.</p>
+<div class="formula"><span>Functionally correct</span><b>+</b><span>exactly once</span><b>+</b><span>completed</span><b>≠</b><strong>deadline met</strong>
+</div>
+<div class="ladder"><span>Deductive argument</span><b>→</b><span>Executable state model</span><b>→</b><span>Timed SystemC</span><b>→</b><strong>Reference architecture</strong>
 </div>
 <p>Each step adds implementation detail while retaining the central counterexample. The model is timed and microarchitecture-aware, not transistor-level and not validated against a specific commercial UCIe IP.</p>
 <div class="table-wrap">
 <table>
 <thead>
-<tr><th scope="col">Reference experiment</th><th scope="col">Measured result</th>
+<tr><th scope="col">Reference experiment</th><th scope="col">Measured result</th><th scope="col">Provenance</th>
 </tr>
 </thead>
 <tbody>
-<tr><td>Sustained traffic TX / RX peak</td><td>11 / 0 flits (capacities 32 / 64)</td>
+<tr><td>Sustained traffic TX / RX peak</td><td>11 / 0 flits (capacities 32 / 64)</td><td><span class="tag">RESULT</span></td>
 </tr>
-<tr><td>Credit counters, throughput run</td><td>120 consumed / 120 returned</td>
+<tr><td>Credit counters, throughput run</td><td>120 consumed / 120 returned</td><td><span class="tag">RESULT</span></td>
 </tr>
-<tr><td>Diagnostics</td><td>8 error-log entries; observer A remains UNKNOWN</td>
+<tr><td>Diagnostics</td><td>8 error-log entries; observer A remains UNKNOWN</td><td><span class="tag">RESULT</span></td>
 </tr>
-<tr><td>L1</td><td>1 event; no evidence here of additional ambiguity from L1 alone</td>
+<tr><td>L1</td><td>1 event; no evidence here of additional ambiguity from L1 alone</td><td><span class="tag">RESULT</span></td>
+</tr>
+<tr><td>LinkError minimum residency</td><td>16 ms</td><td><span class="tag">SPEC</span></td>
+</tr>
+<tr><td>Retrain / LinkReset / reactivation</td><td>5 µs / 10 µs / 2 µs</td><td><span class="tag">CONFIG</span></td>
+</tr>
+<tr><td>AoU credit depth</td><td>32</td><td><span class="tag">ASSUMPTION</span></td>
+</tr>
+<tr><td>Serialization cycles</td><td>4</td><td><span class="tag">CONFIG</span></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The zero RX occupancy is the reported sampled peak; it does not establish that a real receiver needs no buffering. Results describe the stored runs, not exhaustive verification.</p>
-</section>
-<section id="observers">
-<div class="section-label"><span class="tag">RESULT</span>
-</div>
-<h2>Diagnostics and observer knowledge</h2>
-<div class="table-wrap">
-<table>
-<thead>
-<tr><th scope="col">Scenario</th><th scope="col">Commits</th><th scope="col">A · AXI</th><th scope="col">B · AXI + FDI</th><th scope="col">C · + UCIe status</th><th scope="col">D · + metadata</th>
-</tr>
-</thead>
-<tbody>
-<tr><td>Commit + lost response</td><td>1</td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td>
-</tr>
-<tr><td>Request lost pre-target</td><td>0</td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="positive">NOT_COMPLETED</code></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Additional metadata can shrink the ambiguity region, but does not necessarily resolve post-commit uncertainty. Error logging did not resolve AXI-only UNKNOWN into COMPLETED or NOT_COMPLETED.</p>
-<p><span class="tag">ASSUMPTION</span> Profile D retains ACK/NAK history sufficient to distinguish the pre-target loss in this experiment. This is extra observer knowledge, not a standardized architectural commit indication.</p>
-<p><span class="tag">INTERPRETATION</span> Diagnostics expose transport state. They do not automatically provide target architectural-commit knowledge.</p>
+<p>The zero RX occupancy is the reported sampled peak; it does not establish that a real receiver needs no buffering. Timing values are labeled by source. Do not treat configured delays as normative UCIe timings.</p>
 </section>
 <section id="timing">
 <div class="section-label"><span class="tag">RESULT</span>
 </div>
 <h2>Cross-client timing effects</h2>
-<p>Client B completion latency, measured from transaction creation. Client A carries the injected faults; both share the modeled adapter/link. No hypervisor or guest isolation model is established here.</p>
+<p>Independent traffic sources sharing the same UCIe transport resources can influence each other's timing. Client A carries the injected faults; Client B is otherwise fault-free. No hypervisor or guest isolation model is established here.</p>
 <figure class="panel">
 <div class="bar-group">
-<h3>Original model <span class="delta">+45 ns</span>
-</h3>
-<div class="bar-row"><span>Quiet</span>
-<div class="bar" style="width:41.59090909090909%">61 ns</div>
-</div>
-<div class="bar-row"><span>A faulted</span>
-<div class="bar faultbar" style="width:72.27272727272727%">106 ns</div>
-</div>
-</div>
-<div class="bar-group">
-<h3>Reference model <span class="delta">+44 ns</span>
+<h3>Reference configuration <span class="delta">+44 ns</span>
 </h3>
 <div class="bar-row"><span>Quiet</span>
 <div class="bar" style="width:31.363636363636363%">46 ns</div>
@@ -269,15 +322,10 @@
 <div class="bar faultbar" style="width:61.36363636363637%">90 ns</div>
 </div>
 </div><figcaption>Common scale · 0–110 ns · quiet versus Client-A-faulted workload</figcaption>
-</figure>
-<p><strong>The effect did not disappear when the single-in-flight assumption was removed.</strong> Reference latency increases from 46 to 90 ns. Client B commits once and completes.</p>
-<p><span class="tag">CONFIG</span> Reference experimental timing budget = <strong>55.2 ns</strong> (46 × 1.20); faulted latency exceeds it. The previous model used 73.2 ns (61 × 1.20). Neither is an automotive-standard deadline.</p>
-<p><span class="tag">INTERPRETATION</span> The effect is architecture- and policy-dependent; it is not a universal UCIe timing property or, by itself, an ISO 26262 freedom-from-interference violation.</p>
-</section>
-<section id="root-cause">
-<div class="section-label"><span class="tag">RESULT</span>
-</div>
-<h2>Why the reference-model delay persists</h2>
+</figure><pre><code>cross-client added delay ≈ 44 ns</code></pre>
+<p>The effect remained observable with multiple outstanding flits and realistic buffering. Client B commits once and completes.</p>
+<p><span class="tag">CONFIG</span> Experimental timing budget = <strong>55.2 ns</strong> (46 × 1.20); faulted latency exceeds it. This is an experimental budget, not an automotive-standard deadline.</p>
+<p><span class="tag">INTERPRETATION</span> This is architecture- and policy-dependent. It is not a universal UCIe property or, by itself, an ISO 26262 freedom-from-interference violation.</p>
 <div class="callout">Shared resource: adapter replay scheduling and the go-back-N sequence domain.</div>
 <figure class="timing-diagram"><svg class="replay-diagram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 330"><title>Shared replay timeline</title><style>.replay-diagram text{font:13px var(--font-sans);fill:var(--foreground)}.replay-diagram .mono{font:12px var(--font-mono)}.replay-diagram .axis{stroke:var(--border)}.replay-diagram .event{fill:var(--warning)}.replay-diagram .normal{fill:var(--primary)}</style><rect width="1000" height="330" fill="var(--card)"/><path class="axis" d="M160 40v230" stroke-dasharray="2 6"/><text class="mono" x="160" y="302" text-anchor="middle">2000</text><path class="axis" d="M230 40v230" stroke-dasharray="2 6"/><text class="mono" x="230" y="302" text-anchor="middle">2010</text><path class="axis" d="M300 40v230" stroke-dasharray="2 6"/><text class="mono" x="300" y="302" text-anchor="middle">2020</text><path class="axis" d="M370 40v230" stroke-dasharray="2 6"/><text class="mono" x="370" y="302" text-anchor="middle">2030</text><path class="axis" d="M440 40v230" stroke-dasharray="2 6"/><text class="mono" x="440" y="302" text-anchor="middle">2040</text><path class="axis" d="M510 40v230" stroke-dasharray="2 6"/><text class="mono" x="510" y="302" text-anchor="middle">2050</text><path class="axis" d="M580 40v230" stroke-dasharray="2 6"/><text class="mono" x="580" y="302" text-anchor="middle">2060</text><path class="axis" d="M650 40v230" stroke-dasharray="2 6"/><text class="mono" x="650" y="302" text-anchor="middle">2070</text><path class="axis" d="M720 40v230" stroke-dasharray="2 6"/><text class="mono" x="720" y="302" text-anchor="middle">2080</text><path class="axis" d="M790 40v230" stroke-dasharray="2 6"/><text class="mono" x="790" y="302" text-anchor="middle">2090</text><path class="axis" d="M860 40v230" stroke-dasharray="2 6"/><text class="mono" x="860" y="302" text-anchor="middle">2100</text><path class="axis" d="M930 40v230" stroke-dasharray="2 6"/><text class="mono" x="930" y="302" text-anchor="middle">2110</text><text x="15" y="75">Client A / CRC</text><path class="axis" d="M160 70H930"/><text x="15" y="160">Client B</text><path class="axis" d="M160 155H930"/><text x="15" y="250">Link state</text><path class="axis" d="M160 245H930"/><circle class="event" cx="251" cy="70" r="5"/><circle class="event" cx="279" cy="70" r="5"/><circle class="event" cx="335" cy="70" r="5"/><circle class="event" cx="363" cy="70" r="5"/><text x="251" y="48">CRC → shared go-back-N replay</text><rect x="293" y="137" width="168" height="36" fill="var(--muted)"/><text x="363" y="192" text-anchor="middle">Sequence waiting / delivery</text><circle class="normal" cx="244" cy="155" r="4"/><text x="244" y="125" text-anchor="middle">TX</text><circle class="normal" cx="293" cy="155" r="4"/><text x="293" y="110" text-anchor="middle">discard</text><circle class="normal" cx="377" cy="155" r="4"/><text x="377" y="125" text-anchor="middle">discard</text><circle class="normal" cx="461" cy="155" r="4"/><text x="461" y="125" text-anchor="middle">received</text><circle class="normal" cx="615" cy="155" r="4"/><text x="615" y="125" text-anchor="middle">data TX</text><circle class="normal" cx="706" cy="155" r="4"/><text x="706" y="110" text-anchor="middle">commit</text><circle class="normal" cx="790" cy="155" r="4"/><text x="790" y="125" text-anchor="middle">complete</text><path d="M160 245H888" stroke="var(--primary)" stroke-width="5"/><path d="M888 245H930" stroke="var(--warning)" stroke-width="5"/><text x="180" y="230">Active during Client B transaction</text><text x="888" y="230" text-anchor="end">2104: Retrain begins</text><text x="930" y="323" text-anchor="end">Absolute simulation time (ns)</text></svg><figcaption>Absolute simulation time. Shaded interval spans sequence waiting and delivery; it is not a pure-wait measurement.</figcaption>
 </figure>
@@ -308,20 +356,42 @@
 </div>
 </div>
 </details>
-<p>Client B transmits while several flits are outstanding, then its request is discarded twice while the receiver awaits the expected sequence. Replay is scheduled ahead of new payload in the adapter. This supports coupling through the shared replay path; it does not support attributing B’s delay to a single occupied TX slot.</p>
-<p>The 2019–2043 ns interval spans observed sequence waiting and subsequent delivery, not a measured pure-wait counter. The trace does not decompose all 44 ns of added latency. Retrain at 2104 ns happens after B completes and cannot explain that completion delay.</p>
+<p>Client B transmits while several flits are outstanding; its request is discarded twice while the receiver awaits the expected sequence. Replay is scheduled ahead of new payload in the adapter. Retrain at 2104 ns happens after B completes and cannot explain that completion delay.</p>
 <p><a href="data/ref2x_cross_client_trace.csv">Full event CSV</a> · <a href="sources/ucie_adapter.cpp">Adapter scheduling code ↗</a>
 </p>
+</section>
+<section id="model-dependent">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>What was model-dependent</h2>
+<p>Not every measured simulator outcome is a protocol property. Some results depend on transport simplifications.</p>
+<div class="pair">
+<article class="panel muted">
+<h3>Simplified transport model</h3>
+<p>Single in-flight payload<br>Simplified buffers<br>Abstract credits</p>
+<div class="big">1 <small>flit peak</small>
+</div>
+</article>
+<article class="panel">
+<h3>Reference architecture</h3>
+<p>Multiple outstanding flits · TX 32 / RX 64<br>Retry 16 · early credits / threshold 2<br>Sideband 8 · L1 · error logging · go-back-N replay</p>
+<div class="big">3 <small>flits peak / capacity 16</small>
+</div>
+</article>
+</div><pre><code>retry-buffer peak = 1   →   not robust
+retry-buffer peak = 3   →   reference architecture</code></pre>
+<p>The single-entry occupancy behavior depended on the simplified one-flit transport model. The measured peak of three under the reference configuration is workload-specific, not a new capacity limit.</p>
+<div class="callout">Model-dependent behavior — not a failed protocol claim.</div>
 </section>
 <section id="mitigations">
 <div class="section-label"><span class="tag">POLICY / EXPLORATORY RESULT</span>
 </div>
-<h2>Mitigations: exploratory architecture experiments</h2>
-<p>The earlier campaign tested whether contention was architecturally avoidable. These options have not been revalidated as a mitigation campaign against the reference configuration.</p>
+<h2>Mitigation experiments</h2>
+<p>These experiments test architectural sensitivity. They are not UCIe requirements.</p>
 <div class="table-wrap">
 <table>
 <thead>
-<tr><th scope="col">Earlier single-slot campaign option</th><th scope="col">Client B latency</th>
+<tr><th scope="col">Modeled architecture option</th><th scope="col">Client B latency (exploratory)</th>
 </tr>
 </thead>
 <tbody>
@@ -340,92 +410,86 @@
 </tbody>
 </table>
 </div>
-<p>These are modeled architecture options, not UCIe requirements. Changed sequence spaces, arbitration, and resource allocation are experimental policies. Latency improvements can trade off fairness; the old results do not establish reference-model guarantees.</p><a href="sources/cross_client_fault_interference.md">Earlier campaign report (legacy field names retained)</a>
+<p>Changed sequence spaces, arbitration, and resource allocation are experimental policies. Latency improvements can trade off fairness. These options have not been revalidated as a full mitigation campaign against the reference configuration; they do not establish guarantees.</p><a href="sources/cross_client_fault_interference.md">Exploratory campaign report ↗</a>
+</section>
+<section id="automotive">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
+</div>
+<h2>Automotive interpretation</h2>
+<p>Automotive relevance arises when safety-critical commands cross a shared chiplet transport path.</p>
+<p>A system-level safety architecture must decide how to handle an operation whose architectural effect cannot be reconstructed after recovery.</p>
+<ul>
+<li>Reset a fault-containment region</li>
+<li>Mark the operation as indeterminate</li>
+<li>Use persistent transaction IDs</li>
+<li>Use duplicate suppression</li>
+<li>Use device-specific recovery contracts</li>
+</ul>
+<p>This study does not claim an ISO 26262 violation. Cross-client timing coupling is architecture- and policy-dependent evidence for system architects, not a normative freedom-from-interference finding.</p>
 </section>
 <section id="claims">
 <div class="section-label"><span class="tag">INTERPRETATION</span>
 </div>
-<h2>What this study claims — and does not claim</h2>
-<div class="pair">
-<article class="panel">
-<h3>Supported claims</h3>
+<h2>What this study claims</h2>
+<article class="claim-box">
 <ul>
 <li>Transaction-fate ambiguity is reachable in the executable model.</li>
-<li>The ambiguity survives a more detailed UCIe D2D reference architecture.</li>
-<li>Blind retry of an indeterminate non-idempotent operation can duplicate architectural effects.</li>
-<li>Additional transport diagnostics do not necessarily reveal target commit.</li>
-<li>Timing coupling between independent traffic sources survives multiple outstanding flits in the tested configuration.</li>
-<li>Refinement identifies the original retry-buffer peak of one as a model artifact.</li>
+<li>The ambiguity remains reachable under the provided reference architecture.</li>
+<li>Blind retry of an indeterminate non-idempotent operation can duplicate its effect.</li>
+<li>Transport diagnostics do not necessarily reveal architectural commit.</li>
+<li>Some timing coupling between independent traffic sources remains under the reference configuration.</li>
+<li>Some simulator outcomes are implementation-dependent.</li>
 </ul>
 </article>
-<article class="panel muted">
-<h3>Not claimed</h3>
-<ul>
-<li>UCIe is broken or violates its specification.</li>
-<li>Every commercial UCIe implementation behaves this way.</li>
-<li>The reference slide fully specifies a real product microarchitecture.</li>
-<li>The timed model is cycle-accurate to commercial IP.</li>
-<li>Measured nanosecond values are universal UCIe timings.</li>
-<li>The experimental deadline is an automotive-standard deadline.</li>
-<li>Cross-client latency automatically proves an ISO 26262 freedom-from-interference violation.</li>
-<li>UCIe is responsible for defining AXI architectural commit semantics.</li>
-</ul>
-</article>
-</div>
 </section>
-<section id="recovery">
-<div class="section-label"><span class="tag">PROVENANCE</span>
+<section id="non-claims">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
 </div>
-<h2>Timing and recovery: keep provenance visible</h2>
-<div class="table-wrap">
-<table>
-<thead>
-<tr><th scope="col">Provenance</th><th scope="col">Parameter / behavior</th><th scope="col">Scope</th>
-</tr>
-</thead>
-<tbody>
-<tr><td><span class="tag">SPEC</span></td><td>LinkError minimum residency: 16 ms</td><td>UCIe 2.0 §10.3.3.7, as cited in the study</td>
-</tr>
-<tr><td><span class="tag">CONFIG</span></td><td>Retrain: 5 µs; LinkReset: 10 µs; reactivation: 2 µs</td><td>Chosen simulation timings</td>
-</tr>
-<tr><td><span class="tag">CONFIG</span></td><td>Sideband: 50 ns normal / 20 ns priority</td><td>Configured delays; no performance guarantee</td>
-</tr>
-<tr><td><span class="tag">ASSUMPTION</span></td><td>AoU credit depth 32; L1 state preservation</td><td>Not established by the reference diagram</td>
-</tr>
-<tr><td><span class="tag">POLICY</span></td><td>Retrain preserves retry; outstanding AXI discarded on LinkError</td><td>Modeled recovery choices; discard does not prove no commit</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Specification-derived constants are kept separate from configured delays and policy. The page does not infer the architectural disposition of an AXI operation from transport-state flushes.</p>
+<h2>What this study does not claim</h2>
+<article class="claim-box muted">
+<ul>
+<li>UCIe is broken.</li>
+<li>UCIe violates its specification.</li>
+<li>Every UCIe implementation behaves this way.</li>
+<li>The reference configuration fully specifies a commercial implementation.</li>
+<li>The timed SystemC model is cycle-accurate to real silicon.</li>
+<li>The measured timing numbers are universal.</li>
+<li>Cross-client interference automatically implies an ISO 26262 freedom-from-interference violation.</li>
+<li>UCIe is responsible for defining AXI target commit semantics.</li>
+</ul>
+</article>
 </section>
 <section id="limitations">
 <div class="section-label"><span class="tag">ASSUMPTION / SCOPE</span>
 </div>
 <h2>Limitations</h2>
 <ul>
-<li>No RTL, electrical PHY, or commercial IP validation; no transistor-level equivalence.</li>
+<li>Abstract target model: architectural commit is modeled, not silicon-verified.</li>
+<li>Incomplete knowledge of commercial UCIe controller microarchitecture.</li>
+<li>Configurable recovery policies (for example, outstanding AXI discard after LinkError).</li>
+<li>Timed SystemC, not transistor-level or cycle-accurate to commercial IP.</li>
+<li>No silicon validation; no RTL or commercial IP confirmation.</li>
+<li>Random workload rates are not field probabilities.</li>
+<li>The reference architecture is not a complete implementation specification.</li>
+<li>The AoU model remains an abstraction where the full specification behavior is not modeled.</li>
 <li>Format-6 optional bytes, electrical training, and FDI cycle accuracy are out of scope.</li>
-<li>AoU 0.8 specification text is absent from this workspace; packing and credits include explicit abstractions.</li>
 <li>Diagnostic fields are study abstractions, not standardized or vendor register maps.</li>
-<li>L1 nesting with concurrent recovery commands uses a single command slot.</li>
-<li>The reference diagram constrains parameters, not every microarchitectural or recovery decision.</li>
-<li>Finite scenarios establish reachability; they do not establish field failure rates or exhaustive absence of other outcomes.</li>
+<li>Finite scenarios establish reachability, not exhaustive absence of other outcomes.</li>
 </ul>
 </section>
 <section id="reproducibility">
 <div class="section-label"><span class="tag">REPRODUCIBILITY</span>
 </div>
-<h2>Reproduce and inspect the evidence</h2>
+<h2>Reproducibility</h2>
 <p>From the repository root, with SystemC, CMake, pkg-config, and Python available:</p><pre><code>cmake -S . -B build
 cmake --build build -j
 python -m simulation.experiments.reference_architecture_validation</code></pre>
 <p>The campaign loads the repository’s internal reference configurations. The neutral public exports below preserve their parameter values; naming and identifying comments are sanitized. Stored evidence is presented here without rerunning or changing the simulation.</p>
-<div class="downloads"><a href="sources/reference_architecture_validation.md">Reference report ↗</a><a href="data/reference_architecture_validation.json">Complete JSON ↗</a><a href="data/reference_architecture_validation.csv">Validation CSV ↗</a><a href="configs/reference_ucie2x.yaml">configs/reference_ucie2x.yaml ↗</a><a href="configs/reference_ucie3.yaml">configs/reference_ucie3.yaml ↗</a><a href="data/ref2x_cross_client_trace.csv">Faulted event trace ↗</a><a href="data/ref2x_shared_quiet_trace.csv">Quiet event trace ↗</a><a href="sources/findings.md">Original findings ↗</a><a href="sources/comparison_ucie2_vs_ucie3.md">Earlier revision comparison ↗</a><a href="sources/reference_architecture_validation.py">Campaign code (sanitized export) ↗</a><a href="sources/ucie_adapter.cpp">Timed adapter code ↗</a>
+<div class="downloads"><a href="sources/reference_architecture_validation.md">Reference report ↗</a><a href="data/reference_architecture_validation.json">Complete JSON ↗</a><a href="data/reference_architecture_validation.csv">Validation CSV ↗</a><a href="configs/reference_ucie2x.yaml">configs/reference_ucie2x.yaml ↗</a><a href="configs/reference_ucie3.yaml">configs/reference_ucie3.yaml ↗</a><a href="data/ref2x_cross_client_trace.csv">Faulted event trace ↗</a><a href="data/ref2x_shared_quiet_trace.csv">Quiet event trace ↗</a><a href="sources/findings.md">Transaction-fate case report ↗</a><a href="sources/comparison_ucie2_vs_ucie3.md">Revision comparison report ↗</a><a href="sources/reference_architecture_validation.py">Campaign code (sanitized export) ↗</a><a href="sources/ucie_adapter.cpp">Timed adapter code ↗</a>
 </div>
 <details>
 <summary>Evidence notes and terminology</summary>
-<p>Downloads preserve legacy machine keys such as <code>guest</code>; these denote traffic clients here, not modeled hypervisor guests. The exported reference report contains a generic final caveat that coupling “may disappear” under multi-outstanding buffering. Its measured reference run instead reports 44 ns added delay and a deadline miss; this page follows those measurements. Whether other implementations eliminate the effect remains open.</p>
+<p>Downloads preserve legacy machine keys such as <code>guest</code>; these denote traffic clients here, not modeled hypervisor guests. The exported reference report contains a generic caveat that coupling “may disappear” under multi-outstanding buffering. Its measured reference run instead reports 44 ns added delay and a deadline miss; this page follows those measurements. Whether other implementations eliminate the effect remains open.</p>
 </details>
 </section>
 <section id="questions">
@@ -433,22 +497,20 @@ python -m simulation.experiments.reference_architecture_validation</code></pre>
 </div>
 <h2>Open questions</h2>
 <ul>
-<li>Which remaining results depend on implementation-defined adapter microarchitecture?</li>
-<li>How does real UCIe IP preserve or flush retry, FIFO, and diagnostic state across recovery?</li>
-<li>Which standardized or implementation-specific information can safely determine transaction disposition?</li>
-<li>Which findings reproduce in RTL or a commercial UCIe controller?</li>
-<li>What end-to-end mechanism is sufficient to eliminate post-commit UNKNOWN?</li>
-<li>Which recovery mechanisms affect independent traffic sources under real adapter arbitration?</li>
-<li>How should these effects be represented in an automotive virtual-platform model?</li>
+<li>Which remaining behaviors depend on implementation-specific UCIe controller microarchitecture?</li>
+<li>What state survives Retrain, LinkReset, and LinkError in a real controller?</li>
+<li>Can implementation-specific diagnostics eliminate any remaining UNKNOWN cases?</li>
+<li>What end-to-end mechanism is sufficient to provide exactly-once behavior?</li>
+<li>Which findings reproduce in RTL or commercial IP?</li>
+<li>How should these behaviors be represented in an automotive virtual platform?</li>
 </ul>
 </section>
 <section id="conclusion">
 <div class="section-label"><span class="tag">INTERPRETATION</span>
 </div>
-<h2>The next step is implementation validation.</h2>
-<p>The initial transaction-fate ambiguity was not eliminated by replacing simplified transport assumptions with a more detailed UCIe D2D reference architecture. The refined model reproduced committed-but-unacknowledged UNKNOWN, blind-retry duplicate execution, and observational equivalence for limited observers.</p>
-<p>Refinement also exposed retry-buffer occupancy of one as a model artifact. The study separates findings that survived refinement from implementation-dependent behavior, rather than treating every simulator outcome as a protocol property.</p>
-<p>The next step is to determine which remaining behaviors occur in a concrete UCIe D2D controller and which are resolved by proprietary microarchitecture or system-level recovery policy.</p>
+<h2>Conclusion</h2>
+<p>The study demonstrates that recovering a UCIe link and reconstructing the architectural fate of an interrupted higher-layer operation are different problems. In the reference-architecture model, a committed non-idempotent operation whose response is lost can remain observationally indistinguishable from an operation that never reached the target. Blind retry can therefore create duplicate architectural effects unless additional end-to-end recovery information is available.</p>
+<p>The reference configuration shows that this ambiguity is not dependent on a one-flit transport simplification. At the same time, model refinement exposed other behaviors as implementation-dependent. The next step is validation against a concrete UCIe controller implementation.</p>
 </section>
 </main>
 <footer>UCIe / AoU fault-injection study · Reference-model evidence, not commercial-IP validation.<a href="#content">Back to top ↑</a>

@@ -1,0 +1,42 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_WRITE
+2002.000 ns  AXI accepts T1
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2008.000 ns  queued for the link
+2008.000 ns  write-data TX begins
+2011.000 ns  remote endpoint receives the request
+2017.000 ns  target accepts T1
+2021.000 ns  ARCHITECTURAL COMMIT
+2021.000 ns  memory write
+2023.000 ns  response created
+2025.000 ns  response queued
+2025.000 ns  queued for the link
+2025.000 ns  response TX
+2030.000 ns  absolute-time fault
+2030.000 ns  [MODEL] L1 entry
+2032.000 ns  response received by the initiating AoU
+2033.000 ns  initiator completion, observer A COMPLETED
+2130.000 ns  L1
+2630.000 ns  [MODEL] L1 exit
+2730.000 ns  ACTIVE
+2730.000 ns  Guest A creates T2 INCREMENT_COUNTER
+2732.000 ns  AXI accepts T2
+2734.000 ns  AoU packet ready
+2734.000 ns  queued for the link
+2734.000 ns  UCIe TX begins
+2738.000 ns  queued for the link
+2738.000 ns  write-data TX begins
+2741.000 ns  remote endpoint receives the request
+2747.000 ns  target accepts T2
+2751.000 ns  ARCHITECTURAL COMMIT
+2751.000 ns  counter 7 -> 8
+2753.000 ns  response created
+2755.000 ns  response queued
+2755.000 ns  queued for the link
+2755.000 ns  response TX
+2762.000 ns  response received by the initiating AoU
+2763.000 ns  initiator completion, observer A COMPLETED

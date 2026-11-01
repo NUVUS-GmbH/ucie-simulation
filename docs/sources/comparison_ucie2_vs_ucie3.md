@@ -150,4 +150,3 @@ Link recovery and transaction recovery are different events. The
 Conclusion
 
 Systematic fault-injection analysis shows that the transaction-fate ambiguity previously identified under UCIe 2.0 remains reachable under UCIe 3.0. Although UCIe 3.0 provides enhanced error signaling and recovery mechanisms, these mechanisms describe link and transport state rather than the architectural commit state of an outstanding AXI transaction. Two executions with different architectural outcomes can therefore remain observationally equivalent to the initiator after recovery.
-

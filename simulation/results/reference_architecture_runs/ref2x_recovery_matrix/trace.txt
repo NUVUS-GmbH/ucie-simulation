@@ -1,0 +1,76 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2008.000 ns  queued for the link
+2008.000 ns  write-data TX begins
+2011.000 ns  remote endpoint receives the request
+2017.000 ns  target accepts T1
+2021.000 ns  ARCHITECTURAL COMMIT
+2021.000 ns  counter 7 -> 8
+2023.000 ns  response created
+2023.000 ns  fault 12 at RESPONSE_CREATED
+2023.000 ns  RETRAIN
+2023.000 ns  UCIe enters Retrain
+2023.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+2025.000 ns  response queued
+7023.000 ns  Retrain completes and both adapters return to Active
+7023.000 ns  ACTIVE
+7023.000 ns  queued for the link
+7023.000 ns  response TX
+7030.000 ns  response received by the initiating AoU
+7031.000 ns  initiator completion, observer A COMPLETED
+7031.000 ns  Guest A creates T2 INCREMENT_COUNTER
+7033.000 ns  AXI accepts T2
+7035.000 ns  AoU packet ready
+7035.000 ns  queued for the link
+7035.000 ns  UCIe TX begins
+7039.000 ns  queued for the link
+7039.000 ns  write-data TX begins
+7042.000 ns  remote endpoint receives the request
+7048.000 ns  target accepts T2
+7052.000 ns  ARCHITECTURAL COMMIT
+7052.000 ns  counter 7 -> 8
+7054.000 ns  response created
+7054.000 ns  fault 13 at RESPONSE_CREATED
+7054.000 ns  LINK_RESET
+7054.000 ns  LinkReset entered
+17054.000 ns  [SPEC] pipelines and retry buffers flushed
+17054.000 ns  Response is discarded during cleanup
+17054.000 ns  no AXI completion, observer A UNKNOWN, observer D UNKNOWN
+17054.000 ns  RESET
+17054.000 ns  RECOVERING
+17054.000 ns  [MODEL] link reactivation
+19054.000 ns  ACTIVE
+19054.000 ns  link is Active again
+19054.000 ns  Guest A creates T3 INCREMENT_COUNTER
+19056.000 ns  AXI accepts T3
+19058.000 ns  AoU packet ready
+19058.000 ns  queued for the link
+19058.000 ns  UCIe TX begins
+19062.000 ns  queued for the link
+19062.000 ns  write-data TX begins
+19065.000 ns  remote endpoint receives the request
+19071.000 ns  target accepts T3
+19075.000 ns  ARCHITECTURAL COMMIT
+19075.000 ns  counter 7 -> 8
+19077.000 ns  response created
+19077.000 ns  fault 14 at RESPONSE_CREATED
+19077.000 ns  LINK_ERROR
+19077.000 ns  LinkError entered
+19077.000 ns  Forced LinkError
+19077.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+19097.000 ns  priority sideband delivered (LinkError)
+19097.000 ns  safety manager received LinkError and records the configured action
+16019077.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+16019077.000 ns  [SPEC] pipelines and retry buffers flushed
+16019077.000 ns  Response is discarded during cleanup
+16019077.000 ns  no AXI completion, observer A UNKNOWN, observer D UNKNOWN
+16019077.000 ns  RECOVERING
+16019077.000 ns  [MODEL] link reactivation
+16021077.000 ns  ACTIVE
+16021077.000 ns  link is Active again

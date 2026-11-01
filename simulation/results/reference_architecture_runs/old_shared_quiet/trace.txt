@@ -1,0 +1,122 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_WRITE
+2000.000 ns  Guest A creates T2 MEMORY_WRITE
+2000.000 ns  Guest A creates T3 MEMORY_WRITE
+2000.000 ns  Guest A creates T4 MEMORY_WRITE
+2000.000 ns  Guest A creates T5 MEMORY_WRITE
+2000.000 ns  Guest A creates T6 MEMORY_WRITE
+2000.000 ns  Guest B creates T7 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2003.000 ns  AXI accepts T7
+2004.000 ns  AoU packet ready
+2004.000 ns  AXI accepts T2
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2005.000 ns  AXI accepts T3
+2006.000 ns  AoU packet ready
+2006.000 ns  AXI accepts T4
+2007.000 ns  AXI accepts T5
+2008.000 ns  AoU packet ready
+2008.000 ns  AXI accepts T6
+2010.000 ns  AoU packet ready
+2011.000 ns  remote endpoint receives the request
+2012.000 ns  AoU packet ready
+2014.000 ns  AoU packet ready
+2014.000 ns  queued for the link
+2014.000 ns  write-data TX begins
+2016.000 ns  AoU packet ready
+2023.000 ns  target accepts T1
+2024.000 ns  queued for the link
+2024.000 ns  UCIe TX begins
+2027.000 ns  ARCHITECTURAL COMMIT
+2027.000 ns  memory write
+2029.000 ns  response created
+2031.000 ns  response queued
+2031.000 ns  remote endpoint receives the request
+2033.000 ns  queued for the link
+2033.000 ns  response TX
+2034.000 ns  queued for the link
+2034.000 ns  write-data TX begins
+2040.000 ns  response received by the initiating AoU
+2041.000 ns  initiator completion, observer A COMPLETED
+2043.000 ns  target accepts T7
+2044.000 ns  queued for the link
+2044.000 ns  UCIe TX begins
+2047.000 ns  ARCHITECTURAL COMMIT
+2047.000 ns  counter 7 -> 8
+2049.000 ns  response created
+2051.000 ns  response queued
+2051.000 ns  remote endpoint receives the request
+2053.000 ns  queued for the link
+2053.000 ns  response TX
+2054.000 ns  queued for the link
+2054.000 ns  write-data TX begins
+2060.000 ns  response received by the initiating AoU
+2061.000 ns  initiator completion, observer A COMPLETED
+2063.000 ns  target accepts T2
+2064.000 ns  queued for the link
+2064.000 ns  UCIe TX begins
+2067.000 ns  ARCHITECTURAL COMMIT
+2067.000 ns  memory write
+2069.000 ns  response created
+2071.000 ns  response queued
+2071.000 ns  remote endpoint receives the request
+2073.000 ns  queued for the link
+2073.000 ns  response TX
+2074.000 ns  queued for the link
+2074.000 ns  write-data TX begins
+2080.000 ns  response received by the initiating AoU
+2081.000 ns  initiator completion, observer A COMPLETED
+2083.000 ns  target accepts T3
+2084.000 ns  queued for the link
+2084.000 ns  UCIe TX begins
+2087.000 ns  ARCHITECTURAL COMMIT
+2087.000 ns  memory write
+2089.000 ns  response created
+2091.000 ns  response queued
+2091.000 ns  remote endpoint receives the request
+2093.000 ns  queued for the link
+2093.000 ns  response TX
+2094.000 ns  queued for the link
+2094.000 ns  write-data TX begins
+2100.000 ns  response received by the initiating AoU
+2101.000 ns  initiator completion, observer A COMPLETED
+2103.000 ns  target accepts T4
+2104.000 ns  queued for the link
+2104.000 ns  UCIe TX begins
+2107.000 ns  ARCHITECTURAL COMMIT
+2107.000 ns  memory write
+2109.000 ns  response created
+2111.000 ns  response queued
+2111.000 ns  remote endpoint receives the request
+2113.000 ns  queued for the link
+2113.000 ns  response TX
+2114.000 ns  queued for the link
+2114.000 ns  write-data TX begins
+2120.000 ns  response received by the initiating AoU
+2121.000 ns  initiator completion, observer A COMPLETED
+2123.000 ns  target accepts T5
+2124.000 ns  queued for the link
+2124.000 ns  UCIe TX begins
+2127.000 ns  ARCHITECTURAL COMMIT
+2127.000 ns  memory write
+2129.000 ns  response created
+2131.000 ns  response queued
+2131.000 ns  remote endpoint receives the request
+2133.000 ns  queued for the link
+2133.000 ns  response TX
+2134.000 ns  queued for the link
+2134.000 ns  write-data TX begins
+2140.000 ns  response received by the initiating AoU
+2141.000 ns  initiator completion, observer A COMPLETED
+2143.000 ns  target accepts T6
+2147.000 ns  ARCHITECTURAL COMMIT
+2147.000 ns  memory write
+2149.000 ns  response created
+2151.000 ns  response queued
+2151.000 ns  queued for the link
+2151.000 ns  response TX
+2158.000 ns  response received by the initiating AoU
+2159.000 ns  initiator completion, observer A COMPLETED

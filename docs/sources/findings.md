@@ -296,4 +296,3 @@ Conclusion
 Systematic fault injection identified legal execution traces in which a remote AXI operation reached its architectural commit point before UCIe entered LinkError, while the corresponding completion response was lost during error recovery. In these traces, the initiating endpoint could not distinguish a committed operation from an operation that had not executed. The modeled AoU 0.8/UCIe 2.0 stack therefore requires an explicit UNKNOWN transaction state or an additional end-to-end recovery mechanism for safe handling of non-idempotent transactions.
 
 Automatic retry after UCIe link recovery can result in duplicate architectural effects when a transaction commits remotely before its completion response is lost. Exactly-once semantics therefore cannot be assumed without additional transaction sequencing, persistent commit tracking or duplicate suppression.
-
