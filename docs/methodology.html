@@ -45,7 +45,7 @@
     <div class="wrap hero">
       <p class="kicker">Method</p>
       <h1 class="page-title">How the model separates architectural truth from what the initiator can see</h1>
-      <p class="lede">The simulator is a discrete-event model of one AXI manager, one AoU endpoint pair, and one UCIe link. It records the target’s commit count and, separately, the completion the initiator actually received.</p>
+      <p class="lede">The simulator is a discrete-event model of one <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> manager, one AoU endpoint pair, and one UCIe link. It records the target’s commit count and, separately, the completion the initiator actually received.</p>
     </div>
 
     <section>
@@ -54,7 +54,7 @@
         <p>Time is a sequence of protocol events. The 375-flit replay timeout, the 128-flit sequence-number handshake bound, the 8 ms sideband timeout, and the 16 ms LinkError residency are single events in the model. They are not wall-clock delays. The CRC LFSR in the specification is not executed. One-, two-, and three-bit flips are treated as detected because UCIe §3.7 guarantees detection of up to three bits. The replay-count limit defaults to 3. Section 3.8 points at the PCIe rules for speeds at or below 32 GT/s and does not restate that integer, so the model keeps it as a parameter.</p>
         <p>A transaction moves through logical phases. A fault may be armed at one of them:</p>
         <ol>
-          <li>Created, then accepted locally on AXI.</li>
+          <li>Created, then accepted locally on <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>.</li>
           <li>AoU request packed and the request flit transmitted.</li>
           <li>Request received by the remote endpoint.</li>
           <li>Write data accepted locally, packed, transmitted, and received remotely. Reads skip these phases.</li>
@@ -84,15 +84,15 @@
           <div><span>Initiator</span><code>completion_received = false</code></div>
           <div><span>Result</span><code>UNKNOWN</code></div>
         </div>
-        <p>Ground truth is the number of times the target applied the operation. Initiator state is whether AXI accepted the transaction and whether an OKAY completion was delivered. The label is computed from the initiator state and from the observation profile. The commit count is consulted only by the later invariant checks.</p>
-        <p>COMPLETED requires OKAY at the initiator. NOT_COMPLETED, under FDI and AXI alone, is a transaction the manager has not handed to the endpoint. After handoff, a missing completion is UNKNOWN. An explicit UNKNOWN response from policy C is UNKNOWN. It is not OKAY, and it is not permission to retry.</p>
+        <p>Ground truth is the number of times the target applied the operation. Initiator state is whether <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> accepted the transaction and whether an OKAY completion was delivered. The label is computed from the initiator state and from the observation profile. The commit count is consulted only by the later invariant checks.</p>
+        <p>COMPLETED requires OKAY at the initiator. NOT_COMPLETED, under FDI and <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> alone, is a transaction the manager has not handed to the endpoint. After handoff, a missing completion is UNKNOWN. An explicit UNKNOWN response from policy C is UNKNOWN. It is not OKAY, and it is not permission to retry.</p>
       </div>
     </section>
 
     <section>
       <div class="wrap">
         <h2>Policies</h2>
-        <p>UCIe does not say which AXI completion an outstanding transaction receives after LinkError. The model does not invent one silent answer. <code>Policy</code> in <code>simulation/model/types.py</code> is the choice.</p>
+        <p>UCIe does not say which <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> completion an outstanding transaction receives after LinkError. The model does not invent one silent answer. <code>Policy</code> in <code>simulation/model/types.py</code> is the choice.</p>
         <div class="table-wrap">
           <table>
             <caption>Named policies. Definitions follow the repository README.</caption>
@@ -105,7 +105,7 @@
             <tbody>
               <tr>
                 <th scope="row">A · DISCARD</th>
-                <td>Discard outstanding AoU transactions. No AXI completion.</td>
+                <td>Discard outstanding AoU transactions. No <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> completion.</td>
               </tr>
               <tr>
                 <th scope="row">B · PRESERVE_LOCAL</th>
@@ -143,12 +143,12 @@
             </thead>
             <tbody>
               <tr>
-                <th scope="row">1 · FDI / AXI</th>
-                <td>AXI was accepted, OKAY was or was not received, and a destructive link event occurred. This is the recovery interface the model treats as defined for the protocol layer: <code>pl_state_sts</code>, plus whatever AXI response was already delivered.</td>
+                <th scope="row">1 · FDI / <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr></th>
+                <td><abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> was accepted, OKAY was or was not received, and a destructive link event occurred. This is the recovery interface the model treats as defined for the protocol layer: <code>pl_state_sts</code>, plus whatever <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> response was already delivered.</td>
               </tr>
               <tr>
                 <th scope="row">2 · Software error</th>
-                <td>Profile 1, plus link and D2D error registers. Those registers name CRC, Retrain, and LinkError conditions. They do not name an AXI transaction.</td>
+                <td>Profile 1, plus link and D2D error registers. Those registers name CRC, Retrain, and LinkError conditions. They do not name an <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> transaction.</td>
               </tr>
               <tr>
                 <th scope="row">3 · Management</th>
@@ -156,12 +156,12 @@
               </tr>
               <tr>
                 <th scope="row">Retry disposition</th>
-                <td>ACK/NAK history latched before the retry buffer is flushed. Sections 3.8 and 10.3.3.5 do not require that history to survive, or to be tied to an AXI id. Using it is an assumption.</td>
+                <td>ACK/NAK history latched before the retry buffer is flushed. Sections 3.8 and 10.3.3.5 do not require that history to survive, or to be tied to an <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> id. Using it is an assumption.</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p>Profiles 2 and 3 are required not to change the FDI/AXI label. A true commit bit would mean the model had invented a field the specification does not define. On the reported equivalence pairs, all three standardized profiles match.</p>
+        <p>Profiles 2 and 3 are required not to change the FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> label. A true commit bit would mean the model had invented a field the specification does not define. On the reported equivalence pairs, all three standardized profiles match.</p>
       </div>
     </section>
 

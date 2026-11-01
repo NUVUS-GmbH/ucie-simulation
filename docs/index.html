@@ -50,8 +50,8 @@
   <main id="content">
     <div class="wrap hero" id="summary">
       <p class="kicker">AoU 0.8 over UCIe · discrete-event fault injection</p>
-      <h1>UCIe link recovery does not guarantee AXI transaction recovery</h1>
-      <p class="lede">A comparative fault-injection study of UCIe 2.0 and UCIe 3.0 shows that interrupted non-idempotent MMIO transactions can remain architecturally indeterminate after link recovery.</p>
+      <h1>UCIe link recovery does not guarantee <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> transaction recovery</h1>
+      <p class="lede">A comparative fault-injection study of UCIe 2.0 and UCIe 3.0 shows that interrupted <span class="term" title="Not safe to repeat. Doing it twice is not the same as doing it once, so a blind retry can commit the effect a second time.">non-idempotent</span> <abbr class="term" title="Memory-mapped I/O. A read or write to a device address, such as a control register, rather than to ordinary memory.">MMIO</abbr> transactions can remain architecturally <span class="term" title="Not settled by what the initiator can observe. A committed transaction and one that never reached the target can look the same.">indeterminate</span> after link recovery.</p>
 
       <div class="cards cards-3" style="margin-top: var(--space-32)">
         <article class="card">
@@ -92,7 +92,7 @@
     <section id="question">
       <div class="wrap">
         <p class="section-label">02 · Research question</p>
-        <h2>After UCIe error recovery, can the AXI initiator always determine whether an outstanding non-idempotent transaction committed?</h2>
+        <h2>After UCIe error recovery, can the <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> initiator always determine whether an outstanding <span class="term" title="Not safe to repeat. Doing it twice is not the same as doing it once, so a blind retry can commit the effect a second time.">non-idempotent</span> transaction committed?</h2>
         <p>For the initiator interface modeled here, the answer is no. Once the link is Active again, “the request was accepted” and “no completion arrived” is compatible with a committed operation and with an operation that never reached the target.</p>
         <p>The simulator therefore classifies each interrupted transaction as one of three states. The classifier reads initiator-visible facts. It does not read the target’s commit count. The count is ground truth, used afterwards to test whether a label was sound.</p>
         <div class="fates">
@@ -102,11 +102,11 @@
           </article>
           <article class="card">
             <h3 class="fate-name">NOT_COMPLETED</h3>
-            <p>The initiator has a positive reason to treat the effect as absent. Under FDI and AXI alone, that is a transaction the manager never handed to the endpoint. A NAK-only history supports this label only when it is latched before the retry buffers are flushed. UCIe does not require that latch.</p>
+            <p>The initiator has a positive reason to treat the effect as absent. Under FDI and <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> alone, that is a transaction the manager never handed to the endpoint. A NAK-only history supports this label only when it is latched before the retry buffers are flushed. UCIe does not require that latch.</p>
           </article>
           <article class="card">
             <h3 class="fate-name">UNKNOWN</h3>
-            <p>The transaction was accepted and no completion arrived, and standardized status does not prove that the effect was absent. Both counterexample traces receive this label from FDI and AXI.</p>
+            <p>The transaction was accepted and no completion arrived, and standardized status does not prove that the effect was absent. Both counterexample traces receive this label from FDI and <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>.</p>
           </article>
         </div>
         <div class="truth" aria-label="How the three labels are reached">
@@ -114,7 +114,7 @@
           <div><span>Never handed off</span><code>NOT_COMPLETED</code></div>
           <div><span>Accepted, no proof</span><code>UNKNOWN</code></div>
         </div>
-        <p class="caption">FDI reports link state on <code>pl_state_sts</code>. The cited AoU 0.8 §8.3.3 rule returns the activation FSM to DISABLED on link-down. Neither interface names the outstanding AXI transaction that had reached architectural commit.</p>
+        <p class="caption">FDI reports link state on <code>pl_state_sts</code>. The cited AoU 0.8 §8.3.3 rule returns the activation FSM to DISABLED on link-down. Neither interface names the outstanding <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> transaction that had reached architectural commit.</p>
       </div>
     </section>
 
@@ -122,16 +122,16 @@
       <div class="wrap">
         <p class="section-label">03 · Why this matters</p>
         <h2>A missing completion is not evidence that the command had no effect.</h2>
-        <p>If a command increments a hardware counter, starts DMA, triggers an actuator command, or rings a doorbell, repeating it may not be safe. The model treats those operations, and an accelerator start, as non-idempotent. The printed counterexample is the counter: the committed trace changes it from 7 to 8, then loses the response.</p>
+        <p>If a command increments a hardware counter, starts DMA, triggers an actuator command, or rings a doorbell, repeating it may not be safe. The model treats those operations, and an accelerator start, as <span class="term" title="Not safe to repeat. Doing it twice is not the same as doing it once, so a blind retry can commit the effect a second time.">non-idempotent</span>. The printed counterexample is the counter: the committed trace changes it from 7 to 8, then loses the response.</p>
         <p>The same gap appears where a chiplet shares a link across clients. In the UCIe 3.0 run <code>ucie3_two_guests_shared_link</code>, two initiators each finish with <code>architectural_commit_count = 1</code> and classification UNKNOWN. UCIe status is link-scoped. It does not say which guest command already took effect.</p>
-        <p>For a virtual ECU, the question after the link is healthy again is what it knows about the last safety-relevant command. A Level-4 platform that keeps a function available across a link fault still has to answer that question before it reissues MMIO to an actuator, a DMA engine, or a shared accelerator. The comparison’s automotive reading is that the sound state is UNKNOWN unless a completion was already delivered.</p>
+        <p>For a virtual ECU, the question after the link is healthy again is what it knows about the last safety-relevant command. A Level-4 platform that keeps a function available across a link fault still has to answer that question before it reissues <abbr class="term" title="Memory-mapped I/O. A read or write to a device address, such as a control register, rather than to ordinary memory.">MMIO</abbr> to an actuator, a DMA engine, or a shared accelerator. The comparison’s automotive reading is that the sound state is UNKNOWN unless a completion was already delivered.</p>
       </div>
     </section>
 
     <section id="model">
       <div class="wrap">
         <p class="section-label">04 · System model</p>
-        <h2>One AXI manager, one AoU endpoint pair, one UCIe link, one target.</h2>
+        <h2>One <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> manager, one AoU endpoint pair, one UCIe link, one target.</h2>
         <p>The simulator is a discrete-event model of that stack. Time is a sequence of protocol events. It is not a PHY and not a cycle-accurate UCIe implementation. The fault is injected on the channel between the adapters. Architectural commit happens at the target, after both the request and the write data have been delivered. The completion then has to travel back.</p>
         <ul class="legend">
           <li><span class="swatch swatch-request" aria-hidden="true"></span>Request path</li>
@@ -141,13 +141,13 @@
           <li><span class="swatch swatch-recovery" aria-hidden="true"></span>Recovery path</li>
         </ul>
         <ol class="path">
-          <li><span class="tag">Request</span><span>AXI Initiator</span></li>
+          <li><span class="tag">Request</span><span><abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> Initiator</span></li>
           <li><span class="tag">Request</span><span>AoU Endpoint A</span></li>
           <li><span class="tag">Request</span><span>UCIe Adapter A</span></li>
           <li class="fault"><span class="tag">Fault</span><span>Fault-injection channel</span></li>
           <li><span class="tag">Request</span><span>UCIe Adapter B</span></li>
           <li><span class="tag">Request</span><span>AoU Endpoint B</span></li>
-          <li class="commit"><span class="tag">Commit</span><span>AXI Target</span></li>
+          <li class="commit"><span class="tag">Commit</span><span><abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> Target</span></li>
         </ol>
         <p class="caption path-note">The completion travels back from the target to the initiator. Link recovery runs between the two adapters: Retrain, LinkError, reset, return to Active. Editable diagram: <a href="assets/architecture.svg">architecture.svg</a>.</p>
         <figure class="arch-wide">
@@ -176,7 +176,7 @@
                 </marker>
               </defs>
               <rect class="box" x="24" y="24" width="136" height="88" rx="8"/>
-              <text x="92" y="62" text-anchor="middle" font-size="15" font-weight="500">AXI</text>
+              <text x="92" y="62" text-anchor="middle" font-size="15" font-weight="500"><tspan class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</tspan></text>
               <text x="92" y="82" text-anchor="middle" font-size="15" font-weight="500">Initiator</text>
               <rect class="box" x="176" y="24" width="136" height="88" rx="8"/>
               <text x="244" y="62" text-anchor="middle" font-size="15" font-weight="500">AoU</text>
@@ -194,7 +194,7 @@
               <text x="852" y="62" text-anchor="middle" font-size="15" font-weight="500">AoU</text>
               <text x="852" y="82" text-anchor="middle" font-size="15" font-weight="500">Endpoint B</text>
               <rect class="box commit-box" x="936" y="24" width="140" height="88" rx="8"/>
-              <text x="1006" y="56" text-anchor="middle" font-size="15" font-weight="500">AXI</text>
+              <text x="1006" y="56" text-anchor="middle" font-size="15" font-weight="500"><tspan class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</tspan></text>
               <text x="1006" y="76" text-anchor="middle" font-size="15" font-weight="500">Target</text>
               <circle class="commit-dot" cx="1006" cy="94" r="4"/>
               <line class="request" x1="160" y1="68" x2="174" y2="68" marker-end="url(#arch-arrow)"/>
@@ -208,7 +208,7 @@
               <text class="muted" x="548" y="176" text-anchor="middle" font-size="13">Recovery path · Retrain, LinkError, reset, return to Active</text>
               <path class="response" d="M 1006 132 V 268 H 92 V 120" marker-end="url(#arch-arrow)"/>
               <text class="muted" x="548" y="248" text-anchor="middle" font-size="13">Response path · completion travels back toward the initiator</text>
-              <text x="24" y="308" font-size="14">Commit is a target-local architectural effect. It is not the UCIe acknowledgement, and it is not the AXI completion.</text>
+              <text x="24" y="308" font-size="14">Commit is a target-local architectural effect. It is not the UCIe acknowledgement, and it is not the <tspan class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</tspan> completion.</text>
               <text class="muted" x="24" y="332" font-size="13">A lost completion can leave architectural_commit_count = 1 while completion_received = false.</text>
             </svg>
           </div>
@@ -221,15 +221,15 @@
       <div class="wrap">
         <p class="section-label">05 · Key counterexample</p>
         <h2>Same observation. Different reality.</h2>
-        <p>These are two different executions of a non-idempotent MMIO increment at <code>0x1000</code>, policy A (discard outstanding transactions, no AXI completion). In T17 the target commits and the write response is then lost. In T18 every copy of the request fails CRC before the target accepts it. After LinkError and return to Active, the FDI/AXI view is the same.</p>
+        <p>These are two different executions of a <span class="term" title="Not safe to repeat. Doing it twice is not the same as doing it once, so a blind retry can commit the effect a second time.">non-idempotent</span> <abbr class="term" title="Memory-mapped I/O. A read or write to a device address, such as a control register, rather than to ordinary memory.">MMIO</abbr> increment at <code>0x1000</code>, policy A (discard outstanding transactions, no <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> completion). In T17 the target commits and the write response is then lost. In T18 every copy of the request fails CRC before the target accepts it. After LinkError and return to Active, the FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> view is the same.</p>
         <p>Because the initiator-visible state is identical while the architectural truth differs, transaction fate cannot be uniquely reconstructed.</p>
 
         <div class="traces">
           <article class="trace">
-            <p class="trace-id">Trace A · T17 · MMIO_WRITE · INCREMENT_COUNTER</p>
+            <p class="trace-id">Trace A · T17 · <abbr class="term" title="Memory-mapped I/O write. A write to a device address rather than to ordinary memory.">MMIO_WRITE</abbr> · INCREMENT_COUNTER</p>
             <h3>Committed write, response lost</h3>
             <ol>
-              <li>AXI write accepted</li>
+              <li><abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> write accepted</li>
               <li>Request reaches the target</li>
               <li>Target commits</li>
               <li>Architectural state changes: counter 7 to 8</li>
@@ -249,10 +249,10 @@
           </article>
           <p class="trace-center">Same observation. Different reality.</p>
           <article class="trace">
-            <p class="trace-id">Trace B · T18 · MMIO_WRITE · INCREMENT_COUNTER</p>
+            <p class="trace-id">Trace B · T18 · <abbr class="term" title="Memory-mapped I/O write. A write to a device address rather than to ordinary memory.">MMIO_WRITE</abbr> · INCREMENT_COUNTER</p>
             <h3>Write never reaches the target</h3>
             <ol>
-              <li>AXI write accepted locally</li>
+              <li><abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> write accepted locally</li>
               <li>UCIe request repeatedly corrupted</li>
               <li>Request never reaches the target</li>
               <li>LinkError</li>
@@ -269,7 +269,7 @@
         </div>
 
         <div class="callout callout-status">
-          <p>Both initiator views, from FDI and AXI: the request was accepted, and no B response arrived. UCIe 3.0 profile 3, which may also read software error state and standardized management facts, still matches on this pair.</p>
+          <p>Both initiator views, from FDI and <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>: the request was accepted, and no B response arrived. UCIe 3.0 profile 3, which may also read software error state and standardized management facts, still matches on this pair.</p>
           <p><code>axi_accepted=true, completion_received=false, signals=linkerror, crc_error, retrain, uncorrectable, remote_linkerror_sideband, axi_commit_bit=false</code></p>
         </div>
 
@@ -283,7 +283,7 @@
         </ol>
         <p class="caption">AoU remains enabled across Retrain. FDI link-down is not signaled for Retrain. LinkError returns the activation FSM to DISABLED under the cited AoU 0.8 §8.3.3 rule, flushes retry buffers, and discards the outstanding message. This is the path of these two traces. Other runs end in a transparent retry or a completed response. Counts are in the results.</p>
 
-        <p>If the initiating adapter latches retry disposition before the flush, the traces separate. T18 was only NAK’d, and UCIe does not deliver a CRC-invalid flit, so that assumed latch classifies it NOT_COMPLETED. T17 was acknowledged and then lost its response, so it stays UNKNOWN. The latch is an assumption. UCIe flushes retry buffers on this path and does not require the NAK/ACK history to be kept, tied to an AXI id, and shown to software. The cited AoU 0.8 text does not require it either. Safe automatic retry of T17 is no, with or without the latch.</p>
+        <p>If the initiating adapter latches retry disposition before the flush, the traces separate. T18 was only NAK’d, and UCIe does not deliver a CRC-invalid flit, so that assumed latch classifies it NOT_COMPLETED. T17 was acknowledged and then lost its response, so it stays UNKNOWN. The latch is an assumption. UCIe flushes retry buffers on this path and does not require the NAK/ACK history to be kept, tied to an <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> id, and shown to software. The cited AoU 0.8 text does not require it either. Safe automatic retry of T17 is no, with or without the latch.</p>
         <p>The same observational equivalence is reported for three UCIe 3.0-only pairs: Emergency Shutdown, priority sideband plus a mainband loss, and endpoint reset. In each pair the commit counts differ and profiles 1, 2, and 3 still match. <a href="results.html#pairs">Signal sets</a>.</p>
         <p class="caption">Condensed from the generated traces. Line-by-line text: <a href="sources/findings.md">findings.md</a> and <a href="sources/findings_ucie3.md">findings_ucie3.md</a>. Diagram file: <a href="assets/counterexample.svg">counterexample.svg</a>.</p>
       </div>
@@ -322,7 +322,7 @@
               </tr>
               <tr>
                 <th scope="row">Fault signaling</th>
-                <td>FDI link state. Modeled error registers name CRC, Retrain, and LinkError, not an AXI transaction</td>
+                <td>FDI link state. Modeled error registers name CRC, Retrain, and LinkError, not an <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> transaction</td>
                 <td>Those registers remain. Runtime parity, runtime recalibration, the Link Health Monitor, and management transport are also visible. In every equivalence pair the committed and uncommitted traces still match</td>
               </tr>
               <tr>
@@ -362,15 +362,15 @@
       <div class="wrap">
         <p class="section-label">07 · Simulation method</p>
         <h2>Ground truth and the initiator’s view are recorded separately.</h2>
-        <p>Each run is a state machine over AXI, AoU, and UCIe phases: local acceptance, packing, transmission, remote reception, target acceptance, architectural commit, response creation, and response delivery. Faults are armed at a chosen phase. The UCIe paths exercised are CRC replay, the retry threshold, Retrain, LinkReset, and LinkError, plus the UCIe 3.0 mechanisms listed above.</p>
-        <p>The non-idempotent MMIO model commits at the target. The initiator-visible record stores whether AXI was accepted and whether OKAY was delivered. Systematic scenarios cover the phase crossings. A second suite draws 200 randomized injections from seed 1. Both suites are replayed on the UCIe 3.0 rule set.</p>
+        <p>Each run is a state machine over <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>, AoU, and UCIe phases: local acceptance, packing, transmission, remote reception, target acceptance, architectural commit, response creation, and response delivery. Faults are armed at a chosen phase. The UCIe paths exercised are CRC replay, the retry threshold, Retrain, LinkReset, and LinkError, plus the UCIe 3.0 mechanisms listed above.</p>
+        <p>The <span class="term" title="Not safe to repeat. Doing it twice is not the same as doing it once, so a blind retry can commit the effect a second time.">non-idempotent</span> <abbr class="term" title="Memory-mapped I/O. A read or write to a device address, such as a control register, rather than to ordinary memory.">MMIO</abbr> model commits at the target. The initiator-visible record stores whether <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> was accepted and whether OKAY was delivered. Systematic scenarios cover the phase crossings. A second suite draws 200 randomized injections from seed 1. Both suites are replayed on the UCIe 3.0 rule set.</p>
         <div class="truth" aria-label="Example of ground truth against initiator state">
           <div><span>Ground truth</span><code>architectural_commit_count = 1</code></div>
           <div><span>Initiator</span><code>completion_received = false</code></div>
           <div><span>Result</span><code>UNKNOWN</code></div>
         </div>
         <p>That split is T17. The classifier never consults the commit count. A later check uses the count only to detect a false safe retry or a duplicate commit.</p>
-        <p>Outstanding-transaction fate after cleanup is a named policy, because the specification text used here does not define the AXI completion for an outstanding transaction. Five policies are compared. Observation profiles restrict what the classifier may read: FDI and AXI; software error registers; standardized management; and, as an explicit assumption, latched retry disposition. <a href="methodology.html">Method, policies, and what was taken from the specifications</a>.</p>
+        <p>Outstanding-transaction fate after cleanup is a named policy, because the specification text used here does not define the <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> completion for an outstanding transaction. Five policies are compared. Observation profiles restrict what the classifier may read: FDI and <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>; software error registers; standardized management; and, as an explicit assumption, latched retry disposition. <a href="methodology.html">Method, policies, and what was taken from the specifications</a>.</p>
       </div>
     </section>
 
@@ -399,7 +399,7 @@
             </div>
           </article>
           <article class="card">
-            <h3>FDI / AXI class</h3>
+            <h3>FDI / <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> class</h3>
             <div class="metric-list">
               <div><span>COMPLETED</span><strong>158</strong></div>
               <div><span>NOT_COMPLETED</span><strong>10</strong></div>
@@ -420,7 +420,7 @@
         <p class="caption" style="margin-top: var(--space-16)">The equivalent workload on the UCIe 3.0 model reports the same 289 simulations, the same 171 UNKNOWN transactions, 17 liveness failures, and 204 recovery traces explored on each side. Duplicate commit and false safe retry remain reachable. This page does not give the 10 credit-invariant hits or the 17 liveness failures a specification-defect reading. They are the report’s invariant totals.</p>
 
         <h3 style="margin-top: var(--space-32)">UNKNOWN rate by fault position</h3>
-        <p>Randomized suite only, seed 1, watched transaction, FDI/AXI. A non-zero COMPLETED count means replay or a non-destructive fault still delivered the response. The comparison reports these same five rates for UCIe 3.0.</p>
+        <p>Randomized suite only, seed 1, watched transaction, FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>. A non-zero COMPLETED count means replay or a non-destructive fault still delivered the response. The comparison reports these same five rates for UCIe 3.0.</p>
         <figure>
           <div class="bars" role="img" aria-label="UNKNOWN rate by fault position. Before target acceptance 48.8 percent, 21 of 43. After target acceptance 52.1 percent, 25 of 48. After architectural commit 69.4 percent, 25 of 36. After response generation 54.5 percent, 18 of 33. After response delivery 0 percent, 0 of 40.">
             <div class="bar-row">
@@ -504,7 +504,7 @@
           <li><strong>Original transaction had already committed</strong></li>
           <li><strong>Duplicate effect</strong><br>Counter 7 → 8, then a second commit</li>
         </ol>
-        <p>Exactly-once semantics therefore cannot be assumed from link recovery. They need additional transaction sequencing, persistent commit tracking, or duplicate suppression. UNKNOWN remains a necessary transaction state for the modeled scenarios. Automatic retry of an interrupted non-idempotent operation is unsafe without end-to-end commit knowledge or duplicate suppression.</p>
+        <p>Exactly-once semantics therefore cannot be assumed from link recovery. They need additional transaction sequencing, persistent commit tracking, or duplicate suppression. UNKNOWN remains a necessary transaction state for the modeled scenarios. Automatic retry of an interrupted <span class="term" title="Not safe to repeat. Doing it twice is not the same as doing it once, so a blind retry can commit the effect a second time.">non-idempotent</span> operation is unsafe without end-to-end commit knowledge or duplicate suppression.</p>
         <p>The comparison applies that to virtualization. UCIe 3.0 error signaling cannot be mapped directly to a guest-visible transaction failure: the same CRC, Retrain, and LinkError status appears for a command that committed and for a command that did not. A LinkError invalidates a known success. It does not justify recording the command as known not to have executed. Several guests on one link are not isolated, for retrospective fate, by a physical link fault.</p>
       </div>
     </section>
@@ -527,7 +527,7 @@
           <article class="card">
             <h3>What they do not provide in the modeled scenarios</h3>
             <ul>
-              <li>AXI architectural commit knowledge.</li>
+              <li><abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> architectural commit knowledge.</li>
               <li>End-to-end exactly-once semantics.</li>
               <li>Mandatory transaction commit logging.</li>
               <li>Duplicate suppression across recovery.</li>
@@ -538,7 +538,7 @@
         <div class="callout">
           <p>This study does not claim that UCIe is incorrect. It identifies a cross-layer recovery gap between link-level recovery semantics and transaction-level architectural knowledge.</p>
         </div>
-        <p style="margin-top: var(--space-16)">UCIe 3.0 §10.3.4, as used by the model, still says the adapter and PHY do not guarantee quiescence of protocol transactions. Two recorded integration choices sit in that gap. Preserving retry state across Retrain ends the unacknowledged-response case as COMPLETED with commit count 1. Reinitializing it, which is what §3.8 describes for the IDLE-handshake retry variables, ends as UNKNOWN with commit count 1 and a deadlock flag. Separately, a write response already queued in the initiating AoU and not yet accepted on AXI is UNKNOWN under policy A and COMPLETED under policy B, both with commit count 1. The report calls that an integration choice, not a detected coding bug.</p>
+        <p style="margin-top: var(--space-16)">UCIe 3.0 §10.3.4, as used by the model, still says the adapter and PHY do not guarantee quiescence of protocol transactions. Two recorded integration choices sit in that gap. Preserving retry state across Retrain ends the unacknowledged-response case as COMPLETED with commit count 1. Reinitializing it, which is what §3.8 describes for the IDLE-handshake retry variables, ends as UNKNOWN with commit count 1 and a deadlock flag. Separately, a write response already queued in the initiating AoU and not yet accepted on <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> is UNKNOWN under policy A and COMPLETED under policy B, both with commit count 1. The report calls that an integration choice, not a detected coding bug.</p>
       </div>
     </section>
 
@@ -554,7 +554,7 @@
           <li>Reachability results are stronger than statistical rates.</li>
           <li>The study does not prove that every implementation will exhibit the same outcome.</li>
           <li>The study shows that the ambiguity is reachable under the modeled, specification-consistent assumptions.</li>
-          <li>UCIe link behavior and AXI architectural commit semantics are modeled at different abstraction levels.</li>
+          <li>UCIe link behavior and <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> architectural commit semantics are modeled at different abstraction levels.</li>
         </ul>
         <p><a href="limitations.html">Modeling limits, parameters, and the device-commit assumption</a>.</p>
       </div>
@@ -578,8 +578,8 @@ python -m simulation.main --seed 1 --random 200</code></pre>
     <section id="conclusion">
       <div class="wrap">
         <p class="section-label">13 · Conclusion</p>
-        <h2>UCIe 2.0 and UCIe 3.0 can both recover from link-level faults, but neither guarantees that an AXI initiator can reconstruct the architectural fate of every outstanding non-idempotent transaction.</h2>
-        <p>For safety-critical virtualization, interrupted transactions must therefore be modeled as potentially indeterminate unless an additional end-to-end recovery mechanism exists.</p>
+        <h2>UCIe 2.0 and UCIe 3.0 can both recover from link-level faults, but neither guarantees that an <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> initiator can reconstruct the architectural fate of every outstanding <span class="term" title="Not safe to repeat. Doing it twice is not the same as doing it once, so a blind retry can commit the effect a second time.">non-idempotent</span> transaction.</h2>
+        <p>For safety-critical virtualization, interrupted transactions must therefore be modeled as potentially <span class="term" title="Not settled by what the initiator can observe. A committed transaction and one that never reached the target can look the same.">indeterminate</span> unless an additional end-to-end recovery mechanism exists.</p>
       </div>
     </section>
 
@@ -597,7 +597,7 @@ python -m simulation.main --seed 1 --random 200</code></pre>
         </ul>
         <p>Repository tree, at the root of the project rather than on the Pages artifact:</p>
         <ul class="source-list">
-          <li><code>simulation/model/</code> AXI, AoU, UCIe, target, channel</li>
+          <li><code>simulation/model/</code> <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>, AoU, UCIe, target, channel</li>
           <li><code>simulation/faults/</code> injector and scenarios</li>
           <li><code>simulation/experiments/</code> systematic, randomized, and comparison runners</li>
           <li><code>simulation/tests/</code></li>

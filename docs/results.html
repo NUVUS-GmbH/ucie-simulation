@@ -85,7 +85,7 @@
     <section>
       <div class="wrap">
         <h2>UCIe 2.0 baseline totals</h2>
-        <p>From <a href="sources/findings.md">findings.md</a>. FDI/AXI classification counts cover systematic and randomized transactions. They are not a split of the 289 simulations. Invariant totals are reported as the simulator recorded them. This page does not assign the credit or liveness totals a protocol-defect cause.</p>
+        <p>From <a href="sources/findings.md">findings.md</a>. FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> classification counts cover systematic and randomized transactions. They are not a split of the 289 simulations. Invariant totals are reported as the simulator recorded them. This page does not assign the credit or liveness totals a protocol-defect cause.</p>
         <div class="table-wrap">
           <table>
             <thead>
@@ -116,7 +116,7 @@
 
     <section>
       <div class="wrap">
-        <h2>Fault position, FDI / AXI</h2>
+        <h2>Fault position, FDI / <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr></h2>
         <p>Randomized simulation, watched transaction only. <em>n</em> is the number of injected faults in that bucket. Observed under the selected seeded fault workload.</p>
         <div class="table-wrap">
           <table>
@@ -290,7 +290,7 @@
     <section>
       <div class="wrap">
         <h2>Policy comparison and integration choices</h2>
-        <p>FDI/AXI observation, from the UCIe 2.0 report. “Violations 0” means the invariant checker recorded none for that paired run.</p>
+        <p>FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> observation, from the UCIe 2.0 report. “Violations 0” means the invariant checker recorded none for that paired run.</p>
         <div class="table-wrap">
           <table>
             <thead>
@@ -331,7 +331,7 @@
         </div>
         <p>Policy C differs from policy A by making UNKNOWN explicit. The fate label is still UNKNOWN. Policy D differs by retrying.</p>
         <p>Retrain while the response is still unacknowledged: preserve-retry ends as COMPLETED, commit 1, deadlock false. Reinitialize-retry ends as UNKNOWN, commit 1, deadlock true. The report calls these two outcomes an integration ambiguity. UCIe 2.0 §3.8 reinitializes the IDLE-handshake retry variables on Retrain, and §10.3.3.5 states a flush for LinkReset, not for Retrain.</p>
-        <p>A write response sitting in the initiating AoU, not yet accepted on AXI, then LinkError: policy A is UNKNOWN with commit 1, and policy B is COMPLETED with commit 1. UCIe does not say whether a response already queued above the adapter survives LinkError cleanup. The report calls that an integration choice, not a detected coding bug.</p>
+        <p>A write response sitting in the initiating AoU, not yet accepted on <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>, then LinkError: policy A is UNKNOWN with commit 1, and policy B is COMPLETED with commit 1. UCIe does not say whether a response already queued above the adapter survives LinkError cleanup. The report calls that an integration choice, not a detected coding bug.</p>
         <p><a href="sources/findings.md">UCIe 2.0 report</a> · <a href="sources/findings_ucie3.md">UCIe 3.0 report</a> · <a href="sources/comparison_ucie2_vs_ucie3.md">Comparison</a> · <a href="data/findings.json">JSON</a></p>
       </div>
     </section>

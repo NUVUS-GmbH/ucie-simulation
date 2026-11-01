@@ -843,3 +843,38 @@ details ol {
     gap: 0;
   }
 }
+
+.term {
+  cursor: help;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--muted-foreground);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.term-tip {
+  position: fixed;
+  z-index: 5;
+  max-width: 320px;
+  margin: 0;
+  padding: var(--space-8) var(--space-12);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: var(--shadow-xl);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 1.45;
+  text-align: left;
+  text-decoration: none;
+  pointer-events: none;
+}
+
+.term-tip[hidden] {
+  display: none;
+}
