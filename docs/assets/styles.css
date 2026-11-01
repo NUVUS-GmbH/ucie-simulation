@@ -309,6 +309,30 @@ dt {
   line-height: 1.1;
 }
 
+#scope {
+  margin-top: var(--space-32);
+}
+
+.card-note {
+  display: block;
+  margin-top: var(--space-8);
+  color: var(--muted-foreground);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.45;
+}
+
+.card ul,
+.card ol {
+  margin: var(--space-12) 0 0;
+  padding-left: 1.2em;
+}
+
+.card li + li {
+  margin-top: var(--space-8);
+}
+
 .callout {
   margin: var(--space-24) 0 0;
   padding: var(--space-16) var(--space-24);

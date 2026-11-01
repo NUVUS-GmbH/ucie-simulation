@@ -45,7 +45,7 @@
     <div class="wrap hero">
       <p class="kicker">Results</p>
       <h1 class="page-title">Measured results</h1>
-      <p class="lede">Every count on this page is taken from the generated reports. Percentages are observed under the selected seeded fault workload. They are not intrinsic protocol probabilities. Reachability is the stronger result.</p>
+      <p class="lede">Every count on this page is taken from the generated reports. Reachability is the scientific conclusion. A percentage below is a fault-workload observation, seed 1 — not an estimated field failure probability, and not a general comparison of UCIe 2.0 and UCIe 3.0 reliability.</p>
     </div>
 
     <section>
@@ -78,14 +78,15 @@
             </tbody>
           </table>
         </div>
-        <p>UCIe 3.0 does not eliminate a UCIe 2.0 ambiguity class on this workload. Zero scenario names leave the UNKNOWN set, and zero names enter it. The logical-event ambiguity window is not shorter. Sideband performant mode removes a 32 UI sideband gap. That gap is not a fate milestone in this model, and the specification does not define it as one.</p>
+        <p>For the specific property studied here — reconstructing the architectural fate of an interrupted non-idempotent transaction from the modeled standardized observations — the tested UCIe 3.0 mechanisms did not eliminate the ambiguity found in the UCIe 2.0 model. Zero scenario names leave the UNKNOWN set, and zero names enter it. The logical-event ambiguity window is not shorter. Equality of these counts, including UNKNOWN 171 and 171, applies only to this workload and this transaction-fate property. It is not a statement that UCIe 3.0 is no better than UCIe 2.0, and it is not a general comparison of reliability.</p>
+        <p>UCIe 3.0 adds useful link, management, sideband, recalibration, and emergency-handling capabilities. Sideband performant mode removes a 32 UI sideband gap. That gap is not a fate milestone in this model, and the specification does not define it as one. The added mechanisms do not, by themselves, provide architectural commit knowledge for the transaction-fate cases investigated here.</p>
       </div>
     </section>
 
     <section>
       <div class="wrap">
         <h2>UCIe 2.0 baseline totals</h2>
-        <p>From <a href="sources/findings.md">findings.md</a>. FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> classification counts cover systematic and randomized transactions. They are not a split of the 289 simulations. Invariant totals are reported as the simulator recorded them. This page does not assign the credit or liveness totals a protocol-defect cause.</p>
+        <p>From <a href="sources/findings.md">findings.md</a>. FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> classification counts cover systematic and randomized transactions. They are not a split of the 289 simulations. The reported liveness and credit invariant totals are simulator outcomes. This study does not currently attribute them to normative UCIe defects. The model includes an injected credit fault. The generated report records 10 credit-invariant violations and does not split them by cause, so they are not investigated further on this page.</p>
         <div class="table-wrap">
           <table>
             <thead>
@@ -117,7 +118,7 @@
     <section>
       <div class="wrap">
         <h2>Fault position, FDI / <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr></h2>
-        <p>Randomized simulation, watched transaction only. <em>n</em> is the number of injected faults in that bucket. Observed under the selected seeded fault workload.</p>
+        <p>Fault-workload observation, seed 1 — not an estimated field failure probability. Randomized simulation, watched transaction only. <em>n</em> is the number of injected faults in that bucket.</p>
         <div class="table-wrap">
           <table>
             <thead>
@@ -140,7 +141,7 @@
           </table>
         </div>
         <h3>Same runs, if retry disposition is latched</h3>
-        <p>This table is the report’s second classification. The latch is an assumption. It changes the pre-acceptance bucket. It does not remove UNKNOWN after the target has accepted the write.</p>
+        <p>This table is the report’s second classification. Retaining transport ACK/NAK history can improve classification before target acceptance: UNKNOWN in that bucket falls from 48.8% (21/43) to 11.6% (5/43). It cannot by itself prove the architectural commit state after the request has progressed beyond the transport boundary. The later buckets do not change. This latch is an assumed implementation enhancement, not a standardized AXI transaction-fate mechanism.</p>
         <div class="table-wrap">
           <table>
             <caption>Assumption: ACK/NAK history survives the flush and is visible to the classifier.</caption>
@@ -199,7 +200,7 @@
     <section id="pairs">
       <div class="wrap">
         <h2>Observational equivalence</h2>
-        <p>A pair is an equivalence when the commit counts differ and all three observation profiles still match. The comparison reports four pairs.</p>
+        <p>Two executions are observationally equivalent for an observer when their architectural ground truth differs, but every fact available to that observer is identical. A pair below meets that test: the commit counts differ, and all three observation profiles still match. The comparison reports four pairs. The modeled observer cannot distinguish the two executions in a pair.</p>
         <div class="table-wrap">
           <table>
             <caption>Profile 3 views. axi_commit_bit is false because the specification does not define one. Source: findings_ucie3.md.</caption>
@@ -234,7 +235,7 @@
             </tbody>
           </table>
         </div>
-        <p>Each committed and uncommitted view also has <code>axi_accepted=true</code>, <code>completion_received=false</code>, and <code>axi_commit_bit=false</code>.</p>
+        <p>Each committed and uncommitted view also has <code>axi_accepted=true</code>, <code>completion_received=false</code>, and <code>axi_commit_bit=false</code>. Emergency Shutdown is not another CRC or replay case. It has a different system purpose: rapid containment of a severe condition. The pair shows that the same transaction-fate question can arise when communication is destructively interrupted by endpoint or power recovery. The study asks what software can infer about transactions that were in flight. It does not treat Emergency Shutdown as defective because it does not preserve transaction completion.</p>
         <h3>UCIe 3.0-only scenarios whose watched transaction is UNKNOWN</h3>
         <ul>
           <li><code>ucie3_emergency_after_commit</code></li>
@@ -245,7 +246,7 @@
           <li><code>ucie3_endpoint_reset_before_acceptance</code></li>
           <li><code>ucie3_two_guests_shared_link</code></li>
         </ul>
-        <p>In <code>ucie3_two_guests_shared_link</code> the profile-3 views are identical:</p>
+        <p>In <code>ucie3_two_guests_shared_link</code> the profile-3 views are identical. A link-scoped recovery event may affect transaction-fate knowledge for multiple clients sharing that physical transport. This scenario motivates a separate freedom-from-interference study. It does not by itself establish an ISO 26262 freedom-from-interference violation.</p>
         <ul>
           <li>T70, axi_id 1: architectural_commit_count = 1, classification UNKNOWN, axi_accepted=true, completion_received=false, signals=linkerror, uncorrectable, remote_linkerror_sideband, axi_commit_bit=false</li>
           <li>T71, axi_id 2: architectural_commit_count = 1, classification UNKNOWN, axi_accepted=true, completion_received=false, signals=linkerror, uncorrectable, remote_linkerror_sideband, axi_commit_bit=false</li>
@@ -256,7 +257,7 @@
     <section>
       <div class="wrap">
         <h2>Transport acknowledgement and retry</h2>
-        <p>On the UCIe 3.0 systematic runs, 9 transactions had a transport ACK with architectural_commit_count 0, and 33 transactions had a commit without an initiator completion.</p>
+        <p>In the modeled architecture, transport-level acknowledgement and target architectural commit are distinct events. On the UCIe 3.0 systematic runs, 9 transactions had a transport ACK with architectural_commit_count 0, and 33 transactions had a commit without an initiator completion. That distinction is a result of this model. It is not a universal claim about every protocol.</p>
         <p>Automatic retry of the committed UCIe 3.0 loss, policy D:</p>
         <div class="truth">
           <div><span>Commit count</span><code>architectural_commit_count = 2</code></div>
@@ -330,7 +331,7 @@
           </table>
         </div>
         <p>Policy C differs from policy A by making UNKNOWN explicit. The fate label is still UNKNOWN. Policy D differs by retrying.</p>
-        <p>Retrain while the response is still unacknowledged: preserve-retry ends as COMPLETED, commit 1, deadlock false. Reinitialize-retry ends as UNKNOWN, commit 1, deadlock true. The report calls these two outcomes an integration ambiguity. UCIe 2.0 §3.8 reinitializes the IDLE-handshake retry variables on Retrain, and §10.3.3.5 states a flush for LinkReset, not for Retrain.</p>
+        <p>Retrain while the response is still unacknowledged: preserve-retry ends as COMPLETED, commit 1, deadlock false. Reinitialize-retry ends as UNKNOWN, commit 1, deadlock true. The model identifies an integration ambiguity whose outcome depends on retry-state handling. UCIe 2.0 §3.8 reinitializes the IDLE-handshake retry variables on Retrain, and §10.3.3.5 states a flush for LinkReset, not for Retrain. The study does not treat that difference as a confirmed normative defect.</p>
         <p>A write response sitting in the initiating AoU, not yet accepted on <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>, then LinkError: policy A is UNKNOWN with commit 1, and policy B is COMPLETED with commit 1. UCIe does not say whether a response already queued above the adapter survives LinkError cleanup. The report calls that an integration choice, not a detected coding bug.</p>
         <p><a href="sources/findings.md">UCIe 2.0 report</a> · <a href="sources/findings_ucie3.md">UCIe 3.0 report</a> · <a href="sources/comparison_ucie2_vs_ucie3.md">Comparison</a> · <a href="data/findings.json">JSON</a></p>
       </div>

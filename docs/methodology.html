@@ -45,7 +45,8 @@
     <div class="wrap hero">
       <p class="kicker">Method</p>
       <h1 class="page-title">How the model separates architectural truth from what the initiator can see</h1>
-      <p class="lede">The simulator is a discrete-event model of one <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> manager, one AoU endpoint pair, and one UCIe link. It records the target’s commit count and, separately, the completion the initiator actually received.</p>
+      <p class="lede">The simulator is an <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr>/AoU-inspired transaction model over specification-derived UCIe recovery behavior. It records the target’s commit count and, separately, the completion the initiator actually received.</p>
+      <p class="caption">The complete AoU 0.8 text was not available to the model-building workspace. AoU packing and credit behavior are explicit abstractions. The cited link-down activation rule is the normative AoU behavior used by the model. This is not a full AoU 0.8 conformance implementation.</p>
     </div>
 
     <section>
@@ -64,6 +65,7 @@
           <li>Transaction completed at the initiator.</li>
         </ol>
         <p>The device model commits a write only after both the request and the write data have been delivered. It does not commit on the address alone. Early write response is off unless a scenario turns it on. Both choices are device-model assumptions. AoU and UCIe do not define the device’s commit point.</p>
+        <p>The model is intentionally event-accurate rather than cycle-accurate because the primary property is an observability and reachability property: whether two different architectural outcomes can produce the same observer-visible state. Cycle-accurate modeling would be needed for quantitative real-time claims such as worst-case recovery latency, deadline violations, arbitration effects, or a precise ambiguity duration in nanoseconds.</p>
       </div>
     </section>
 
@@ -72,7 +74,7 @@
         <h2>Link paths</h2>
         <p>UCIe behavior is taken from Revision 2.0, Version 1.0 (6 August 2024), and, for the second model, from Revision 3.0, Version 1.0 (5 August 2025). A 2.0 rule is used in the 3.0 model only where the 3.0 text still states it. The implemented rules are named in <code>simulation/model/ucie.py</code> and <code>simulation/model/spec30.py</code>.</p>
         <p>The paths include CRC failure and replay instead of delivery of an invalid flit, the retry threshold leading to Retrain, LinkReset, and LinkError. LinkError cleanup flushes retry buffers and pipelines. The cited AoU 0.8 §8.3.3 rule returns the activation FSM to DISABLED on FDI link-down. Retrain is not that event, and the model leaves AoU enabled across Retrain. After reset, the link returns to Active, the sequence-number handshake completes, AoU activation completes, and credits are initialized to depth 4 in each direction.</p>
-        <p>UCIe 3.0 mechanisms are modeled only to the extent the 3.0 text defines them: sideband performant mode, priority sideband opcode, Fast Throttle, Emergency Shutdown, runtime recalibration, and runtime parity. The priority-packet payload is left to a future ECN, so the model records opcode only and does not invent a transaction encoding. No modeled mechanism is class F. The classifier refuses a commit bit the specification does not define.</p>
+        <p>UCIe 3.0 mechanisms are modeled only to the extent the 3.0 text defines them: sideband performant mode, priority sideband opcode, Fast Throttle, Emergency Shutdown, runtime recalibration, and runtime parity. The priority-packet payload is left to a future ECN, so the model records opcode only and does not invent a transaction encoding. None of those mechanisms, as modeled, supplies a standardized indication of the associated <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> transaction’s architectural commit state. The classifier refuses a commit bit the specification text used here does not define. Emergency Shutdown is modeled as rapid containment of a severe condition, not as a transaction-completion mechanism.</p>
       </div>
     </section>
 
@@ -152,7 +154,7 @@
               </tr>
               <tr>
                 <th scope="row">3 · Management</th>
-                <td>Profile 2, plus management-transport status, Link Health Monitor, and, on UCIe 3.0, Fast Throttle, Emergency Shutdown, and priority-sideband opcode. None of those structures carries an architectural-commit bit.</td>
+                <td>Profile 2, plus management-transport status, Link Health Monitor, and, on UCIe 3.0, Fast Throttle, Emergency Shutdown, and priority-sideband opcode. None of the structures this model reads carries a standardized <abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> architectural-commit indication.</td>
               </tr>
               <tr>
                 <th scope="row">Retry disposition</th>
@@ -161,7 +163,7 @@
             </tbody>
           </table>
         </div>
-        <p>Profiles 2 and 3 are required not to change the FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> label. A true commit bit would mean the model had invented a field the specification does not define. On the reported equivalence pairs, all three standardized profiles match.</p>
+        <p>The classifier is not allowed to let profiles 2 and 3 invent a different FDI/<abbr class="term" title="Advanced eXtensible Interface. The on-chip protocol between the initiator and the target. The initiator learns whether a transaction finished only from the completion response, not from UCIe link recovery.">AXI</abbr> label. A true commit bit would mean the model had invented a field the specification text used here does not define. On the reported equivalence pairs, all three standardized profiles match. That match is a simulation result for those pairs, not a proof that every added UCIe 3.0 register is irrelevant to reliability.</p>
       </div>
     </section>
 
@@ -169,7 +171,7 @@
       <div class="wrap">
         <h2>Fault injection</h2>
         <p>The systematic suite walks named scenarios, including a fault at each relevant phase of the watched transaction. The randomized suite draws 200 injections with seed 1. Faults include bit corruption, repeated corruption of a replay, retry timeout and threshold, forced Retrain, LinkReset, and LinkError, dropped request or response, and the UCIe 3.0-only indications. The position tables in the results use the phase at which the watched transaction’s fault fired, grouped into five buckets from “before target acceptance” through “after response delivery”.</p>
-        <p>AoU packing is one message per flit. Credits are one per message, not per granule. The full AoU 0.8 text is not in the workspace. Those two choices are labeled abstractions in <code>simulation/model/aou.py</code>.</p>
+        <p>AoU packing is one message per flit. Credits are one per message, not per granule. The complete AoU 0.8 text was not available to the model-building workspace, so this is not a full AoU 0.8 conformance implementation. Those packing and credit choices are labeled abstractions in <code>simulation/model/aou.py</code>. The cited §8.3.3 link-down rule is the normative AoU behavior the model uses.</p>
         <p><a href="index.html#method">Back to the summary</a> · <a href="results.html">Measured results</a> · <a href="limitations.html">Limitations</a></p>
       </div>
     </section>
