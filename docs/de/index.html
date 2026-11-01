@@ -1,1 +1,529 @@
-<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="refresh" content="0;url=../index.html#content"><title>Aktualisierte UCIe-Studie</title><p>Die aktuelle Referenzmodell-Validierung ist auf Englisch verfügbar. <a href="../index.html#content">Aktualisierte Studie lesen</a>.</p></html>
+<!doctype html><html lang="de">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Der architektonische Ausgang einer unterbrochenen AXI-Transaktion kann unbestimmt bleiben</title><meta name="description" content="Technische Studie zu UCIe/AoU-Recovery und unbestimmtem AXI-Transaktionsausgang: Nachweise, Referenzarchitektur, Robustheit und Grenzen."><link rel="icon" href="../assets/favicon.png"><script src="../assets/language.js"></script><link rel="alternate" hreflang="en" href="../index.html"><link rel="alternate" hreflang="de" href="../de/index.html"><link rel="alternate" hreflang="x-default" href="../index.html"><script src="../assets/theme-init.js"></script><link rel="stylesheet" href="../assets/tokens.css"><link rel="stylesheet" href="../assets/study.css"><script src="../assets/theme.js" defer></script>
+</head>
+<body><a class="skip" href="#content">Zum Inhalt springen</a>
+<header><a class="brand" href="index.html?lang=de"><span class="wordmark" role="img" aria-label="NUVUS"></span><span class="brand-caption">/ UCIe · AoU-Forschung</span></a>
+<nav aria-label="Abschnitte der Studie"><a href="#problem">Problem</a><a href="#traces">Abläufe</a><a href="#architecture">Architektur</a><a href="#robustness">Robustheit</a><a href="#claims">Aussagen</a><a href="#reproducibility">Nachweise</a>
+</nav>
+<nav class="language" aria-label="Sprache"><a href="../index.html?lang=en" data-lang-link="en" lang="en" hreflang="en">EN</a><a href="../de/index.html?lang=de" data-lang-link="de" lang="de" hreflang="de" aria-current="page">DE</a>
+</nav>
+<div class="theme" role="group" aria-label="Farbschema"><button type="button" data-theme-set="light" aria-pressed="false">Hell</button><button type="button" data-theme-set="dark" aria-pressed="false">Dunkel</button><button type="button" data-theme-set="system" aria-pressed="true">System</button>
+</div>
+</header>
+<main id="content">
+<div class="hero">
+<div class="eyebrow">UCIe / AoU · FEHLERINJEKTIONSSTUDIE</div>
+<h1>Der architektonische Ausgang einer unterbrochenen AXI-Transaktion kann unbestimmt bleiben</h1>
+<p class="lead">In den modellierten UCIe-Recovery-Szenarien erhalten sowohl eine ausgeführte Operation mit verlorener Abschlussantwort als auch eine Operation, die das Target nie erreicht hat, beim implementierten Observer/Classifier die Klassifikation UNKNOWN.</p>
+<p>Die tatsächlichen Ausgänge unterscheiden sich; die implementierten Klassifikationen stimmen überein. Das belegt weder die Gleichheit der vollständigen beobachtbaren Historien noch, dass umfassendere Diagnostik den Transaktionsausgang nicht bestimmen könnte. Die Studie verwendet drei Klassifikationen: <code>COMPLETED</code>, <code>NOT_COMPLETED</code> und <code class="unknown">UNKNOWN</code>. Dies sind Bezeichnungen der Studie, keine von UCIe definierten Protokollzustände.</p>
+<div class="summary">
+<div><span>Transaktionsausgang</span><small>UNKNOWN erreichbar</small><strong class="positive">Ja</strong>
+</div>
+<div><span>Blindes Retry</span><small>Doppelter architektonischer Effekt</small><strong class="positive">Erreichbar</strong>
+</div>
+<div><span>UCIe 3.0</span><small>Ergebnis des Basisszenarios mit dem implementierten Classifier</small><strong class="">UNKNOWN</strong>
+</div>
+<div><span>Referenzarchitektur</span><small>Die Unbestimmtheit bleibt mit realistischen FIFOs, Credits, Retry-Puffer und mehreren ausstehenden Flits erreichbar</small><strong class="positive">Ja</strong>
+</div>
+</div>
+<p class="takeaway">Diese Studie unterscheidet Link-Recovery von Transaktions-Recovery.</p>
+<details class="legend">
+<summary>So sind die Nachweiskategorien zu lesen</summary>
+<p>SPEC: aus der Spezifikation abgeleitete Tatsache · REFERENCE: bereitgestellter Architekturparameter · CONFIG: Simulationskonfiguration · POLICY: Implementierungsentscheidung · ASSUMPTION: Modellannahme · RESULT: gemessenes Simulationsergebnis · INTERPRETATION: Schlussfolgerung aus Ergebnissen · OPEN QUESTION: offene Forschungsfrage.</p>
+</details>
+</div>
+<section id="problem">
+<div class="section-label"><span class="tag">PROBLEM</span>
+</div>
+<h2>Das Problem</h2>
+<p>UCIe kann Kommunikationsfehler erkennen und den Link wiederherstellen. Eine übergeordnete Transaktion kann den architektonischen Zustand jedoch bereits verändert haben, bevor ihre Abschlussantwort für den Initiator sichtbar wird.</p>
+<div class="pair">
+<article class="panel">
+<h3>Regulärer Ablauf</h3>
+<ol class="flow">
+<li>AXI-Anfrage</li>
+<li>Transport</li>
+<li>Target nimmt an</li>
+<li>Architektonischer Commit</li>
+<li>Antwort</li>
+</ol>
+</article>
+<article class="panel danger-panel">
+<h3>Zeitfenster der Unbestimmtheit</h3>
+<ol class="flow">
+<li>Architektonischer Commit</li>
+<li class="danger">FEHLER</li>
+<li>Antwort nicht beobachtet</li>
+</ol>
+<p class="question">Wurde die Operation ausgeführt?</p>
+</article>
+</div>
+<p>Die Studie klassifiziert unterbrochene Transaktionen als <code>COMPLETED</code>, <code>NOT_COMPLETED</code> oder <code class="unknown">UNKNOWN</code>. Dies sind beobachterabhängige Bezeichnungen der Studie, keine von UCIe definierten Protokollzustände.</p>
+<div class="formula"><span>unterschiedlicher architektonischer Ausgang</span><b>+</b><span>gleiche implementierte Klassifikation</span><b>=</b><strong>unbestimmter Transaktionsausgang</strong>
+</div>
+</section>
+<section id="traces">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Zwei Abläufe mit derselben Klassifikation</h2>
+<p>Nach destruktiver UCIe-Recovery kann für den Initiator unbestimmt bleiben, ob eine ausstehende nicht-idempotente AXI/MMIO-Operation ausgeführt wurde.</p>
+<div class="pair">
+<article class="trace">
+<h3>Ablauf A — Commit erfolgt, Antwort verloren</h3>
+<ol>
+<li>AXI-Anfrage angenommen</li>
+<li>Anfrage transportiert</li>
+<li>Target hat angenommen</li>
+<li><strong class="commit">ARCHITEKTONISCHER COMMIT</strong>
+</li>
+<li>Antwort erzeugt</li>
+<li><span class="fault">Fehler / destruktive Recovery</span>
+</li>
+<li>Kein Abschluss beobachtet</li>
+</ol>
+<div class="verdict">Tatsächlicher Modellzustand <code>commit_count = 1</code>
+</div>
+</article>
+<article class="trace">
+<h3>Ablauf B — kein Commit</h3>
+<ol>
+<li>AXI-Anfrage angenommen</li>
+<li>Anfrage erreicht Target nicht</li>
+<li>Kein architektonischer Commit</li>
+<li><span class="fault">Fehler / Recovery</span>
+</li>
+<li>Kein Abschluss beobachtet</li>
+</ol>
+<div class="verdict">Tatsächlicher Modellzustand <code>commit_count = 0</code>
+</div>
+</article>
+</div>
+<div class="observer-box">
+<h3>Observer A / B / C</h3><pre class="compact"><code>Anfrage angenommen
+Abschluss fehlt
+Klassifikation: UNKNOWN</code></pre>
+</div>
+<div class="equivalence"><strong>Unterschiedliche tatsächliche Ausgänge. Gleiche Klassifikation.</strong>
+<p>Die beiden Abläufe führen für das implementierte Observer-Profil zur selben Klassifikation des Transaktionsausgangs.</p>
+</div>
+<p>Die Prüfung im zeitbehafteten Modell vergleicht Klassifikationen und Abschlussstatus. Sie vergleicht keine vollständigen beobachtbaren Ereignishistorien, Zeitverläufe, Statusbits, Retry-Zähler oder Fehlerprotokolle. Vollständige Beobachtungsäquivalenz ist durch diese Prüfung nicht belegt.</p>
+<p>Dies sind schematische Zusammenfassungen der Läufe mit Referenzarchitektur. Ein blindes Software-Retry einer bereits ausgeführten, aber als unbestimmt klassifizierten Operation kann einen doppelten architektonischen Effekt erzeugen. Davon zu unterscheiden ist die Duplikatunterdrückung auf Transportebene.</p><a href="../data/reference_architecture_validation.json">Gepaarte Läufe und Nachweis zum blinden Retry ansehen ↗</a>
+</section>
+<section id="why">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
+</div>
+<h2>Warum das relevant ist</h2>
+<p>Betrachtet wird ein nicht-idempotenter Schreibzugriff, der einen gemeinsamen Zähler erhöht:</p><pre><code>Zähler = 7
+
+Schreibzugriff erhöht Zähler</code></pre>
+<div class="pair">
+<article class="panel">
+<h3>Wenn die Operation bereits ausgeführt wurde</h3><pre><code>7 → 8</code></pre>
+<p>die Antwort aber verloren ging, kann ein blindes Retry Folgendes bewirken:</p><pre><code>8 → 9</code></pre>
+</article>
+<article class="panel danger-panel">
+<h3>Ergebnis</h3><pre><code>Erwartete Commits = 1
+Tatsächliche Commits = 2</code></pre>
+</article>
+</div>
+<div class="callout">Ein blindes Retry kann Ungewissheit in doppelte Ausführung verwandeln.</div>
+<p>Dies betrifft nicht-idempotente Operationen, etwa entsprechend ausgelegte Doorbells, DMA- oder Accelerator-Starts, FIFO-Pushes, Interrupt-Quittierungen und aktorbezogene Befehle.</p>
+</section>
+<section id="architecture">
+<div class="section-label"><span class="tag">REFERENCE</span>
+</div>
+<h2>Referenzarchitektur</h2>
+<p>Das ausführbare Modell wird mit einer bereitgestellten UCIe-D2D-Referenzkonfiguration untersucht, bevor seine Robustheit eingeordnet wird.</p>
+<div class="architecture"><svg class="architecture-diagram" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 880 400" role="img" aria-labelledby="title desc"><title id="title">Bereitgestellte UCIe-D2D-Referenzarchitektur</title><desc id="desc">Zwei Chiplets verbinden AXI Streaming über FDI, D2D-Controller, RDI und PHY mittels Mainband und Sideband.</desc><style>.architecture-diagram text{font:16px var(--font-sans);fill:var(--foreground)}.architecture-diagram rect{fill:var(--muted);stroke:var(--border)}.architecture-diagram path{stroke:var(--primary);stroke-width:2;fill:none}</style><text x="200" y="30" text-anchor="middle" font-weight="500">Chiplet A</text><rect x="25" y="50" width="350" height="42" rx="8"></rect><text x="200" y="76" text-anchor="middle">AXI Streaming</text><path d="M200 92v18"></path><rect x="25" y="110" width="350" height="42" rx="8"></rect><text x="200" y="136" text-anchor="middle">Streaming / FDI</text><path d="M200 152v18"></path><rect x="25" y="170" width="350" height="42" rx="8"></rect><text x="200" y="196" text-anchor="middle">UCIe D2D Controller</text><path d="M200 212v18"></path><rect x="25" y="230" width="350" height="42" rx="8"></rect><text x="200" y="256" text-anchor="middle">RDI</text><path d="M200 272v18"></path><rect x="25" y="290" width="350" height="42" rx="8"></rect><text x="200" y="316" text-anchor="middle">UCIe PHY</text><text x="680" y="30" text-anchor="middle" font-weight="500">Chiplet B</text><rect x="505" y="50" width="350" height="42" rx="8"></rect><text x="680" y="76" text-anchor="middle">AXI Streaming</text><path d="M680 92v18"></path><rect x="505" y="110" width="350" height="42" rx="8"></rect><text x="680" y="136" text-anchor="middle">Streaming / FDI</text><path d="M680 152v18"></path><rect x="505" y="170" width="350" height="42" rx="8"></rect><text x="680" y="196" text-anchor="middle">UCIe D2D Controller</text><path d="M680 212v18"></path><rect x="505" y="230" width="350" height="42" rx="8"></rect><text x="680" y="256" text-anchor="middle">RDI</text><path d="M680 272v18"></path><rect x="505" y="290" width="350" height="42" rx="8"></rect><text x="680" y="316" text-anchor="middle">UCIe PHY</text><path d="M200 332v38h480v-38"></path><rect x="320" y="348" width="240" height="42" rx="8"></rect><text x="440" y="374" text-anchor="middle">Mainband + Sideband</text></svg>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Parameter</th><th scope="col">Wert</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Link-Breite</td><td>x16</td>
+</tr>
+<tr><td>Protokoll</td><td>Streaming</td>
+</tr>
+<tr><td>FDI-Breite</td><td>512 Bit</td>
+</tr>
+<tr><td>Flit-Format</td><td>Format 6</td>
+</tr>
+<tr><td>CRC</td><td>aktiviert</td>
+</tr>
+<tr><td>Retry</td><td>aktiviert</td>
+</tr>
+<tr><td>TX FIFO</td><td>32 Flits</td>
+</tr>
+<tr><td>RX FIFO</td><td>64 Flits</td>
+</tr>
+<tr><td>Retry-Puffer</td><td>16 Flits</td>
+</tr>
+<tr><td>Credit-Rückgabe</td><td>früh</td>
+</tr>
+<tr><td>Credit-Schwelle</td><td>2 Flits</td>
+</tr>
+<tr><td>Sideband FIFO</td><td>8 Flits</td>
+</tr>
+<tr><td>L1</td><td>aktiviert</td>
+</tr>
+<tr><td>Fehlerprotokollierung</td><td>aktiviert</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p class="caption">Referenzkonfiguration für die Modellvalidierung. Diese Werte sind keine universellen UCIe-Anforderungen.</p>
+<p>Streaming, Format 6, x16 und FDI-512 sind Konfigurationsmetadaten. Das Modell implementiert weder PHY-Bit-Timing noch das Byte-Packing von Format 6 oder FDI-Zyklusgenauigkeit. Die Grafik ist eine generische Neuzeichnung; die Originalfolie und fremde Markenkennzeichen werden nicht wiedergegeben.</p>
+</section>
+<section id="robustness">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Robustheit des Ergebnisses</h2>
+<p>Um die Abhängigkeit der Unbestimmtheit von vereinfachten Transportannahmen zu prüfen, wurde das Modell um realistische Puffer, Credits, mehrere ausstehende Flits und Go-back-N-Replay verfeinert.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Eigenschaft</th><th scope="col">Ergebnis mit Referenzarchitektur</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>UNKNOWN nach Commit</td><td><span class="positive">REPRODUZIERT</span></td>
+</tr>
+<tr><td>Doppelter Commit nach blindem Retry</td><td><span class="positive">REPRODUZIERT</span></td>
+</tr>
+<tr><td>UNKNOWN vor Erreichen des Targets</td><td><span class="positive">REPRODUZIERT</span></td>
+</tr>
+<tr><td>Gespeicherter ACK/NAK-Verlauf → NOT_COMPLETED vor dem Target (Annahme für D)</td><td><span class="positive">REPRODUZIERT</span></td>
+</tr>
+<tr><td>Gleiche Klassifikationen und fehlender Abschluss (A/B/C)</td><td><span class="positive">REPRODUZIERT</span></td>
+</tr>
+<tr><td>Verzögerung zwischen Clients</td><td><span class="positive">REPRODUZIERT</span></td>
+</tr>
+<tr><td>Credit-Erhaltung</td><td><span class="positive">REPRODUZIERT</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout">UNKNOWN bei unterschiedlichen Commit-Ergebnissen bleibt unter der Referenzkonfiguration und der implementierten Klassifikationsregel erreichbar.</div>
+<p class="caption">Quelle: <a href="../data/reference_architecture_validation.csv">Validierungs-CSV</a>. Dies ist Referenzmodellvalidierung, keine Siliziumvalidierung.</p>
+</section>
+<section id="comparison">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>UCIe 2.x im Vergleich zu UCIe 3.0</h2>
+<p>In den untersuchten UCIe-2.x- und 3.0-Referenzszenarien liefert der implementierte Classifier für die unterbrochene Operation des Basisszenarios UNKNOWN. Das belegt nicht, dass umfassendere UCIe-3.0-Diagnostik den Transaktionsausgang nicht bestimmen könnte.</p>
+<div class="pair">
+<article class="panel">
+<h3>Abdeckung im zeitbehafteten Referenzmodell</h3>
+<p>UCIe 2.x / 3.0: CRC/Retry, Retrain und LinkError. Der Versionsvergleich untersucht den Ausgang des Basisszenarios, gepaarte Klassifikationen sowie Sideband- und Diagnoseszenarien. Die 3.0-Erweiterung umfasst Priority-Sideband-Metadaten.</p>
+</article>
+<article class="panel">
+<h3>Umfangreichere Abdeckung im Zustandsmodell</h3>
+<p>Diagnostik, Priority Sideband sowie Notfall- und Managementmechanismen werden in einer separaten Untersuchung des Zustandsmodells betrachtet. Das belegt nicht, dass jeder aufgeführte Mechanismus im zeitbehafteten Referenzmodell getestet wurde.</p>
+</article>
+</div>
+<div class="formula compact-formula"><span>Information zum architektonischen AXI-Commit?</span><strong>Keine standardisierte Anzeige modelliert</strong>
+</div>
+<div class="equivalence"><strong>UNKNOWN bleibt erreichbar</strong>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Modellierter Aspekt</th><th scope="col">UCIe 2.x</th><th scope="col">UCIe 3.0</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>CRC / Retry, Retrain, LinkError</td><td>Modelliert</td><td>Modelliert</td>
+</tr>
+<tr><td>Erweiterung des zeitbehafteten Referenzmodells</td><td>Basismodell</td><td>Priority-Sideband-Metadaten</td>
+</tr>
+<tr><td>Anzeige des architektonischen AXI-Commits</td><td>Keine modelliert</td><td>Keine modelliert</td>
+</tr>
+<tr><td>Klassifikation von Observer A im Basisszenario</td><td>UNKNOWN</td><td>UNKNOWN</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Der Referenzvergleich berichtet für die untersuchte Eigenschaft dieselbe Klassifikation im Basisszenario. Er behauptet weder identische Implementierungen noch universelle Leistungswerte.</p>
+<p>Siehe den <a href="../sources/comparison_ucie2_vs_ucie3.md">Vergleichsbericht zum Zustandsmodell</a>; die Prozentwerte dieses Workloads sind keine inhärenten Protokollwahrscheinlichkeiten.</p>
+</section>
+<section id="observers">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Diagnostik und Beobachterwissen</h2>
+<p>Die Klassifikation hängt sowohl von der Sichtbarkeit für den Observer als auch davon ab, welche Informationen der implementierte Classifier nutzt.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Szenario</th><th scope="col">Tatsächlicher Modellzustand</th><th scope="col">Nur AXI</th><th scope="col">AXI + FDI</th><th scope="col">UCIe-Status</th><th scope="col">Zusätzliche Metadaten</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Commit + Antwort verloren</td><td>COMMITTED</td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td>
+</tr>
+<tr><td>Anfrage vor dem Target verloren</td><td>NOT_COMMITTED</td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="unknown">UNKNOWN</code></td><td><code class="positive">NOT_COMPLETED</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout">Der aktuelle Classifier nutzt nicht alle modellierten Diagnoseinformationen. Diese Experimente belegen daher nicht, dass umfassendere Diagnostik den Transaktionsausgang nicht bestimmen könnte.</div>
+<p>Unter der aktuell implementierten Klassifikationsregel ändert zusätzlicher modellierter Diagnosezustand die Klassifikation nicht. Das reine AXI-Profil A wertet keine Diagnoseprotokolle aus. Bei B/C wird zusätzlicher FDI/UCIe-Zustand aufgezeichnet, diese Felder fließen jedoch nicht in die Klassifikationsentscheidung ein. Die Übereinstimmung mit A wird durch die Implementierung erzwungen.</p>
+<p><span class="tag">ASSUMPTION</span> Profil D speichert einen ACK/NAK-Verlauf, der in diesem Experiment zur Unterscheidung des Verlusts vor dem Target ausreicht. Dies ist zusätzliches Beobachterwissen, keine standardisierte Anzeige eines architektonischen Commits.</p>
+<p><span class="tag">INTERPRETATION</span> Profil D nutzt ausgewählte gespeicherte Zustellmetadaten und unterscheidet den getesteten Verlust vor dem Target. Ob zusätzliche Diagnoseinformationen andere Ausgänge einschließlich des Zustands nach einem Commit bestimmen können, bleibt offen.</p>
+</section>
+<section id="timed">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Ergebnisse des zeitbehafteten SystemC-Modells</h2>
+<p>Transaktionsausgang und Zeitverhalten sind getrennte Eigenschaften.</p>
+<div class="formula"><span>Funktional korrekt</span><b>+</b><span>genau einmal</span><b>+</b><span>abgeschlossen</span><b>≠</b><strong>Frist eingehalten</strong>
+</div>
+<div class="ladder"><span>Deduktives Argument</span><b>→</b><span>Ausführbares Zustandsmodell</span><b>→</b><span>Zeitbehaftetes SystemC-Modell</span><b>→</b><strong>Referenzarchitektur</strong>
+</div>
+<p>Jede Stufe ergänzt Implementierungsdetails, während das zentrale Gegenbeispiel erhalten bleibt. Das Modell berücksichtigt Zeitverhalten und Mikroarchitektur, arbeitet nicht auf Transistorebene und wurde nicht gegen eine bestimmte kommerzielle UCIe-IP validiert.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Referenzexperiment</th><th scope="col">Gemessenes Ergebnis</th><th scope="col">Herkunft</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>TX-/RX-Spitzenbelegung bei Dauerverkehr</td><td>11 / 0 Flits (Kapazitäten 32 / 64)</td><td><span class="tag">RESULT</span></td>
+</tr>
+<tr><td>Credit-Zähler im Durchsatzlauf</td><td>120 verbraucht / 120 zurückgegeben</td><td><span class="tag">RESULT</span></td>
+</tr>
+<tr><td>Diagnostik</td><td>8 Fehlerprotokolleinträge; Observer A bleibt bei UNKNOWN</td><td><span class="tag">RESULT</span></td>
+</tr>
+<tr><td>L1</td><td>1 Ereignis; hier kein Nachweis zusätzlicher Unbestimmtheit allein durch L1</td><td><span class="tag">RESULT</span></td>
+</tr>
+<tr><td>LinkError-Mindestverweildauer</td><td>16 ms</td><td><span class="tag">SPEC</span></td>
+</tr>
+<tr><td>Retrain / LinkReset / Reaktivierung</td><td>5 µs / 10 µs / 2 µs</td><td><span class="tag">CONFIG</span></td>
+</tr>
+<tr><td>AoU-Credit-Tiefe</td><td>32</td><td><span class="tag">ASSUMPTION</span></td>
+</tr>
+<tr><td>Serialisierungszyklen</td><td>4</td><td><span class="tag">CONFIG</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Die RX-Belegung von null ist der gemeldete, abgetastete Spitzenwert. Sie belegt nicht, dass ein realer Empfänger keine Puffer benötigt. Zeitwerte sind nach ihrer Herkunft gekennzeichnet. Konfigurierte Verzögerungen sind keine normativen UCIe-Zeiten.</p>
+</section>
+<section id="timing">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Zeitliche Wechselwirkungen zwischen Clients</h2>
+<p>Unabhängige Verkehrsquellen können sich zeitlich beeinflussen, wenn sie dieselben UCIe-Transportressourcen nutzen. Die Fehler werden bei Client A injiziert; Client B ist ansonsten fehlerfrei. Ein Hypervisor- oder Gastisolationsmodell wird hier nicht nachgewiesen.</p>
+<figure class="panel">
+<div class="bar-group">
+<h3>Referenzkonfiguration <span class="delta">+44 ns</span>
+</h3>
+<div class="bar-row"><span>Ohne Fehler</span>
+<div class="bar" style="width:31.363636363636363%">46 ns</div>
+</div>
+<div class="bar-row"><span>Fehler bei A</span>
+<div class="bar faultbar" style="width:61.36363636363637%">90 ns</div>
+</div>
+</div><figcaption>Gemeinsame Skala · 0–110 ns · Workload ohne Fehler und mit Fehlern bei Client A</figcaption>
+</figure><pre><code>Zusätzliche Verzögerung für den anderen Client ≈ 44 ns</code></pre>
+<p>Der Effekt blieb mit mehreren ausstehenden Flits und realistischer Pufferung sichtbar. Client B führt genau einen Commit aus und schließt ab.</p>
+<p><span class="tag">CONFIG</span> Experimentelles Zeitbudget = <strong>55.2 ns</strong> (46 × 1.20); die Latenz im Fehlerfall überschreitet es. Dies ist ein experimentelles Budget, keine durch einen Automotive-Standard vorgegebene Frist.</p>
+<p><span class="tag">INTERPRETATION</span> Das Ergebnis hängt von Architektur und Implementierungsregeln ab. Es ist weder eine universelle UCIe-Eigenschaft noch für sich genommen ein Nachweis einer Verletzung der Rückwirkungsfreiheit nach ISO 26262.</p>
+<div class="callout">Gemeinsame Ressource: Replay-Scheduling des Adapters und Go-back-N-Sequenzraum.</div>
+<figure class="timing-diagram"><svg class="replay-diagram" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 1000 330"><title>Zeitverlauf des gemeinsamen Replay-Pfads</title><style>.replay-diagram text{font:13px var(--font-sans);fill:var(--foreground)}.replay-diagram .mono{font:12px var(--font-mono)}.replay-diagram .axis{stroke:var(--border)}.replay-diagram .event{fill:var(--warning)}.replay-diagram .normal{fill:var(--primary)}</style><rect width="1000" height="330" fill="var(--card)"></rect><path class="axis" d="M160 40v230" stroke-dasharray="2 6"></path><text class="mono" x="160" y="302" text-anchor="middle">2000</text><path class="axis" d="M230 40v230" stroke-dasharray="2 6"></path><text class="mono" x="230" y="302" text-anchor="middle">2010</text><path class="axis" d="M300 40v230" stroke-dasharray="2 6"></path><text class="mono" x="300" y="302" text-anchor="middle">2020</text><path class="axis" d="M370 40v230" stroke-dasharray="2 6"></path><text class="mono" x="370" y="302" text-anchor="middle">2030</text><path class="axis" d="M440 40v230" stroke-dasharray="2 6"></path><text class="mono" x="440" y="302" text-anchor="middle">2040</text><path class="axis" d="M510 40v230" stroke-dasharray="2 6"></path><text class="mono" x="510" y="302" text-anchor="middle">2050</text><path class="axis" d="M580 40v230" stroke-dasharray="2 6"></path><text class="mono" x="580" y="302" text-anchor="middle">2060</text><path class="axis" d="M650 40v230" stroke-dasharray="2 6"></path><text class="mono" x="650" y="302" text-anchor="middle">2070</text><path class="axis" d="M720 40v230" stroke-dasharray="2 6"></path><text class="mono" x="720" y="302" text-anchor="middle">2080</text><path class="axis" d="M790 40v230" stroke-dasharray="2 6"></path><text class="mono" x="790" y="302" text-anchor="middle">2090</text><path class="axis" d="M860 40v230" stroke-dasharray="2 6"></path><text class="mono" x="860" y="302" text-anchor="middle">2100</text><path class="axis" d="M930 40v230" stroke-dasharray="2 6"></path><text class="mono" x="930" y="302" text-anchor="middle">2110</text><text x="15" y="75">Client A / CRC</text><path class="axis" d="M160 70H930"></path><text x="15" y="160">Client B</text><path class="axis" d="M160 155H930"></path><text x="15" y="250">Link-Zustand</text><path class="axis" d="M160 245H930"></path><circle class="event" cx="251" cy="70" r="5"></circle><circle class="event" cx="279" cy="70" r="5"></circle><circle class="event" cx="335" cy="70" r="5"></circle><circle class="event" cx="363" cy="70" r="5"></circle><text x="251" y="48">CRC → gemeinsames Go-back-N-Replay</text><rect x="293" y="137" width="168" height="36" fill="var(--muted)"></rect><text x="363" y="192" text-anchor="middle">Sequenzwarten / Zustellung</text><circle class="normal" cx="244" cy="155" r="4"></circle><text x="244" y="125" text-anchor="middle">TX</text><circle class="normal" cx="293" cy="155" r="4"></circle><text x="293" y="110" text-anchor="middle">verworfen</text><circle class="normal" cx="377" cy="155" r="4"></circle><text x="377" y="125" text-anchor="middle">verworfen</text><circle class="normal" cx="461" cy="155" r="4"></circle><text x="461" y="125" text-anchor="middle">empfangen</text><circle class="normal" cx="615" cy="155" r="4"></circle><text x="615" y="125" text-anchor="middle">Daten-TX</text><circle class="normal" cx="706" cy="155" r="4"></circle><text x="706" y="110" text-anchor="middle">commit</text><circle class="normal" cx="790" cy="155" r="4"></circle><text x="790" y="125" text-anchor="middle">Abschluss</text><path d="M160 245H888" stroke="var(--primary)" stroke-width="5"></path><path d="M888 245H930" stroke="var(--warning)" stroke-width="5"></path><text x="180" y="230">Active während der Transaktion von Client B</text><text x="888" y="230" text-anchor="end">2104: Retrain beginnt</text><text x="930" y="323" text-anchor="end">Absolute Simulationszeit (ns)</text></svg><figcaption>Absolute Simulationszeit. Der markierte Zeitraum umfasst das Warten auf die Sequenz und die Zustellung; er ist keine reine Wartezeitmessung.</figcaption>
+</figure>
+<details>
+<summary>Genaue Trace-Ereignisse und Zeitstempel</summary>
+<div class="timeline">
+<div><time>2004 ns</time><strong>Client A</strong><span>Anfrage-TX; Fehlerinjektion aktiviert</span>
+</div>
+<div><time>2012 ns</time><strong>Client B</strong><span>Anfrage-TX beginnt</span>
+</div>
+<div><time>2013 / 2017 ns</time><strong>Gemeinsames Replay</strong><span>CRC → Go-back-N-Replay von 3 Flits</span>
+</div>
+<div><time>2019 ns</time><strong>Client B</strong><span>Flit vor der erwarteten Sequenz verworfen</span>
+</div>
+<div><time>2025 / 2029 ns</time><strong>Gemeinsames Replay</strong><span>Weitere CRC-Fehler / Go-back-N-Replay</span>
+</div>
+<div><time>2031 ns</time><strong>Client B</strong><span>Flit vor der erwarteten Sequenz erneut verworfen</span>
+</div>
+<div><time>2043 ns</time><strong>Client B</strong><span>Anfrage erreicht entfernten Endpunkt</span>
+</div>
+<div><time>2065 ns</time><strong>Client B</strong><span>Schreibdaten-TX beginnt</span>
+</div>
+<div><time>2074 / 2078 ns</time><strong>Client B</strong><span>Annahme durch Target / architektonischer Commit</span>
+</div>
+<div><time>2090 ns</time><strong>Client B</strong><span>Abschluss (90 ns nach Erzeugung)</span>
+</div>
+<div><time>2104 ns</time><strong>Link</strong><span>Retrain beginnt nach Abschluss von Client B</span>
+</div>
+</div>
+</details>
+<p>Client B sendet, während mehrere Flits ausstehen. Seine Anfrage wird zweimal verworfen, während der Empfänger auf die erwartete Sequenz wartet. Der Adapter plant Replay vor neuen Nutzdaten ein. Retrain bei 2104 ns beginnt erst nach dem Abschluss von B und kann dessen Verzögerung daher nicht erklären.</p>
+<p><a href="../data/ref2x_cross_client_trace.csv">Vollständige Ereignis-CSV</a> · <a href="../sources/ucie_adapter.cpp">Code des Adapter-Schedulings ↗</a>
+</p>
+</section>
+<section id="model-dependent">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Welche Ergebnisse modellabhängig waren</h2>
+<p>Nicht jedes gemessene Simulationsergebnis ist eine Protokolleigenschaft. Manche Ergebnisse hängen von Transportvereinfachungen ab.</p>
+<div class="pair">
+<article class="panel muted">
+<h3>Vereinfachtes Transportmodell</h3>
+<p>Nur eine Nutzlast gleichzeitig unterwegs<br>Vereinfachte Puffer<br>Abstrakte Credits</p>
+<div class="big">1 <small>Flit Spitzenbelegung</small>
+</div>
+</article>
+<article class="panel">
+<h3>Referenzarchitektur</h3>
+<p>Mehrere ausstehende Flits · TX 32 / RX 64<br>Retry 16 · frühe Credits / Schwelle 2<br>Sideband 8 · L1 · Fehlerprotokollierung · Go-back-N-Replay</p>
+<div class="big">3 <small>Flits Spitzenbelegung / Kapazität 16</small>
+</div>
+</article>
+</div><pre><code>Retry-Puffer-Spitze = 1   →   nicht robust
+Retry-Puffer-Spitze = 3   →   Referenzarchitektur</code></pre>
+<p>Die Belegung mit nur einem Eintrag hing vom vereinfachten Ein-Flit-Transportmodell ab. Die gemessene Spitze von drei unter der Referenzkonfiguration ist workloadabhängig und keine neue Kapazitätsgrenze.</p>
+<div class="callout">Modellabhängiges Verhalten — keine widerlegte Protokollaussage.</div>
+</section>
+<section id="mitigations">
+<div class="section-label"><span class="tag">POLICY / EXPLORATIVES ERGEBNIS</span>
+</div>
+<h2>Experimente zu Gegenmaßnahmen</h2>
+<p>Diese Experimente untersuchen die Abhängigkeit von Architekturentscheidungen. Sie sind keine UCIe-Anforderungen.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Modellierte Architekturoption</th><th scope="col">Latenz von Client B (explorativ)</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Round-Robin-Basismodell</td><td>106 ns</td>
+</tr>
+<tr><td>Arbitrierung mit Sicherheitspriorität</td><td>39 ns</td>
+</tr>
+<tr><td>Sendeslots pro Client</td><td>71 ns</td>
+</tr>
+<tr><td>Replay-Budget mit Freigabe</td><td>59 ns</td>
+</tr>
+<tr><td>Reservierte Bandbreite</td><td>71 ns</td>
+</tr>
+<tr><td>Virtuelle Kanäle / getrennte Warteschlangen</td><td>71 ns</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Veränderte Sequenzräume, Arbitrierung und Ressourcenzuteilung sind experimentelle Regeln. Latenzverbesserungen können zulasten der Fairness gehen. Diese Optionen wurden nicht erneut als vollständige Kampagne mit der Referenzkonfiguration validiert und begründen keine Garantien.</p><a href="../sources/cross_client_fault_interference.md">Bericht zur explorativen Kampagne ↗</a>
+</section>
+<section id="automotive">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
+</div>
+<h2>Einordnung für Automotive-Systeme</h2>
+<p>Die Automotive-Relevanz entsteht, wenn sicherheitskritische Befehle einen gemeinsam genutzten Chiplet-Transportpfad durchlaufen.</p>
+<p>Eine Sicherheitsarchitektur auf Systemebene muss festlegen, wie mit einer Operation umzugehen ist, deren architektonischer Effekt nach der Recovery nicht rekonstruiert werden kann.</p>
+<ul>
+<li>Fehlereindämmungsbereich zurücksetzen</li>
+<li>Operation als unbestimmt kennzeichnen</li>
+<li>Persistente Transaktions-IDs verwenden</li>
+<li>Duplikatunterdrückung einsetzen</li>
+<li>Gerätespezifische Recovery-Vereinbarungen nutzen</li>
+</ul>
+<p>Diese Studie behauptet keine Verletzung von ISO 26262. Zeitliche Wechselwirkungen zwischen Clients liefern architektur- und regelabhängige Hinweise für Systemarchitekten, keinen normativen Nachweis einer Verletzung der Rückwirkungsfreiheit.</p>
+</section>
+<section id="claims">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
+</div>
+<h2>Was diese Studie aussagt</h2>
+<p><strong>Stark belegt:</strong> die gemessenen Commit-Zahlen, UNKNOWN-Klassifikationen und doppelte Ausführung nach blindem Retry. <strong>Mit Einschränkung belegt:</strong> Die Ergebnisse bleiben unter der Referenzkonfiguration und dem aktuellen Classifier erreichbar.</p>
+<article class="claim-box">
+<ul>
+<li>Eine ausgeführte Operation mit verlorenem Abschluss und eine nicht ausgeführte Operation erhalten beim implementierten Observer/Classifier beide UNKNOWN.</li>
+<li>Diese Ergebnisse bleiben mit FIFOs, Retry-Pufferung und Credits gemäß Referenzkonfiguration sowie mehreren ausstehenden Flits unter der implementierten Klassifikationsregel erreichbar.</li>
+<li>Ein blindes Retry einer nicht-idempotenten Operation mit unbestimmtem Ausgang kann ihren Effekt duplizieren.</li>
+<li>Der aktuelle Classifier lässt modellierte Diagnoseinformationen ungenutzt. Die Experimente bestimmen nicht die Grenzen umfassenderer Diagnose-Classifier.</li>
+<li>Unter der Referenzkonfiguration bleiben zeitliche Wechselwirkungen zwischen unabhängigen Verkehrsquellen bestehen.</li>
+<li>Einige Simulationsergebnisse sind implementierungsabhängig.</li>
+</ul>
+</article>
+<div class="callout"><strong>Noch nicht belegt:</strong> vollständige Beobachtungsäquivalenz der Abläufe oder dass umfassendere UCIe-Diagnostik den Transaktionsausgang nicht bestimmen kann.</div>
+</section>
+<section id="non-claims">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
+</div>
+<h2>Was diese Studie nicht behauptet</h2>
+<article class="claim-box muted">
+<ul>
+<li>UCIe ist fehlerhaft.</li>
+<li>UCIe verletzt seine Spezifikation.</li>
+<li>Jede UCIe-Implementierung verhält sich so.</li>
+<li>Die Referenzkonfiguration spezifiziert eine kommerzielle Implementierung vollständig.</li>
+<li>Das zeitbehaftete SystemC-Modell ist zyklusgenau zu realem Silizium.</li>
+<li>Die gemessenen Zeitwerte gelten universell.</li>
+<li>Wechselwirkungen zwischen Clients bedeuten automatisch eine Verletzung der Rückwirkungsfreiheit nach ISO 26262.</li>
+<li>UCIe ist für die Definition der AXI-Target-Commit-Semantik verantwortlich.</li>
+</ul>
+</article>
+</section>
+<section id="limitations">
+<div class="section-label"><span class="tag">ANNAHME / GELTUNGSBEREICH</span>
+</div>
+<h2>Grenzen</h2>
+<ul>
+<li>Abstraktes Target-Modell: Der architektonische Commit ist modelliert, nicht an Silizium verifiziert.</li>
+<li>Unvollständige Kenntnis der Mikroarchitektur kommerzieller UCIe-Controller.</li>
+<li>Konfigurierbare Recovery-Regeln, beispielsweise das Verwerfen ausstehender AXI-Transaktionen nach LinkError.</li>
+<li>Zeitbehaftetes SystemC-Modell, weder Transistorebene noch Zyklusgenauigkeit zu kommerzieller IP.</li>
+<li>Keine Siliziumvalidierung; keine Bestätigung durch RTL oder kommerzielle IP.</li>
+<li>Raten zufälliger Workloads sind keine Feldwahrscheinlichkeiten.</li>
+<li>Die Referenzarchitektur ist keine vollständige Implementierungsspezifikation.</li>
+<li>Das AoU-Modell bleibt dort abstrakt, wo das vollständige Spezifikationsverhalten nicht modelliert wird.</li>
+<li>Optionale Format-6-Bytes, elektrisches Training und FDI-Zyklusgenauigkeit liegen außerhalb des Modellumfangs.</li>
+<li>Diagnosefelder sind Abstraktionen der Studie, keine standardisierten oder herstellerspezifischen Registerabbildungen.</li>
+<li>Endliche Szenarien belegen Erreichbarkeit, nicht das vollständige Fehlen anderer Ergebnisse.</li>
+<li>Das Äquivalenz-Flag im zeitbehafteten Modell prüft Klassifikationen und Abschlussstatus, nicht vollständige beobachtbare Historien.</li>
+<li>Die Profile B/C nutzen nicht alle aufgezeichneten Diagnosezustände zur Klassifikation. Ein leistungsfähigerer Diagnose-Classifier wurde nicht untersucht.</li>
+</ul>
+</section>
+<section id="reproducibility">
+<div class="section-label"><span class="tag">REPRODUZIERBARKEIT</span>
+</div>
+<h2>Reproduzierbarkeit</h2>
+<p>Aus dem Repository-Stammverzeichnis, mit verfügbarem SystemC, CMake, pkg-config und Python:</p><pre><code>cmake -S . -B build
+cmake --build build -j
+python -m simulation.experiments.reference_architecture_validation</code></pre>
+<p>Die Kampagne lädt die internen Referenzkonfigurationen des Repositorys. Die neutralen öffentlichen Exporte unten behalten deren Parameterwerte bei; Namen und identifizierende Kommentare wurden bereinigt. Hier werden gespeicherte Nachweise dargestellt, ohne die Simulation erneut auszuführen oder zu verändern.</p>
+<p>Die Nachweis-Downloads behalten ihre englischen Originaltexte und maschinenlesbaren Feldnamen bei.</p>
+<div class="downloads"><a href="../sources/reference_architecture_validation.md">Referenzbericht ↗</a><a href="../data/reference_architecture_validation.json">Vollständiges JSON ↗</a><a href="../data/reference_architecture_validation.csv">Validierungs-CSV ↗</a><a href="../configs/reference_ucie2x.yaml">configs/reference_ucie2x.yaml ↗</a><a href="../configs/reference_ucie3.yaml">configs/reference_ucie3.yaml ↗</a><a href="../data/ref2x_cross_client_trace.csv">Ereignis-Trace mit Fehlern ↗</a><a href="../data/ref2x_shared_quiet_trace.csv">Ereignis-Trace ohne Fehler ↗</a><a href="../sources/findings.md">Fallbericht zum Transaktionsausgang ↗</a><a href="../sources/comparison_ucie2_vs_ucie3.md">Versionsvergleichsbericht ↗</a><a href="../sources/reference_architecture_validation.py">Kampagnencode (bereinigter Export) ↗</a><a href="../sources/ucie_adapter.cpp">Code des zeitbehafteten Adapters ↗</a>
+</div>
+<p class="caption">Gespeicherte Berichte und JSON behalten historische Begriffe bei, darunter <code>observational_equivalence_abc</code>. Im zeitbehafteten Prüfer bezeichnet dieses Flag übereinstimmende Klassifikationen und Abschlussstatus; es ist kein Äquivalenztest vollständiger Historien. Diagnoseaussagen in diesen Berichten sind ebenfalls unter den oben genannten Classifier-Einschränkungen zu lesen. Messwerte wurden nicht verändert.</p>
+<details>
+<summary>Hinweise zu Nachweisen und Begriffen</summary>
+<p>Downloads behalten ältere maschinenlesbare Schlüssel bei, etwa <code>guest</code>; diese bezeichnen hier Verkehrsclients, keine modellierten Hypervisor-Gäste. Der exportierte Referenzbericht enthält den allgemeinen Vorbehalt, Wechselwirkungen könnten bei mehreren ausstehenden Flits verschwinden. Sein gemessener Referenzlauf berichtet dagegen 44 ns zusätzliche Verzögerung und eine Fristüberschreitung; diese Seite folgt den Messungen. Ob andere Implementierungen den Effekt beseitigen, bleibt offen.</p>
+</details>
+</section>
+<section id="questions">
+<div class="section-label"><span class="tag">OFFENE FRAGE</span>
+</div>
+<h2>Offene Fragen</h2>
+<ul>
+<li>Welche verbleibenden Verhaltensweisen hängen von der implementierungsspezifischen Mikroarchitektur des UCIe-Controllers ab?</li>
+<li>Welcher Zustand überlebt Retrain, LinkReset und LinkError in einem realen Controller?</li>
+<li>Kann implementierungsspezifische Diagnostik verbleibende UNKNOWN-Fälle auflösen?</li>
+<li>Welcher Ende-zu-Ende-Mechanismus reicht aus, um eine genau einmalige Ausführung sicherzustellen?</li>
+<li>Welche Ergebnisse lassen sich in RTL oder kommerzieller IP reproduzieren?</li>
+<li>Wie sollten diese Verhaltensweisen in einer virtuellen Automotive-Plattform abgebildet werden?</li>
+</ul>
+</section>
+<section id="conclusion">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
+</div>
+<h2>Fazit</h2>
+<p>Die Studie zeigt, dass die Wiederherstellung eines UCIe-Links und die Rekonstruktion des architektonischen Ausgangs einer unterbrochenen übergeordneten Operation unterschiedliche Probleme sind. Im Referenzarchitekturmodell erhalten eine ausgeführte nicht-idempotente Operation mit verlorener Antwort und eine Operation, die das Target nie erreicht hat, beim implementierten Observer/Classifier beide UNKNOWN. Ein blindes Retry des bereits ausgeführten Falls kann doppelte architektonische Effekte erzeugen. Vollständige Äquivalenz der beobachtbaren Historien und die Fähigkeit umfassenderer Diagnostik zur Bestimmung des Ausgangs bleiben ungeprüfte stärkere Aussagen.</p>
+<p>Die Referenzkonfiguration zeigt, dass diese Unbestimmtheit nicht von einer Ein-Flit-Transportvereinfachung abhängt. Zugleich hat die Modellverfeinerung andere Verhaltensweisen als implementierungsabhängig offengelegt. Der nächste Schritt ist die Validierung gegen eine konkrete UCIe-Controller-Implementierung.</p>
+</section>
+</main>
+<footer>UCIe / AoU-Fehlerinjektionsstudie · Nachweise aus dem Referenzmodell, keine Validierung kommerzieller IP.<a href="#content">Nach oben ↑</a>
+</footer>
+</body></html>

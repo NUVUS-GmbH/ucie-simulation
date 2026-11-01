@@ -60,5 +60,21 @@ The supplied report's final generic caveat says interference may disappear under
 multi-outstanding buffering. Its stored reference metrics reproduce a 44 ns delay;
 the page explains this discrepancy without editing the original evidence.
 
-Old secondary URLs and German URLs redirect to the current English study. A
-reviewed translation is required before restoring German content.
+## German localization
+
+`docs/de/index.html` contains the full German study, including diagrams, provenance
+labels, accessibility text and the qualified scientific claims. Evidence downloads
+remain in English with unchanged machine identifiers. The translation catalogue is
+`scripts/translations/de.json`; new untranslated English text fails the build.
+
+The EN/DE control preserves the section anchor. An explicit `?lang=en` or `?lang=de`
+choice takes priority and is saved locally. Without an explicit or saved choice,
+the primary browser language selects German for `de`/`de-*`, otherwise English.
+Both the project subpath used by GitHub Pages and blocked browser storage are tested.
+Legacy German secondary URLs now redirect within the German study.
+
+Checks: bilingual link/anchor parity, numeric-value parity, complete translation
+coverage, and `node scripts/check_site_languages.mjs` passed. Browser rendering of
+this localization could not be checked: automatic browser approval was blocked by
+a usage limit. Earlier layout checks above apply to the English page before this
+localization, not to the new German rendering.

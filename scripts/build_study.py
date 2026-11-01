@@ -545,6 +545,7 @@ sections.append(
         p('From the repository root, with SystemC, CMake, pkg-config, and Python available:')
         + '<pre><code>cmake -S . -B build\ncmake --build build -j\npython -m simulation.experiments.reference_architecture_validation</code></pre>'
         + p('The campaign loads the repository’s internal reference configurations. The neutral public exports below preserve their parameter values; naming and identifying comments are sanitized. Stored evidence is presented here without rerunning or changing the simulation.')
+        + p('Evidence downloads retain their original English text and machine-readable field names.')
         + '<div class="downloads">'
         + ''.join(f'<a href="{url}">{label} ↗</a>' for url, label in downloads)
         + '</div>'
@@ -610,7 +611,7 @@ hero = (
     '<div class="eyebrow">UCIe / AoU FAULT-INJECTION STUDY</div>'
     '<h1>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</h1>'
     '<p class="lead">In the modeled UCIe recovery scenarios, a committed operation with lost completion and an operation that never reached the target both receive UNKNOWN under the implemented observer/classifier.</p>'
-    + p('The ground-truth outcomes differ; the implemented fate classifications match. This does not establish equality of the complete observer-visible histories or that richer diagnostics cannot determine fate. The study uses the classifications <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. <code class="unknown">UNKNOWN</code> is a study classification, not a UCIe-defined protocol state.')
+    + p('The ground-truth outcomes differ; the implemented fate classifications match. This does not establish equality of the complete observer-visible histories or that richer diagnostics cannot determine fate. The study uses three fate classifications: <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. These are study labels, not UCIe-defined protocol states.')
     + '<div class="summary">'
     + ''.join(
         f'<div><span>{label}</span><small>{sub}</small><strong class="{cls}">{value}</strong></div>'
@@ -629,6 +630,10 @@ page = (
     '<title>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</title>'
     '<meta name="description" content="Technical study of UCIe/AoU recovery and AXI transaction-fate ambiguity: evidence, reference architecture, robustness, and limits.">'
     '<link rel="icon" href="assets/favicon.png">'
+    '<script src="assets/language.js"></script>'
+    '<link rel="alternate" hreflang="en" href="index.html">'
+    '<link rel="alternate" hreflang="de" href="de/index.html">'
+    '<link rel="alternate" hreflang="x-default" href="index.html">'
     '<script src="assets/theme-init.js"></script>'
     '<link rel="stylesheet" href="assets/tokens.css">'
     '<link rel="stylesheet" href="assets/study.css">'
@@ -639,6 +644,7 @@ page = (
     '<nav aria-label="Study sections">'
     + ''.join(f'<a href="#{sid}">{label}</a>' for sid, label in nav)
     + '</nav>'
+    '<nav class="language" aria-label="Language"><a href="index.html?lang=en" data-lang-link="en" lang="en" hreflang="en" aria-current="page">EN</a><a href="de/index.html?lang=de" data-lang-link="de" lang="de" hreflang="de">DE</a></nav>'
     '<div class="theme" role="group" aria-label="Colour theme">'
     '<button type="button" data-theme-set="light" aria-pressed="false">Light</button>'
     '<button type="button" data-theme-set="dark" aria-pressed="false">Dark</button>'

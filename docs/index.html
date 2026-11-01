@@ -1,9 +1,11 @@
 <!doctype html><html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</title><meta name="description" content="Technical study of UCIe/AoU recovery and AXI transaction-fate ambiguity: evidence, reference architecture, robustness, and limits."><link rel="icon" href="assets/favicon.png"><script src="assets/theme-init.js"></script><link rel="stylesheet" href="assets/tokens.css"><link rel="stylesheet" href="assets/study.css"><script src="assets/theme.js" defer></script>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</title><meta name="description" content="Technical study of UCIe/AoU recovery and AXI transaction-fate ambiguity: evidence, reference architecture, robustness, and limits."><link rel="icon" href="assets/favicon.png"><script src="assets/language.js"></script><link rel="alternate" hreflang="en" href="index.html"><link rel="alternate" hreflang="de" href="de/index.html"><link rel="alternate" hreflang="x-default" href="index.html"><script src="assets/theme-init.js"></script><link rel="stylesheet" href="assets/tokens.css"><link rel="stylesheet" href="assets/study.css"><script src="assets/theme.js" defer></script>
 </head>
 <body><a class="skip" href="#content">Skip to content</a>
 <header><a class="brand" href="index.html"><span class="wordmark" role="img" aria-label="NUVUS"></span><span class="brand-caption">/ UCIe · AoU research</span></a>
 <nav aria-label="Study sections"><a href="#problem">Problem</a><a href="#traces">Traces</a><a href="#architecture">Architecture</a><a href="#robustness">Robustness</a><a href="#claims">Claims</a><a href="#reproducibility">Evidence</a>
+</nav>
+<nav class="language" aria-label="Language"><a href="index.html?lang=en" data-lang-link="en" lang="en" hreflang="en" aria-current="page">EN</a><a href="de/index.html?lang=de" data-lang-link="de" lang="de" hreflang="de">DE</a>
 </nav>
 <div class="theme" role="group" aria-label="Colour theme"><button type="button" data-theme-set="light" aria-pressed="false">Light</button><button type="button" data-theme-set="dark" aria-pressed="false">Dark</button><button type="button" data-theme-set="system" aria-pressed="true">System</button>
 </div>
@@ -13,7 +15,7 @@
 <div class="eyebrow">UCIe / AoU FAULT-INJECTION STUDY</div>
 <h1>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</h1>
 <p class="lead">In the modeled UCIe recovery scenarios, a committed operation with lost completion and an operation that never reached the target both receive UNKNOWN under the implemented observer/classifier.</p>
-<p>The ground-truth outcomes differ; the implemented fate classifications match. This does not establish equality of the complete observer-visible histories or that richer diagnostics cannot determine fate. The study uses the classifications <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. <code class="unknown">UNKNOWN</code> is a study classification, not a UCIe-defined protocol state.</p>
+<p>The ground-truth outcomes differ; the implemented fate classifications match. This does not establish equality of the complete observer-visible histories or that richer diagnostics cannot determine fate. The study uses three fate classifications: <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. These are study labels, not UCIe-defined protocol states.</p>
 <div class="summary">
 <div><span>Transaction fate</span><small>UNKNOWN reachable</small><strong class="positive">Yes</strong>
 </div>
@@ -492,6 +494,7 @@ retry-buffer peak = 3   →   reference architecture</code></pre>
 cmake --build build -j
 python -m simulation.experiments.reference_architecture_validation</code></pre>
 <p>The campaign loads the repository’s internal reference configurations. The neutral public exports below preserve their parameter values; naming and identifying comments are sanitized. Stored evidence is presented here without rerunning or changing the simulation.</p>
+<p>Evidence downloads retain their original English text and machine-readable field names.</p>
 <div class="downloads"><a href="sources/reference_architecture_validation.md">Reference report ↗</a><a href="data/reference_architecture_validation.json">Complete JSON ↗</a><a href="data/reference_architecture_validation.csv">Validation CSV ↗</a><a href="configs/reference_ucie2x.yaml">configs/reference_ucie2x.yaml ↗</a><a href="configs/reference_ucie3.yaml">configs/reference_ucie3.yaml ↗</a><a href="data/ref2x_cross_client_trace.csv">Faulted event trace ↗</a><a href="data/ref2x_shared_quiet_trace.csv">Quiet event trace ↗</a><a href="sources/findings.md">Transaction-fate case report ↗</a><a href="sources/comparison_ucie2_vs_ucie3.md">Revision comparison report ↗</a><a href="sources/reference_architecture_validation.py">Campaign code (sanitized export) ↗</a><a href="sources/ucie_adapter.cpp">Timed adapter code ↗</a>
 </div>
 <p class="caption">Stored reports and JSON retain historical terminology, including <code>observational_equivalence_abc</code>. In the timed checker this flag means matching fate labels and completion status; it is not a full-history equivalence test. Diagnostic claims in those reports must likewise be read subject to the classifier limitations above. Measurements have not been changed.</p>
