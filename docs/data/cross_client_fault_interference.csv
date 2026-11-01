@@ -1,0 +1,10 @@
+run,guest_b_latency_ns,deadline_ns,slack_ns,deadline_pass,guest_b_retry,guest_b_commit,crc_failures_run
+guest_b_isolated,39.0,73.2,34.2,True,0,1,0
+shared_quiet,61.0,73.2,12.200000000000003,True,0,1,0
+guest_a_storm,106.0,73.2,-32.8,False,0,1,36
+guest_b_storm,117.0,73.2,-43.8,False,6,1,6
+mit_safety_priority,39.0,73.2,34.2,True,0,1,36
+mit_per_guest_slots,71.0,73.2,2.200000000000003,True,0,1,36
+mit_replay_budget,59.0,73.2,14.200000000000003,True,0,1,36
+mit_reserved_bw,71.0,73.2,2.200000000000003,True,0,1,36
+mit_virtual_channels,71.0,73.2,2.200000000000003,True,0,1,36

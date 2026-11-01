@@ -1,0 +1,78 @@
+# Provided UCIe D2D reference architecture (UCIe 3.0 mode).
+#
+# Same basic architecture and slide parameters as reference_ucie2x.yaml.
+# Only mechanisms actually supported by the UCIe 3.0 model are added:
+# priority sideband. Do not claim fate changes unless a modeled 3.0 feature
+# causes them.
+
+clock_period_ns: 1.0
+cycle_mode: false
+trace: transactions
+sim_timeout_ns: 200000000
+
+reference:
+  # REFERENCE-SLIDE (shared with 2.x)
+  link_width: 16
+  fdi_width_bits: 512
+  flit_format: 6
+  protocol: streaming
+  crc_enabled: true
+  retry_enabled: true
+  l1_enabled: true
+  error_logging: true
+  ucie_revision: ucie3
+  # UCIe 3.0 modeled addition
+  priority_sideband: true
+
+axi:
+  handshake_cycles: 1
+  arbitration_cycles: 1
+  request_queue: 8
+  response_queue: 8
+
+aou:
+  pack_cycles: 2
+  credit_depth: 32
+  request_queue: 8
+  partition_credits: false
+
+ucie:
+  tx_buffer_entries: 32
+  rx_buffer_entries: 64
+  retry_buffer_entries: 16
+  early_credit_return: true
+  credit_update_threshold: 2
+  single_inflight_slot: false
+  serialization_cycles: 4
+  propagation_cycles: 2
+  buffer_cycles: 1
+  retrain_ns: 5000
+  link_reset_ns: 10000
+  reactivation_ns: 2000
+  l1_entry_ns: 100
+  l1_exit_ns: 100
+  l1_hold_ns: 500
+
+spec:
+  replay_timeout_flits: 375
+  link_error_residency_ns: 16000000
+  sideband_timeout_ns: 8000000
+
+policy:
+  recovery: discard
+  replay_limit: 3
+  retrain_preserves_retry: true
+
+target:
+  accept_cycles: 2
+  commit_cycles: 4
+  response_cycles: 2
+  completion_cycles: 1
+
+sideband:
+  fifo_entries: 8
+  message_ns: 50
+  priority_ns: 20
+
+virt:
+  guest_queue: 8

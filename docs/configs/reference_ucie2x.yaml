@@ -1,0 +1,92 @@
+# Provided UCIe D2D reference architecture (UCIe 2.x mode).
+#
+# Values marked REFERENCE-SLIDE come from the provided architecture slide.
+# Values marked SPEC are UCIe 2.0 constants used by this study.
+# Values marked SIMULATION CONFIGURATION / ASSUMPTION are not on the slide
+# and must not be treated as vendor or UCIe normative timing.
+
+clock_period_ns: 1.0
+cycle_mode: false
+trace: transactions
+sim_timeout_ns: 200000000
+
+reference:
+  # REFERENCE-SLIDE
+  link_width: 16
+  fdi_width_bits: 512
+  flit_format: 6
+  protocol: streaming
+  crc_enabled: true
+  retry_enabled: true
+  l1_enabled: true
+  error_logging: true
+  ucie_revision: ucie2x
+  # UCIe 2.x mode: do not enable 3.0-only priority sideband.
+  priority_sideband: false
+
+axi:
+  # ASSUMPTION — not shown on the slide
+  handshake_cycles: 1
+  arbitration_cycles: 1
+  request_queue: 8
+  response_queue: 8
+
+aou:
+  # ASSUMPTION — AoU credit depth is not on the slide. Sized so the
+  # reference retry buffer (16) and TX FIFO (32) can be exercised without
+  # artificial credit starvation.
+  pack_cycles: 2
+  credit_depth: 32
+  request_queue: 8
+  partition_credits: false
+
+ucie:
+  # REFERENCE-SLIDE buffer depths
+  tx_buffer_entries: 32
+  rx_buffer_entries: 64
+  retry_buffer_entries: 16
+  # REFERENCE-SLIDE credit behavior
+  early_credit_return: true
+  credit_update_threshold: 2
+  # Important model correction: multi-outstanding flits by default.
+  single_inflight_slot: false
+  # SIMULATION CONFIGURATION — not vendor timing claims
+  serialization_cycles: 4
+  propagation_cycles: 2
+  buffer_cycles: 1
+  retrain_ns: 5000
+  link_reset_ns: 10000
+  reactivation_ns: 2000
+  l1_entry_ns: 100
+  l1_exit_ns: 100
+  l1_hold_ns: 500
+
+spec:
+  # UCIe SPEC
+  replay_timeout_flits: 375
+  link_error_residency_ns: 16000000
+  sideband_timeout_ns: 8000000
+
+policy:
+  # POLICY — outstanding AXI fate after LinkError is not defined by UCIe
+  recovery: discard
+  replay_limit: 3
+  retrain_preserves_retry: true
+
+target:
+  # ASSUMPTION — device timing not on the slide
+  accept_cycles: 2
+  commit_cycles: 4
+  response_cycles: 2
+  completion_cycles: 1
+
+sideband:
+  # REFERENCE-SLIDE
+  fifo_entries: 8
+  # SIMULATION CONFIGURATION
+  message_ns: 50
+  priority_ns: 20
+
+virt:
+  # ASSUMPTION
+  guest_queue: 8
