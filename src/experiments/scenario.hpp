@@ -1,5 +1,7 @@
 #pragma once
 
+#include "axi/axis_types.hpp"
+#include "axi/axi5_types.hpp"
 #include "common/enums.hpp"
 #include "common/transaction.hpp"
 #include "faults/fault.hpp"
@@ -22,6 +24,31 @@ struct Issue {
   int priority = 0;
   bool wait_for_previous = false;
   int counter_reset = -1;
+  int burst_len = 1;           // AXI beats (ARLEN/AWLEN+1); MODEL default 1
+  int axi_id = -1;             // <0 => assign from logical_id
+  bool reuse_prior_axi_id = false;
+  // AXIS-P1 packet description (ignored unless axis_enabled).
+  bool axis_enabled = false;
+  AxisSinkKind axis_sink = AxisSinkKind::Imm;
+  int axis_beats = 4;
+  int axis_last_valid_bytes = 16;
+  std::uint8_t axis_tid = 0;
+  std::uint8_t axis_tdest = 0;
+  std::uint8_t axis_tuser = 0;
+  bool axis_force_tid_change_mid = false;  // Continuous_Packets negativetest
+  bool axis_app_ack = false;
+  bool axis_packet_id = false;
+  std::uint64_t axis_packet_op_id = 0;
+  // AXI5-MM-P1 (ignored unless axi5_enabled / axi5_mm_p1 profile).
+  bool axi5_enabled = false;
+  Axi5AtomicForm axi5_form = Axi5AtomicForm::None;
+  Axi5AtomicOp axi5_atomic_op = Axi5AtomicOp::Add;
+  std::uint8_t axi5_awatop = 0;
+  bool axi5_wpoison = false;
+  bool axi5_awtrace = false;
+  bool axi5_wtrace = false;
+  bool axi5_exclusive = false;  // out of P1 scope if true
+  std::uint64_t axi5_logical_op_id = 0;
 };
 
 // Architectural mitigations for the cross-guest temporal-interference study.
@@ -88,6 +115,9 @@ struct RunResult {
   std::string experiment;
   std::vector<Transaction> transactions;
   int counter = 0;
+  int atomic_value = 0;
+  int atomic_ops_applied = 0;
+  int axi5_commit_watermark = 0;
   int fifo_depth = 0;
   int dma_starts = 0;
   bool converged = false;
@@ -123,6 +153,9 @@ struct RunResult {
   int credits_returned = 0;
   int l1_events = 0;
   int error_log_entries = 0;
+  int txn_watchdog_fires = 0;
+  int late_responses_discarded = 0;
+  bool txn_watchdog_escalated = false;
   bool pass = false;
   std::vector<std::string> failures;
 };

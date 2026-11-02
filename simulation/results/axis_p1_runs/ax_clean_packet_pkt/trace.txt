@@ -1,0 +1,36 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER AXIS beats=4 sink=PKT
+2001.000 ns  AXIS manager begins packet T1
+2002.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+2003.000 ns  TVALID&TREADY beat=1 tlast=0 bytes=16
+2004.000 ns  AoU packet ready
+2004.000 ns  TVALID&TREADY beat=2 tlast=0 bytes=16
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX AXIS segment beat=0
+2005.000 ns  TVALID&TREADY beat=3 tlast=1 bytes=16
+2006.000 ns  AoU packet ready
+2008.000 ns  AoU packet ready
+2010.000 ns  AoU packet ready
+2011.000 ns  remote endpoint receives AXIS segment
+2013.000 ns  AXIS sink accepts beat 0
+2013.000 ns  buffered beat=0 bytes=16 sealed=no
+2014.000 ns  queued for the link
+2014.000 ns  UCIe TX AXIS segment beat=1
+2023.000 ns  AXIS sink accepts beat 1
+2023.000 ns  buffered beat=1 bytes=16 sealed=no
+2024.000 ns  queued for the link
+2024.000 ns  UCIe TX AXIS segment beat=2
+2033.000 ns  AXIS sink accepts beat 2
+2033.000 ns  buffered beat=2 bytes=16 sealed=no
+2034.000 ns  queued for the link
+2034.000 ns  UCIe TX AXIS segment beat=3
+2041.000 ns  remote TLAST accepted (reception only; not an application effect)
+2043.000 ns  AXIS sink accepts beat 3
+2043.000 ns  buffered beat=3 bytes=16 sealed=pending_tlast
+2045.000 ns  SINK-PKT processing started (separate from packet_complete)
+2047.000 ns  AXIS-PKT ARCHITECTURAL EFFECT
+2047.000 ns  AXIS-PKT effect bytes=64 effects=1
+2047.000 ns  AXIS settle fate_a=UNKNOWN commits=1
+200000000.000 ns  simulation timeout

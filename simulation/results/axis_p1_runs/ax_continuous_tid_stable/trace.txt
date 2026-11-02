@@ -1,0 +1,8 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER AXIS beats=4 sink=IMM
+2001.000 ns  AXIS manager begins packet T1
+2002.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+2002.000 ns  Continuous_Packets TID/TDEST changed mid-packet
+2002.000 ns  Continuous_Packets TID/TDEST changed mid-packet

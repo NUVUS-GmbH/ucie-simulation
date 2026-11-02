@@ -96,6 +96,20 @@ def flow(steps, highlight=None) -> str:
     return '<ol class="flow">' + ''.join(items) + '</ol>'
 
 
+
+# Extended campaigns: counts come from stored, verified evidence.
+def campaign_count(name):
+    report = json.loads((root / 'simulation/results' / (name + '.json')).read_text())
+    runs = report['experiments']
+    passed = sum(bool(run['pass']) for run in runs)
+    if passed != len(runs):
+        raise ValueError('Campaign contains failing scenarios: ' + name)
+    return f'{passed}/{len(runs)} PASS'
+
+for name in ['fault_handling_summary.json', 'fault_handling_reference_summary.json', 'fault_handling_observer_diff.json', 'axis_p1_summary.json', 'axis_p1_reference_summary.json', 'axi5_mm_p1_summary.json', 'axi5_mm_p1_reference_summary.json', 'axis_p1_report.md', 'axi5_mm_p1_report.md', 'phase3_abschlussbericht.md']:
+    folder = 'data' if name.endswith('.json') else 'sources'
+    (docs / folder / name).write_text(sanitize((root / 'simulation/results' / name).read_text()))
+
 sections = []
 
 # --- 2. The Problem ---
@@ -155,7 +169,7 @@ sections.append(
         'Two traces with the same fate classification',
         p('After destructive UCIe recovery, the initiator may be unable to determine whether an outstanding non-idempotent AXI/MMIO operation executed.')
         + traces
-        + p('The timed check compares fate labels and completion status. It does not compare complete observer-visible event histories, timing, status bits, retry counters, or error logs. Full observational equivalence has not been established by this check.')
+        + p('This historical reference check compares fate labels and completion status, not full histories. The extended paired-history experiment above adds separate event-sequence and timed comparisons; neither establishes universal observational equivalence.')
         + p('These are schematic summaries of the reference-architecture runs. Blind software retry of a committed, indeterminate operation can produce a duplicate architectural effect; that is distinct from transport duplicate suppression.')
         + '<a href="data/reference_architecture_validation.json">Inspect the paired runs and blind-retry evidence ↗</a>',
     )
@@ -312,8 +326,8 @@ sections.append(
             ['Scenario', 'Ground truth', 'AXI only', 'AXI + FDI', 'UCIe status', 'Extra metadata'],
             obs,
         )
-        + '<div class="callout">The current classifier does not exploit all modeled diagnostic information. Therefore these experiments do not establish that richer diagnostics cannot resolve transaction fate.</div>'
-        + p('Under the currently implemented classification policy, adding the modeled diagnostic state does not change the fate classification. AXI-only profile A does not consume diagnostic logs. Profiles B/C record additional FDI/UCIe state, but those fields are not passed into the classification decision; their agreement with A is enforced by the implementation.')
+        + '<div class="callout">The historical reference classifier did not exploit all modeled diagnostics. The fault-handling extension now evaluates selected bridge evidence; it does not establish the limits of all richer diagnostics.</div>'
+        + p('In the historical reference runs, B/C diagnostic fields did not influence classification. In the extended model, equality is measured rather than enforced: C/D can identify a request that was never handed to UCIe. Missing ACK alone remains insufficient, including when delivery and commit precede a lost ACK.')
         + p(
             badge('ASSUMPTION')
             + ' Profile D retains ACK/NAK history sufficient to distinguish the pre-target loss in this experiment. This is extra observer knowledge, not a standardized architectural commit indication.'
@@ -465,7 +479,7 @@ claims = [
     'A committed operation with lost completion and a non-committed operation both receive UNKNOWN under the implemented observer/classifier.',
     'These outcomes remain reachable with reference-configured FIFOs, retry buffering, credits and multiple outstanding flits, under the implemented classification policy.',
     'Blind retry of an indeterminate non-idempotent operation can duplicate its effect.',
-    'The current classifier leaves modeled diagnostic information unused; the experiments do not establish the limits of richer diagnostic classifiers.',
+    'Selected bridge diagnostics resolve the tested never-handed case; missing ACK does not prove non-execution. Other diagnostic capabilities remain outside the evaluated profile.',
     'Some timing coupling between independent traffic sources remains under the reference configuration.',
     'Some simulator outcomes are implementation-dependent.',
 ]
@@ -516,8 +530,8 @@ sections.append(
                 'Format-6 optional bytes, electrical training, and FDI cycle accuracy are out of scope.',
                 'Diagnostic fields are study abstractions, not standardized or vendor register maps.',
                 'Finite scenarios establish reachability, not exhaustive absence of other outcomes.',
-                'The timed equivalence flag checks fate labels and completion status, not complete observer-visible histories.',
-                'Profiles B/C do not use all recorded diagnostic state for classification; a stronger diagnostic classifier has not been evaluated.',
+                'The historical reference equivalence flag compares fate labels and completion status. The extension separately compares projected event sequences and timed histories.',
+                'The extension evaluates selected bridge diagnostics, not every UCIe or vendor diagnostic feature. Trace signals do not serve as commit evidence.',
             ]
         ),
         'ASSUMPTION / SCOPE',
@@ -525,7 +539,7 @@ sections.append(
 )
 
 # --- 17. Reproducibility ---
-downloads = [
+downloads = [('sources/phase3_abschlussbericht.md', 'Extended study audit (German)'), ('sources/axis_p1_report.md', 'AXIS-P1 report'), ('sources/axi5_mm_p1_report.md', 'AXI5-MM-P1 report'), ('data/fault_handling_summary.json', 'fault_handling_summary'), ('data/fault_handling_reference_summary.json', 'fault_handling_reference_summary'), ('data/fault_handling_observer_diff.json', 'fault_handling_observer_diff'), ('data/axis_p1_summary.json', 'axis_p1_summary'), ('data/axis_p1_reference_summary.json', 'axis_p1_reference_summary'), ('data/axi5_mm_p1_summary.json', 'axi5_mm_p1_summary'), ('data/axi5_mm_p1_reference_summary.json', 'axi5_mm_p1_reference_summary')] + [
     ('sources/reference_architecture_validation.md', 'Reference report'),
     ('data/reference_architecture_validation.json', 'Complete JSON'),
     ('data/reference_architecture_validation.csv', 'Validation CSV'),
@@ -543,9 +557,9 @@ sections.append(
         'reproducibility',
         'Reproducibility',
         p('From the repository root, with SystemC, CMake, pkg-config, and Python available:')
-        + '<pre><code>cmake -S . -B build\ncmake --build build -j\npython -m simulation.experiments.reference_architecture_validation</code></pre>'
+        + '<pre><code>cmake -S . -B build\ncmake --build build -j\npython -m simulation.experiments.reference_architecture_validation\npython -m simulation.experiments.fault_handling_campaign\npython -m simulation.experiments.axis_campaign\npython -m simulation.experiments.axi5_mm_p1_campaign</code></pre>'
         + p('The campaign loads the repository’s internal reference configurations. The neutral public exports below preserve their parameter values; naming and identifying comments are sanitized. Stored evidence is presented here without rerunning or changing the simulation.')
-        + p('Evidence downloads retain their original English text and machine-readable field names.')
+        + p('Evidence downloads retain their source language and machine-readable field names; the extended audit is in German.')
         + '<div class="downloads">'
         + ''.join(f'<a href="{url}">{label} ↗</a>' for url, label in downloads)
         + '</div>'
@@ -579,15 +593,19 @@ sections.append(
     section(
         'conclusion',
         'Conclusion',
-        p('The study demonstrates that recovering a UCIe link and reconstructing the architectural fate of an interrupted higher-layer operation are different problems. In the reference-architecture model, a committed non-idempotent operation whose response is lost and an operation that never reached the target both receive UNKNOWN under the implemented observer/classifier. Blind retry of the committed case can create duplicate architectural effects. Full observer-history equivalence and the ability of richer diagnostics to resolve fate remain untested stronger claims.')
+        p('Link recovery, protocol completion and knowledge of remote effects are distinct. The extended MM, Stream and AXI5 profiles demonstrate lost-response ambiguity, partial stream effects and duplicate ADD execution after blind retry. Selected diagnostics help, but finite projected-history comparisons do not prove universal indistinguishability or exactly-once behavior.')
         + p('The reference configuration shows that this ambiguity is not dependent on a one-flit transport simplification. At the same time, model refinement exposed other behaviors as implementation-dependent. The next step is validation against a concrete UCIe controller implementation.'),
         'INTERPRETATION',
     )
 )
 
+sections.insert(1, section('extensions', 'Extended protocol study', p('The study now covers AXI4 Memory-Mapped fault handling, AXI4-Stream as a separate interface, and the bounded AXI5-MM-P1 profile. UCIe streaming transport is not the same thing as an AXI4-Stream interface.') + table(['Profile', 'Automotive scenarios', 'Reference scenarios', 'Scope'], [['AXI4 Memory-Mapped', campaign_count('fault_handling_summary'), campaign_count('fault_handling_reference_summary'), 'Local SLVERR, watchdog, late responses and retry'],['AXIS-P1', campaign_count('axis_p1_summary'), campaign_count('axis_p1_reference_summary'), 'Immediate and atomic packet sinks; optional App-ACK and duplicate suppression'],['AXI5-MM-P1', campaign_count('axi5_mm_p1_summary'), campaign_count('axi5_mm_p1_reference_summary'), 'AtomicStore(ADD), Poison policies and Trace; separate from AXIS']]) + p('PASS means that the specified scenario assertions passed, including expected counterexamples. These finite campaigns are not a protocol-conformance certificate or an exhaustive safety proof.'), 'RESULT'))
+sections.insert(2, section('effect-knowledge', 'Completion is not effect knowledge', table(['Dimension', 'Meaning'], [['Protocol completion', 'COMPLETED records a successful transfer response; it does not universally prove a remote effect.'], ['Architectural effect', 'Target state, commit counts and partial effects are ground truth used for evaluation, never hidden classifier inputs.'], ['Observer knowledge', 'SURE_EFFECT, SURE_NO_EFFECT and INDETERMINATE are derived separately from permitted observations and explicit profile assumptions.']]) + p('Poison + OKAY: the tested RejectWithoutCommitOkay policy completes the transfer without applying the ADD. Observers A–D now report INDETERMINATE rather than SURE_EFFECT. This expected policy outcome is not a protocol inconsistency.') + p('For unpoisoned MM responses and the modeled Stream App-ACK, effect knowledge relies on the explicit endpoint contract. SURE_EFFECT means the intended effect occurred; it does not mean exactly once. Duplicate execution remains a separate at-most-once violation.'), 'INTERPRETATION'))
+sections.insert(3, section('protocol-findings', 'What the new experiments establish', '<h3>' + 'AXI4-Stream: packet reception is not application commit' + '</h3>' + p('AXIS-P1 models VALID/READY handshakes, stable offers under backpressure and packet boundaries. SINK-IMM can produce partial effects before interruption. SINK-PKT separates complete reception, processing start and an explicitly assumed atomic packet effect. Local TLAST alone is not a remote-effect acknowledgement. Without App-ACK, this profile does not classify the remote effect as known completed.') + '<h3>' + 'AXI5: atomic does not mean retry-safe' + '</h3>' + p('AtomicStore(ADD) starts at 10 with operand +5. The first execution produces 15; after response loss and blind retry, a second execution produces 20. Without retry the value remains 15. This profile uses a B-response and no returned prior value. Poison and Trace are examined separately; Trace is not commit evidence.') + '<h3>' + 'Diagnostics, histories and safe retry' + '</h3>' + p('A local SLVERR plus evidence that a request was never handed to UCIe can support NOT_COMPLETED in C/D. Missing ACK cannot: the delivered-request/lost-ACK counterexample commits and remains UNKNOWN. The paired-history experiment reports matching A/B event sequences only after removing timestamps; timed comparisons are reported separately. C/D projections differ.') + '<h3>' + 'Model boundaries' + '</h3>' + p('Bridge mappings are model profiles, not an AoU conformity claim. AXIS follows the selected IHI0051B profile; AXI5-MM-P1 selects AtomicStore(ADD), Poison and Trace from IHI0022L. Full AXI5, commercial-IP validation and silicon validation are outside scope. Safe retry with instant shared-state cancel depends on that idealized assumption; delayed cancel can lose the race with commit. Duplicate suppression depends on identity, retention and reset behavior.'), 'RESULT / SCOPE'))
+
 nav = [
     ('problem', 'Problem'),
-    ('traces', 'Traces'),
+    ('extensions', 'New findings'),
     ('architecture', 'Architecture'),
     ('robustness', 'Robustness'),
     ('claims', 'Claims'),
@@ -612,6 +630,7 @@ hero = (
     '<h1>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</h1>'
     '<p class="lead">In the modeled UCIe recovery scenarios, a committed operation with lost completion and an operation that never reached the target both receive UNKNOWN under the implemented observer/classifier.</p>'
     + p('The ground-truth outcomes differ; the implemented fate classifications match. This does not establish equality of the complete observer-visible histories or that richer diagnostics cannot determine fate. The study uses three fate classifications: <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. These are study labels, not UCIe-defined protocol states.')
+    + p('Extended results: AXI4-Stream, AtomicStore(ADD), Poison and a corrected separation of transfer completion from effect knowledge.')
     + '<div class="summary">'
     + ''.join(
         f'<div><span>{label}</span><small>{sub}</small><strong class="{cls}">{value}</strong></div>'

@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 /build/
 /timed_results/
+# Project draft may contain vendor placeholders; keep out of accidental public publish paths.
+# The file may still exist locally for analysis; do not copy into docs/.
+simulation/results/fault_handling_draft_extract.txt

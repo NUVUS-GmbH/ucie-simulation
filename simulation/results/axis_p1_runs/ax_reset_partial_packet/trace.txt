@@ -1,0 +1,28 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER AXIS beats=4 sink=IMM
+2001.000 ns  AXIS manager begins packet T1
+2002.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+2003.000 ns  TVALID&TREADY beat=1 tlast=0 bytes=16
+2004.000 ns  AoU packet ready
+2004.000 ns  TVALID&TREADY beat=2 tlast=0 bytes=16
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX AXIS segment beat=0
+2005.000 ns  TVALID&TREADY beat=3 tlast=1 bytes=16
+2006.000 ns  AoU packet ready
+2008.000 ns  AoU packet ready
+2010.000 ns  AoU packet ready
+2011.000 ns  remote endpoint receives AXIS segment
+2011.000 ns  fault 13 at REMOTE_RECEIVED
+2011.000 ns  LINK_RESET
+2011.000 ns  LinkReset entered
+2013.000 ns  AXIS sink accepts beat 0
+10005.000 ns  AXIS settle fate_a=UNKNOWN commits=0
+12011.000 ns  [SPEC] pipelines and retry buffers flushed
+12011.000 ns  RESET
+12011.000 ns  RECOVERING
+12011.000 ns  [MODEL] link reactivation
+14011.000 ns  ACTIVE
+14011.000 ns  link is Active again
+200000000.000 ns  simulation timeout

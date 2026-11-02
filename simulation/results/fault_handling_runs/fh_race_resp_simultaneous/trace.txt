@@ -1,0 +1,49 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2002.000 ns  arm transaction watchdog id=1 addr=0x4096 dir=W timeout_ns=80.000000
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2011.000 ns  remote endpoint receives the request
+2014.000 ns  queued for the link
+2014.000 ns  write-data TX begins
+2041.000 ns  target accepts T1
+2061.000 ns  ARCHITECTURAL COMMIT
+2061.000 ns  fault 14 at ARCHITECTURAL_COMMIT
+2061.000 ns  counter 7 -> 8
+2061.000 ns  LINK_ERROR
+2061.000 ns  LinkError entered
+2061.000 ns  Forced LinkError
+2061.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+2081.000 ns  response created
+2081.000 ns  priority sideband delivered (LinkError)
+2081.000 ns  safety manager received LinkError and records the configured action
+2082.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=W cause=txn_watchdog
+2082.000 ns  [PROJECT WDT-03] local SLVERR after transaction watchdog
+2082.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=W cause=txn_watchdog
+2083.000 ns  response queued
+2083.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=W cause=txn_watchdog
+2083.000 ns  [PROJECT CONFIG] escalate after repeated transaction timeouts
+2087.000 ns  AXI SLVERR from WATCHDOG, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 5
+2111.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+2111.000 ns  [SPEC] pipelines and retry buffers flushed
+2111.000 ns  RECOVERING
+2111.000 ns  [MODEL] link reactivation
+4111.000 ns  ACTIVE
+4111.000 ns  link is Active again
+4111.000 ns  LINK_ERROR
+4111.000 ns  LinkError entered
+4111.000 ns  Forced LinkError
+4111.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+4131.000 ns  priority sideband delivered (LinkError)
+4131.000 ns  safety manager received LinkError and records the configured action
+4161.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+4161.000 ns  [SPEC] pipelines and retry buffers flushed
+4161.000 ns  RECOVERING
+4161.000 ns  [MODEL] link reactivation
+6161.000 ns  ACTIVE
+6161.000 ns  link is Active again
+200000000.000 ns  simulation timeout

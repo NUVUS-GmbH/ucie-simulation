@@ -1,0 +1,50 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2002.000 ns  arm transaction watchdog id=7 addr=0x4096 dir=W timeout_ns=150.000000
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2011.000 ns  remote endpoint receives the request
+2014.000 ns  queued for the link
+2014.000 ns  write-data TX begins
+2023.000 ns  target accepts T1
+2063.000 ns  ARCHITECTURAL COMMIT
+2063.000 ns  counter 7 -> 8
+2103.000 ns  response created
+2105.000 ns  response queued
+2105.000 ns  queued for the link
+2105.000 ns  response TX
+2105.000 ns  fault 6 at RESPONSE_TRANSMITTING
+2152.000 ns  [PROJECT WDT-03] transaction timeout id=7 addr=0x4096 dir=W cause=txn_watchdog
+2152.000 ns  [PROJECT WDT-03] local SLVERR after transaction watchdog
+2152.000 ns  [PROJECT WDT-03] transaction timeout id=7 addr=0x4096 dir=W cause=txn_watchdog
+2153.000 ns  AXI SLVERR from WATCHDOG, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 1
+2400.000 ns  Guest A creates T2 INCREMENT_COUNTER
+2402.000 ns  AXI accepts T2
+2402.000 ns  arm transaction watchdog id=7 addr=0x4096 dir=W timeout_ns=150.000000
+2404.000 ns  AoU packet ready
+2404.000 ns  queued for the link
+2404.000 ns  UCIe TX begins
+2411.000 ns  remote endpoint receives the request
+2552.000 ns  [PROJECT WDT-03] transaction timeout id=7 addr=0x4096 dir=W cause=txn_watchdog
+2552.000 ns  [PROJECT WDT-03] local SLVERR after transaction watchdog
+2552.000 ns  [PROJECT CONFIG] escalate after repeated transaction timeouts
+2552.000 ns  LINK_ERROR
+2552.000 ns  LinkError entered
+2552.000 ns  Forced LinkError
+2552.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+2552.000 ns  [PROJECT WDT-03] transaction timeout id=7 addr=0x4096 dir=W cause=txn_watchdog
+2552.000 ns  [PROJECT WDT-03] transaction timeout id=7 addr=0x4096 dir=W cause=txn_watchdog
+2553.000 ns  AXI SLVERR from WATCHDOG, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 1
+2572.000 ns  priority sideband delivered (LinkError)
+2572.000 ns  safety manager received LinkError and records the configured action
+10112.000 ns  [PROJECT WDT-04] late response discarded after local close
+16002552.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+16002552.000 ns  [SPEC] pipelines and retry buffers flushed
+16002552.000 ns  RECOVERING
+16002552.000 ns  [MODEL] link reactivation
+16004552.000 ns  ACTIVE
+16004552.000 ns  link is Active again

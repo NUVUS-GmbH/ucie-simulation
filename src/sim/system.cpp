@@ -83,6 +83,9 @@ void write_outputs(const World& world, const RunResult& result, const std::strin
   js << "  \"experiment\": \"" << json_escape(result.experiment) << "\",\n";
   js << "  \"pass\": " << (result.pass ? "true" : "false") << ",\n";
   js << "  \"counter\": " << result.counter << ",\n";
+  js << "  \"atomic_value\": " << result.atomic_value << ",\n";
+  js << "  \"atomic_ops_applied\": " << result.atomic_ops_applied << ",\n";
+  js << "  \"axi5_commit_watermark\": " << result.axi5_commit_watermark << ",\n";
   js << "  \"converged\": " << (result.converged ? "true" : "false") << ",\n";
   js << "  \"deadlock\": " << (result.deadlock ? "true" : "false") << ",\n";
   js << "  \"crc_failures\": " << result.crc_failures << ",\n";
@@ -126,6 +129,17 @@ void write_outputs(const World& world, const RunResult& result, const std::strin
   js << "  \"credits_returned\": " << result.credits_returned << ",\n";
   js << "  \"l1_events\": " << result.l1_events << ",\n";
   js << "  \"error_log_entries\": " << result.error_log_entries << ",\n";
+  js << "  \"txn_watchdog_fires\": " << world.txn_watchdog_fires << ",\n";
+  js << "  \"late_responses_discarded\": " << world.late_responses_discarded << ",\n";
+  js << "  \"txn_watchdog_escalated\": " << (world.txn_watchdog_escalated ? "true" : "false") << ",\n";
+  js << "  \"recovery_policy\": \"" << static_cast<int>(world.scenario.policy) << "\",\n";
+  js << "  \"fate_equal_abc\": "
+     << ((result.transactions.empty() ||
+          (result.transactions[0].visible.fate_a == result.transactions[0].visible.fate_b &&
+           result.transactions[0].visible.fate_a == result.transactions[0].visible.fate_c))
+             ? "true"
+             : "false")
+     << ",\n";
   js << "  \"single_inflight_slot\": " << (world.cfg.single_inflight_slot ? "true" : "false") << ",\n";
   js << "  \"retry_buffer_entries\": " << world.cfg.retry_buffer_entries << ",\n";
   js << "  \"tx_buffer_entries\": " << world.cfg.tx_buffer_entries << ",\n";
@@ -171,7 +185,20 @@ void write_outputs(const World& world, const RunResult& result, const std::strin
        << ", \"fate_b\": \"" << to_string(tx.visible.fate_b) << "\""
        << ", \"fate_c\": \"" << to_string(tx.visible.fate_c) << "\""
        << ", \"fate_d\": \"" << to_string(tx.visible.fate_d) << "\""
-       << ", \"completed\": " << (tx.visible.axi_completed_ok ? "true" : "false")
+       << ", \"completed_ok\": " << (tx.visible.axi_completed_ok ? "true" : "false")
+       << ", \"completed_err\": " << (tx.visible.axi_completed_err ? "true" : "false")
+       << ", \"axi_resp\": \"" << to_string(tx.visible.axi_resp) << "\""
+       << ", \"resp_source\": \"" << to_string(tx.visible.axi_resp_source) << "\""
+       << ", \"proto_state\": \"" << to_string(tx.proto.state) << "\""
+       << ", \"knowledge_a\": \"" << to_string(tx.visible.knowledge_a) << "\""
+       << ", \"knowledge_d\": \"" << to_string(tx.visible.knowledge_d) << "\""
+       << ", \"late_responses_discarded\": " << tx.bridge.late_responses_discarded
+       << ", \"txn_watchdog_fired\": " << (tx.visible.txn_watchdog_fired ? "true" : "false")
+       << ", \"burst_len\": " << tx.proto.burst_len
+       << ", \"beats_responded\": " << tx.proto.beats_responded
+       << ", \"beat_handshake_count\": " << tx.proto.beat_handshake_count
+       << ", \"resp_backpressured\": " << (tx.proto.resp_backpressured ? "true" : "false")
+       << ", \"resp_ready_to_handshake_ns\": " << tx.proto.resp_ready_to_handshake_ns
        << ", \"deadline_violated\": " << (tx.visible.deadline_violated ? "true" : "false")
        << ", \"latency_ns\": " << tx.latency_ns()
        << ", \"ambiguity_window_ns\": " << tx.ambiguity_window_ns
@@ -180,11 +207,79 @@ void write_outputs(const World& world, const RunResult& result, const std::strin
        << ", \"replay_count\": " << tx.replay_count
        << ", \"software_retries\": " << tx.software_retry_count
        << ", \"completion_received\": " << (tx.completion_received ? "true" : "false")
+       << ", \"axi_id\": " << tx.axi_id
+       << ", \"bridge_token\": " << tx.bridge.token
+       << ", \"bridge_generation\": " << tx.bridge.generation
+       << ", \"completing_token\": " << tx.bridge.completing_token
+       << ", \"completing_token_set\": " << (tx.bridge.completing_token_set ? "true" : "false")
+       << ", \"allow_remote_continue\": " << (tx.bridge.allow_remote_continue ? "true" : "false")
+       << ", \"fate_c_without_diag\": \"" << to_string(tx.visible.fate_c_without_diag) << "\""
+       << ", \"fate_d_without_diag\": \"" << to_string(tx.visible.fate_d_without_diag) << "\""
+       << ", \"diag_never_handed\": " << (tx.visible.diag_never_handed ? "true" : "false")
+       << ", \"diag_missing_ack\": " << (tx.visible.diag_missing_ack ? "true" : "false")
+       << ", \"cancel_requested\": " << (tx.bridge.cancel_requested ? "true" : "false")
+       << ", \"cancel_effective_ns\": " << tx.bridge.cancel_effective_ns
+       << ", \"axis_enabled\": " << (tx.axis.enabled ? "true" : "false")
+       << ", \"axis_sink\": \"" << (tx.axis.sink == AxisSinkKind::Imm ? "IMM" : "PKT") << "\""
+       << ", \"axis_local_beats\": " << tx.axis.local_beats_accepted
+       << ", \"axis_local_bytes\": " << tx.axis.local_bytes_accepted
+       << ", \"axis_remote_beats\": " << tx.axis.remote_beats_accepted
+       << ", \"axis_remote_bytes\": " << tx.axis.remote_bytes_accepted
+       << ", \"axis_remote_packet_complete\": " << (tx.axis.remote_packet_complete ? "true" : "false")
+       << ", \"axis_processing_started\": " << (tx.axis.processing_started ? "true" : "false")
+       << ", \"axis_app_effects\": " << tx.axis.app_effects
+       << ", \"axis_bytes_committed\": " << tx.axis.bytes_committed
+       << ", \"axis_local_tlast\": " << (tx.axis.local_tlast_accepted ? "true" : "false")
+       << ", \"axis_protocol_error\": " << (tx.axis.protocol_error ? "true" : "false")
+       << ", \"axis_app_ack_received\": " << (tx.axis.app_ack_received ? "true" : "false")
+       << ", \"axis_packet_op_id\": " << tx.axis.packet_op_id
+       << ", \"axis_dup_suppress_hit\": " << (tx.axis.dup_suppress_hit ? "true" : "false")
+       << ", \"axi5_enabled\": " << (tx.axi5.enabled ? "true" : "false")
+       << ", \"axi5_form\": \"" << to_string(tx.axi5.form) << "\""
+       << ", \"axi5_atomic_op\": \"" << to_string(tx.axi5.atomic_op) << "\""
+       << ", \"axi5_awatop\": " << static_cast<int>(tx.axi5.awatop)
+       << ", \"axi5_wpoison\": " << (tx.axi5.wpoison ? "true" : "false")
+       << ", \"axi5_poison_rejected\": " << (tx.axi5.poison_rejected ? "true" : "false")
+       << ", \"axi5_poison_accepted_marked\": " << (tx.axi5.poison_accepted_marked ? "true" : "false")
+       << ", \"axi5_awtrace\": " << (tx.axi5.awtrace ? "true" : "false")
+       << ", \"axi5_btrace\": " << (tx.axi5.btrace ? "true" : "false")
+       << ", \"axi5_trace_used_in_classify\": " << (tx.axi5.trace_used_in_classify ? "true" : "false")
+       << ", \"axi5_atomic_effects\": " << tx.axi5.atomic_effects
+       << ", \"axi5_value_before\": " << tx.axi5.value_before
+       << ", \"axi5_value_after\": " << tx.axi5.value_after
+       << ", \"axi5_operand\": " << tx.axi5.operand
+       << ", \"axi5_transfer_attempt\": " << tx.axi5.transfer_attempt
+       << ", \"axi5_logical_op_id\": " << tx.axi5.logical_op_id
+       << ", \"axi5_write_response_created\": " << (tx.axi5.write_response_created ? "true" : "false")
+       << ", \"axi5_read_response_created\": " << (tx.axi5.read_response_created ? "true" : "false")
+       << ", \"axi5_unsupported_form\": " << (tx.axi5.unsupported_form ? "true" : "false")
+       << ", \"axi5_poison_policy\": \"" << to_string(tx.axi5.poison_policy) << "\""
        << ", \"wait_arbitration_ns\": " << tx.wait_arbitration_ns
        << ", \"wait_guest_a_normal_ns\": " << tx.wait_guest_a_normal_ns
        << ", \"wait_guest_a_replay_ns\": " << tx.wait_guest_a_replay_ns
        << ", \"wait_own_replay_ns\": " << tx.wait_own_replay_ns
-       << ", \"wait_credit_ns\": " << tx.wait_credit_ns << "}";
+       << ", \"wait_credit_ns\": " << tx.wait_credit_ns
+       << ", \"observer_trace_a\": [";
+    for (std::size_t j = 0; j < tx.observer_trace_a.size(); ++j) {
+      if (j) js << ", ";
+      js << "\"" << json_escape(tx.observer_trace_a[j]) << "\"";
+    }
+    js << "], \"observer_trace_b\": [";
+    for (std::size_t j = 0; j < tx.observer_trace_b.size(); ++j) {
+      if (j) js << ", ";
+      js << "\"" << json_escape(tx.observer_trace_b[j]) << "\"";
+    }
+    js << "], \"observer_trace_c\": [";
+    for (std::size_t j = 0; j < tx.observer_trace_c.size(); ++j) {
+      if (j) js << ", ";
+      js << "\"" << json_escape(tx.observer_trace_c[j]) << "\"";
+    }
+    js << "], \"observer_trace_d\": [";
+    for (std::size_t j = 0; j < tx.observer_trace_d.size(); ++j) {
+      if (j) js << ", ";
+      js << "\"" << json_escape(tx.observer_trace_d[j]) << "\"";
+    }
+    js << "]}";
     if (i + 1 != result.transactions.size()) js << ",";
     js << "\n";
   }
@@ -230,6 +325,7 @@ ChipletSystem::ChipletSystem(sc_core::sc_module_name name, Config config, Scenar
       sideband_("sideband", world_),
       safety_("safety", world_),
       faults_("faults", world_),
+      txn_watchdog_("txn_watchdog", world_),
       output_(std::move(output)) {
   SC_THREAD(campaign);
   SC_THREAD(watchdog);
@@ -266,6 +362,9 @@ void ChipletSystem::campaign() {
   result_.experiment = world_.scenario.name;
   result_.transactions = world_.txns;
   result_.counter = world_.target.counter;
+  result_.atomic_value = world_.target.atomic_value;
+  result_.atomic_ops_applied = world_.target.atomic_ops_applied;
+  result_.axi5_commit_watermark = world_.target.axi5_commit_watermark;
   result_.fifo_depth = static_cast<int>(world_.target.fifo.size());
   result_.dma_starts = world_.target.dma_starts;
   result_.converged = world_.link.converged && world_.link.state == LinkState::Active;
@@ -301,6 +400,9 @@ void ChipletSystem::campaign() {
   result_.credits_returned = world_.credits_returned[0] + world_.credits_returned[1];
   result_.l1_events = world_.l1_events;
   result_.error_log_entries = static_cast<int>(world_.error_log.size());
+  result_.txn_watchdog_fires = world_.txn_watchdog_fires;
+  result_.late_responses_discarded = world_.late_responses_discarded;
+  result_.txn_watchdog_escalated = world_.txn_watchdog_escalated;
   evaluate(world_.scenario, result_);
   write_outputs(world_, result_, output_);
 
@@ -312,7 +414,8 @@ void ChipletSystem::campaign() {
   for (const auto& tx : result_.transactions) {
     std::cout << "T" << tx.logical_id << " guest " << tx.guest_id << " commit " << tx.ground.architectural_commit_count
               << " A " << to_string(tx.visible.fate_a) << " D " << to_string(tx.visible.fate_d)
-              << " completion " << (tx.visible.axi_completed_ok ? "yes" : "no") << "\n";
+              << " resp " << to_string(tx.visible.axi_resp) << "/" << to_string(tx.visible.axi_resp_source)
+              << " proto " << to_string(tx.proto.state) << "\n";
   }
   if (!result_.violations.empty()) {
     std::cout << "violations:";

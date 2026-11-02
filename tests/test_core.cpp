@@ -53,6 +53,33 @@ int main() {
     EXPECT(classify(view_for(ObserverProfile::C_AxiFdiUcieStatus, tx)) == Fate::Unknown);
   }
   {
+    // SLVERR completes AXI but does not imply NOT_COMPLETED or COMPLETED.
+    auto tx = accepted_write();
+    tx.visible.axi_completed_err = true;
+    tx.visible.axi_resp = AxiResp::Slverr;
+    tx.visible.axi_resp_source = RespSource::Bridge;
+    EXPECT(classify(view_for(ObserverProfile::A_AxiOnly, tx)) == Fate::Unknown);
+    EXPECT(classify(view_for(ObserverProfile::B_AxiFdi, tx)) == Fate::Unknown);
+  }
+  {
+    // Diagnostic rule: local SLVERR ∧ never handed → NOT_COMPLETED for C.
+    // Missing ACK alone must remain UNKNOWN (delivery can precede ACK).
+    auto tx = accepted_write();
+    tx.visible.axi_completed_err = true;
+    tx.visible.axi_resp = AxiResp::Slverr;
+    tx.visible.axi_resp_source = RespSource::Bridge;
+    tx.visible.use_diag_fields = true;
+    tx.visible.diag_bridge_local_slverr = true;
+    tx.visible.diag_never_handed = true;
+    EXPECT(classify(view_for(ObserverProfile::C_AxiFdiUcieStatus, tx)) == Fate::NotCompleted);
+    tx.visible.diag_never_handed = false;
+    tx.visible.diag_missing_ack = true;
+    EXPECT(classify(view_for(ObserverProfile::C_AxiFdiUcieStatus, tx)) == Fate::Unknown);
+    tx.visible.use_diag_fields = false;
+    tx.visible.diag_never_handed = true;
+    EXPECT(classify(view_for(ObserverProfile::C_AxiFdiUcieStatus, tx)) == Fate::Unknown);
+  }
+  {
     Transaction tx;
     tx.is_write = true;
     EXPECT(classify(view_for(ObserverProfile::A_AxiOnly, tx)) == Fate::NotCompleted);
@@ -104,7 +131,7 @@ int main() {
     tx.visible.fate_a = Fate::Completed;
     auto issues = check_transaction_invariants({tx});
     EXPECT(!issues.empty());
-    EXPECT(issues[0].false_safe_retry && issues[0].at_most_once && issues[0].completion_inconsistent);
+    EXPECT(issues[0].false_safe_retry && issues[0].at_most_once && !issues[0].completion_inconsistent);
   }
 
   {
@@ -170,6 +197,271 @@ int main() {
     target.commit(tx);
     EXPECT(tx.ground.architectural_commit_count == 2);
     EXPECT(target.counter == 9);
+  }
+
+  // AXIS-P1: SINK-IMM commits per beat; SINK-PKT separates reception / process / effect.
+  {
+    TargetModel target;
+    target.counter = 0;
+    Transaction tx;
+    tx.axis.enabled = true;
+    tx.axis.sink = AxisSinkKind::Imm;
+    tx.axis.beat_count = 2;
+    tx.axis.data_width_bytes = 16;
+    tx.axis.last_beat_valid_bytes = 4;
+    for (int b = 0; b < 2; ++b) {
+      AxisBeatOffer o;
+      o.beat_index = b;
+      o.tdata = static_cast<std::uint64_t>(0x10 + b);
+      o.tkeep = tx.axis.keep_for_beat(b);
+      o.tlast = (b == 1);
+      o.valid_bytes = tx.axis.valid_bytes_for_beat(b);
+      tx.axis.offers.push_back(o);
+    }
+    target.axis_commit_imm_beat(tx, 0, 1.0);
+    EXPECT(tx.axis.app_effects == 1);
+    EXPECT(tx.ground.architectural_commit_count == 1);
+    EXPECT(tx.axis.bytes_committed == 16);
+    target.axis_commit_imm_beat(tx, 1, 2.0);
+    EXPECT(tx.axis.app_effects == 2);
+    EXPECT(tx.axis.bytes_committed == 20);
+    EXPECT(target.counter == 20);
+  }
+  {
+    TargetModel target;
+    Transaction tx;
+    tx.axis.enabled = true;
+    tx.axis.sink = AxisSinkKind::Pkt;
+    tx.axis.beat_count = 2;
+    tx.axis.remote_packet_complete = true;
+    tx.axis.pkt_buffer = {1, 2, 3, 4};
+    // Complete reception alone must not commit.
+    EXPECT(tx.axis.app_effects == 0);
+    EXPECT(tx.ground.architectural_commit_count == 0);
+    auto refused = target.axis_commit_pkt_effect(tx, 1.0);
+    EXPECT(refused.find("processing not started") != std::string::npos);
+    EXPECT(tx.axis.app_effects == 0);
+    tx.axis.processing_started = true;
+    auto ok = target.axis_commit_pkt_effect(tx, 2.0);
+    EXPECT(tx.axis.app_effects == 1);
+    EXPECT(tx.ground.architectural_commit_count == 1);
+    EXPECT(target.axis_packets_committed == 1);
+    EXPECT(ok.find("AXIS-PKT") != std::string::npos);
+  }
+  {
+    // Continuous_Packets keep mask: non-TLAST all bytes valid.
+    AxisRecord axis;
+    axis.beat_count = 2;
+    axis.data_width_bytes = 16;
+    axis.last_beat_valid_bytes = 3;
+    EXPECT(axis.keep_for_beat(0) == 0xffff);
+    EXPECT(axis.valid_bytes_for_beat(1) == 3);
+    EXPECT(axis.keep_for_beat(1) == 0x7);
+  }
+  {
+    // Optional dup-suppress by packet_op_id (ADDITIONAL MECHANISM).
+    TargetModel target;
+    target.axis_dup_suppress = true;
+    target.axis_dup_capacity = 2;
+    target.axis_dup_lifetime_ns = 0;
+    Transaction tx;
+    tx.axis.enabled = true;
+    tx.axis.sink = AxisSinkKind::Pkt;
+    tx.axis.packet_id_enabled = true;
+    tx.axis.packet_op_id = 99;
+    tx.axis.processing_started = true;
+    tx.axis.pkt_buffer = {9};
+    target.axis_commit_pkt_effect(tx, 10.0);
+    EXPECT(tx.ground.architectural_commit_count == 1);
+    Transaction again = tx;
+    again.ground.architectural_commit_count = 0;
+    again.axis.app_effects = 0;
+    again.axis.dup_suppress_hit = false;
+    again.axis.processing_started = true;
+    again.axis.pkt_buffer = {9};
+    target.axis_commit_pkt_effect(again, 11.0);
+    EXPECT(again.axis.dup_suppress_hit);
+    EXPECT(again.ground.architectural_commit_count == 0);
+    EXPECT(target.axis_duplicates_suppressed == 1);
+  }
+
+  // AXI5-MM-P1: AtomicStore(ADD) — no prior-value return; double ADD visible in memory.
+  {
+    TargetModel target;
+    target.atomic_value = 10;
+    Transaction tx;
+    tx.axi5.enabled = true;
+    tx.axi5.form = Axi5AtomicForm::AtomicStore;
+    tx.axi5.atomic_op = Axi5AtomicOp::Add;
+    tx.axi5.awatop = kAwatopAtomicStoreAddLe;
+    tx.axi5.operand = 5;
+    tx.data = 5;
+    tx.address = 0xA000;
+    tx.is_write = true;
+    auto line = target.commit_atomic_store(tx);
+    EXPECT(target.atomic_value == 15);
+    EXPECT(target.atomic_ops_applied == 1);
+    EXPECT(tx.ground.architectural_commit_count == 1);
+    EXPECT(tx.axi5.value_before == 10 && tx.axi5.value_after == 15);
+    EXPECT(!tx.axi5.read_response_created);
+    EXPECT(line.find("AtomicStore(ADD)") != std::string::npos);
+    // Blind-retry style second application (same logical op, new attempt).
+    Transaction retry = tx;
+    retry.ground.architectural_commit_count = 1;  // prior attempt already counted on same logical tx in sim;
+    // Unit test uses a fresh count path via commit_atomic_store again:
+    retry.ground.architectural_commit_count = 0;
+    retry.axi5.atomic_effects = 0;
+    retry.axi5.transfer_attempt = 1;
+    target.commit_atomic_store(retry);
+    EXPECT(target.atomic_value == 20);
+    EXPECT(target.atomic_ops_applied == 2);
+  }
+  // Poison reject: no commit, no undo; AcceptMarked commits.
+  {
+    TargetModel target;
+    target.atomic_value = 10;
+    target.poison_policy = PoisonTargetPolicy::RejectWithoutCommitSlverr;
+    Transaction tx;
+    tx.axi5.enabled = true;
+    tx.axi5.form = Axi5AtomicForm::AtomicStore;
+    tx.axi5.atomic_op = Axi5AtomicOp::Add;
+    tx.axi5.awatop = kAwatopAtomicStoreAddLe;
+    tx.axi5.wpoison = true;
+    tx.axi5.operand = 5;
+    tx.data = 5;
+    target.commit_atomic_store(tx);
+    EXPECT(tx.axi5.poison_rejected);
+    EXPECT(tx.ground.architectural_commit_count == 0);
+    EXPECT(target.atomic_value == 10);
+    EXPECT(tx.axi5.intended_bresp == AxiResp::Slverr);
+  }
+  {
+    TargetModel target;
+    target.atomic_value = 10;
+    target.poison_policy = PoisonTargetPolicy::RejectWithoutCommitOkay;
+    Transaction tx;
+    tx.axi5.enabled = true;
+    tx.axi5.form = Axi5AtomicForm::AtomicStore;
+    tx.axi5.atomic_op = Axi5AtomicOp::Add;
+    tx.axi5.awatop = kAwatopAtomicStoreAddLe;
+    tx.axi5.wpoison = true;
+    tx.axi5.operand = 5;
+    tx.data = 5;
+    target.commit_atomic_store(tx);
+    EXPECT(tx.axi5.poison_rejected);
+    EXPECT(target.atomic_value == 10);
+    EXPECT(tx.axi5.intended_bresp == AxiResp::Okay);
+  }
+  {
+    TargetModel target;
+    target.atomic_value = 10;
+    target.poison_policy = PoisonTargetPolicy::AcceptMarkedOkay;
+    Transaction tx;
+    tx.axi5.enabled = true;
+    tx.axi5.form = Axi5AtomicForm::AtomicStore;
+    tx.axi5.atomic_op = Axi5AtomicOp::Add;
+    tx.axi5.awatop = kAwatopAtomicStoreAddLe;
+    tx.axi5.wpoison = true;
+    tx.axi5.operand = 5;
+    tx.data = 5;
+    target.commit_atomic_store(tx);
+    EXPECT(tx.axi5.poison_accepted_marked);
+    EXPECT(target.atomic_value == 15);
+    EXPECT(tx.ground.architectural_commit_count == 1);
+  }
+  // Poison after commit must not undo.
+  {
+    TargetModel target;
+    target.atomic_value = 10;
+    target.poison_policy = PoisonTargetPolicy::RejectWithoutCommitSlverr;
+    Transaction clean;
+    clean.axi5.enabled = true;
+    clean.axi5.form = Axi5AtomicForm::AtomicStore;
+    clean.axi5.atomic_op = Axi5AtomicOp::Add;
+    clean.axi5.awatop = kAwatopAtomicStoreAddLe;
+    clean.axi5.operand = 5;
+    clean.data = 5;
+    target.commit_atomic_store(clean);
+    EXPECT(target.atomic_value == 15);
+    Transaction poison;
+    poison.axi5.enabled = true;
+    poison.axi5.form = Axi5AtomicForm::AtomicStore;
+    poison.axi5.atomic_op = Axi5AtomicOp::Add;
+    poison.axi5.awatop = kAwatopAtomicStoreAddLe;
+    poison.axi5.wpoison = true;
+    poison.axi5.operand = -5;
+    poison.data = -5;
+    target.commit_atomic_store(poison);
+    EXPECT(target.atomic_value == 15);
+    EXPECT(target.axi5_commit_watermark >= 1);
+  }
+  // Trace must not appear in InitiatorView / classify inputs.
+  {
+    Transaction tx;
+    tx.is_write = true;
+    tx.visible.axi_accepted = true;
+    tx.visible.axi_completed_err = true;
+    tx.visible.axi_resp = AxiResp::Slverr;
+    tx.visible.handed_to_ucie = true;
+    tx.visible.data_attempted = true;
+    tx.axi5.enabled = true;
+    tx.axi5.awtrace = true;
+    tx.axi5.btrace = true;
+    tx.axi5.trace_used_in_classify = false;
+    Fate with_trace = classify(view_for(ObserverProfile::A_AxiOnly, tx));
+    Fate with_trace_d = classify(view_for(ObserverProfile::D_AxiHypervisorMetadata, tx));
+    tx.axi5.awtrace = false;
+    tx.axi5.btrace = false;
+    Fate without_trace = classify(view_for(ObserverProfile::A_AxiOnly, tx));
+    Fate without_trace_d = classify(view_for(ObserverProfile::D_AxiHypervisorMetadata, tx));
+    EXPECT(with_trace == Fate::Unknown);
+    EXPECT(with_trace == without_trace);
+    EXPECT(with_trace_d == without_trace_d);
+    EXPECT(!tx.axi5.trace_used_in_classify);
+  }
+  // AtomicLoad encoding refused in P1.
+  {
+    TargetModel target;
+    Transaction tx;
+    tx.axi5.enabled = true;
+    tx.axi5.form = Axi5AtomicForm::AtomicLoad;
+    tx.axi5.atomic_op = Axi5AtomicOp::Add;
+    tx.axi5.awatop = kAwatopAtomicLoadAddLe;
+    auto msg = target.commit_atomic_store(tx);
+    EXPECT(tx.axi5.unsupported_form);
+    EXPECT(target.atomic_ops_applied == 0);
+    EXPECT(msg.find("only AtomicStore") != std::string::npos);
+  }
+
+  {
+    Transaction tx;
+    tx.visible.axi_accepted = true;
+    tx.visible.axi_completed_ok = true;
+    tx.axi5.enabled = true;
+    tx.axi5.wpoison = true;
+    for (auto profile : {ObserverProfile::A_AxiOnly, ObserverProfile::B_AxiFdi,
+                         ObserverProfile::C_AxiFdiUcieStatus,
+                         ObserverProfile::D_AxiHypervisorMetadata}) {
+      EXPECT(classify(view_for(profile, tx)) == Fate::Completed);
+      EXPECT(classify_effect(view_for(profile, tx)) == EffectKnowledge::Indeterminate);
+      tx.ground.architectural_commit_count = 2; // changing GT cannot change knowledge
+      EXPECT(classify_effect(view_for(profile, tx)) == EffectKnowledge::Indeterminate);
+    }
+    tx.axi5.wpoison = false;
+    EXPECT(classify_effect(view_for(ObserverProfile::A_AxiOnly, tx)) == EffectKnowledge::SureEffect);
+    tx.visible.knowledge_a = EffectKnowledge::SureEffect;
+    auto issues = check_transaction_invariants({tx});
+    EXPECT(issues.size() == 1 && issues[0].at_most_once && !issues[0].false_sure_effect);
+    tx.visible.knowledge_a = EffectKnowledge::Indeterminate;
+    tx.visible.knowledge_d = EffectKnowledge::SureEffect; // negative control: D must be checked
+    tx.ground.architectural_commit_count = 0;
+    issues = check_transaction_invariants({tx});
+    EXPECT(issues.size() == 1 && issues[0].false_sure_effect);
+    tx.visible.knowledge_d = EffectKnowledge::Indeterminate;
+    EXPECT(check_transaction_invariants({tx}).empty());
+    tx.visible.axi_completed_err = true;
+    issues = check_transaction_invariants({tx});
+    EXPECT(issues.size() == 1 && issues[0].completion_inconsistent);
   }
 
   if (fails) {

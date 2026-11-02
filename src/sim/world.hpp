@@ -20,6 +20,7 @@
 #include <random>
 #include <set>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -139,7 +140,10 @@ struct World {
   std::vector<Transaction> txns;
   std::vector<Partial> partial;
   std::deque<std::uint32_t> reissue;
-  std::set<std::pair<std::uint64_t, int>> accepted[2];
+  // Accepted payload identity: (logical_id, role, beat_index).
+  // beat_index distinguishes AXIS StreamSegments of the same transaction;
+  // MM flits use beat_index 0 (or response beat when set).
+  std::set<std::tuple<std::uint64_t, int, int>> accepted[2];
   std::map<std::pair<std::uint64_t, int>, int> storm_hits;
 
   CreditManager credit[2];
@@ -227,10 +231,34 @@ struct World {
   void request(RecoveryCmd cmd);
   void classify_now(Transaction& tx);
   void complete(Transaction& tx);
+  // Complete AXI with an explicit response code/source (OKAY or SLVERR).
+  void complete_resp(Transaction& tx, AxiResp resp, RespSource source);
+  // ERR-05 / WDT-03: local SLVERR for an outstanding accepted transaction.
+  void local_slverr(Transaction& tx, RespSource source, const std::string& reason);
+  // AXIS: local stream lifecycle abort without inventing a BRESP (MODEL bridge).
+  void stream_local_abort(Transaction& tx, RespSource source, const std::string& reason);
+  // AXIS: settle/classify after local TLAST when no App-ACK is modeled.
+  void stream_settle(Transaction& tx);
+  // AXIS: record one remote segment acceptance and enqueue sink work.
+  void accept_axis_segment(Transaction& tx, const Flit& flit);
+  // WDT-04: decide whether an arriving response belongs to an open txn.
+  enum class LateDisposition : std::uint8_t { Accept, DiscardLate, DiscardWrongTxn };
+  LateDisposition handle_incoming_response(Transaction& tx, const Flit& flit);
   void abandon(Transaction& tx, bool fdi, bool explicit_unknown);
   void apply_policy();
   void observe_link_down();
   void flush_destructive();
+  void arm_txn_watchdog(Transaction& tx);
+  // Project an event into the observer histories allowed for each profile.
+  // Prefix convention: AXI: / FDI: / STATUS: / DIAG: / DISP:
+  void record_observer_event(Transaction& tx, const std::string& event);
+  std::uint32_t slot_index(const Transaction& tx) const;
+  // Remote progress gate: respects instantaneous cancel and cancel_latency_ns.
+  bool remote_may_continue(const Transaction& tx) const;
+  int txn_timeout_streak = 0;
+  int txn_watchdog_fires = 0;
+  int late_responses_discarded = 0;
+  bool txn_watchdog_escalated = false;
   void audit_credits();
   void reinit_credits();
   bool already_accepted(int receiver, const Flit& flit) const;

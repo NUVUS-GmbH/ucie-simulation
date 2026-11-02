@@ -3,7 +3,7 @@
 </head>
 <body><a class="skip" href="#content">Zum Inhalt springen</a>
 <header><a class="brand" href="index.html?lang=de"><span class="wordmark" role="img" aria-label="NUVUS"></span><span class="brand-caption">/ UCIe · AoU-Forschung</span></a>
-<nav aria-label="Abschnitte der Studie"><a href="#problem">Problem</a><a href="#traces">Abläufe</a><a href="#architecture">Architektur</a><a href="#robustness">Robustheit</a><a href="#claims">Aussagen</a><a href="#reproducibility">Nachweise</a>
+<nav aria-label="Abschnitte der Studie"><a href="#problem">Problem</a><a href="#extensions">Neue Ergebnisse</a><a href="#architecture">Architektur</a><a href="#robustness">Robustheit</a><a href="#claims">Aussagen</a><a href="#reproducibility">Nachweise</a>
 </nav>
 <nav class="language" aria-label="Sprache"><a href="../index.html?lang=en" data-lang-link="en" lang="en" hreflang="en">EN</a><a href="../de/index.html?lang=de" data-lang-link="de" lang="de" hreflang="de" aria-current="page">DE</a>
 </nav>
@@ -16,6 +16,7 @@
 <h1>Der architektonische Ausgang einer unterbrochenen AXI-Transaktion kann unbestimmt bleiben</h1>
 <p class="lead">In den modellierten UCIe-Recovery-Szenarien erhalten sowohl eine ausgeführte Operation mit verlorener Abschlussantwort als auch eine Operation, die das Target nie erreicht hat, beim implementierten Observer/Classifier die Klassifikation UNKNOWN.</p>
 <p>Die tatsächlichen Ausgänge unterscheiden sich; die implementierten Klassifikationen stimmen überein. Das belegt weder die Gleichheit der vollständigen beobachtbaren Historien noch, dass umfassendere Diagnostik den Transaktionsausgang nicht bestimmen könnte. Die Studie verwendet drei Klassifikationen: <code>COMPLETED</code>, <code>NOT_COMPLETED</code> und <code class="unknown">UNKNOWN</code>. Dies sind Bezeichnungen der Studie, keine von UCIe definierten Protokollzustände.</p>
+<p>Erweiterte Ergebnisse: AXI4-Stream, AtomicStore(ADD), Poison und eine korrigierte Trennung von Transferabschluss und Wirkungswissen.</p>
 <div class="summary">
 <div><span>Transaktionsausgang</span><small>UNKNOWN erreichbar</small><strong class="positive">Ja</strong>
 </div>
@@ -62,6 +63,65 @@
 <div class="formula"><span>unterschiedlicher architektonischer Ausgang</span><b>+</b><span>gleiche implementierte Klassifikation</span><b>=</b><strong>unbestimmter Transaktionsausgang</strong>
 </div>
 </section>
+<section id="extensions">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Erweiterte Protokollstudie</h2>
+<p>Die Studie umfasst jetzt AXI4-Memory-Mapped-Fehlerbehandlung, AXI4-Stream als eigenes Interface und das begrenzte Profil AXI5-MM-P1. Streaming-Transport über UCIe ist nicht dasselbe wie ein AXI4-Stream-Interface.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Profil</th><th scope="col">Automotive-Szenarien</th><th scope="col">Referenzszenarien</th><th scope="col">Umfang</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>AXI4 Memory-Mapped</td><td>19/19 PASS</td><td>12/12 PASS</td><td>Lokale SLVERR-Antwort, Watchdog, verspätete Antworten und Retry</td>
+</tr>
+<tr><td>AXIS-P1</td><td>24/24 PASS</td><td>7/7 PASS</td><td>Sofort verarbeitende und atomare Paketsenke; optionales App-ACK und Duplikatunterdrückung</td>
+</tr>
+<tr><td>AXI5-MM-P1</td><td>20/20 PASS</td><td>7/7 PASS</td><td>AtomicStore(ADD), Poison-Policies und Trace; getrennt von AXIS</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>PASS bedeutet, dass die festgelegten Szenarioprüfungen bestanden wurden, einschließlich erwarteter Gegenbeispiele. Diese endlichen Kampagnen sind weder ein Protokoll-Konformitätsnachweis noch ein vollständiger Sicherheitsbeweis.</p>
+</section>
+<section id="effect-knowledge">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
+</div>
+<h2>Abschluss ist kein Wirkungswissen</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Dimension</th><th scope="col">Bedeutung</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Protokollabschluss</td><td>COMPLETED erfasst eine erfolgreiche Transferantwort; dies beweist nicht allgemein eine entfernte Wirkung.</td>
+</tr>
+<tr><td>Architektonische Wirkung</td><td>Target-Zustand, Commit-Zähler und Teilwirkungen sind Ground Truth für die Auswertung, niemals verborgene Classifier-Eingaben.</td>
+</tr>
+<tr><td>Observer-Wissen</td><td>SURE_EFFECT, SURE_NO_EFFECT und INDETERMINATE werden getrennt aus zulässigen Beobachtungen und expliziten Profilannahmen abgeleitet.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Poison + OKAY: Die getestete Policy RejectWithoutCommitOkay schließt den Transfer ab, ohne ADD auszuführen. Observer A–D melden jetzt INDETERMINATE statt SURE_EFFECT. Dieses erwartete Policy-Ergebnis ist keine Protokoll-Inkonsistenz.</p>
+<p>Bei MM-Antworten ohne Poison und beim modellierten Stream-App-ACK beruht das Wirkungswissen auf dem expliziten Endpunktvertrag. SURE_EFFECT bedeutet, dass die beabsichtigte Wirkung eingetreten ist; es bedeutet nicht genau einmal. Doppelte Ausführung bleibt eine separate At-most-once-Verletzung.</p>
+</section>
+<section id="protocol-findings">
+<div class="section-label"><span class="tag">ERGEBNIS / UMFANG</span>
+</div>
+<h2>Was die neuen Experimente zeigen</h2>
+<h3>AXI4-Stream: Paketempfang ist kein Anwendungs-Commit</h3>
+<p>AXIS-P1 modelliert VALID/READY-Handshakes, stabile Angebote unter Backpressure und Paketgrenzen. SINK-IMM kann vor einem Abbruch Teilwirkungen erzeugen. SINK-PKT trennt vollständigen Empfang, Verarbeitungsbeginn und eine ausdrücklich angenommene atomare Paketwirkung. Lokales TLAST allein bestätigt keine entfernte Wirkung. Ohne App-ACK klassifiziert dieses Profil die entfernte Wirkung nicht als bekannt abgeschlossen.</p>
+<h3>AXI5: atomar bedeutet nicht sicher wiederholbar</h3>
+<p>AtomicStore(ADD) startet bei 10 mit Operand +5. Die erste Ausführung ergibt 15; nach Antwortverlust und Blind Retry ergibt eine zweite Ausführung 20. Ohne Retry bleibt der Wert 15. Dieses Profil nutzt eine B-Antwort ohne Rückgabe des vorherigen Werts. Poison und Trace werden getrennt untersucht; Trace ist kein Commit-Nachweis.</p>
+<h3>Diagnostik, Historien und sicherer Retry</h3>
+<p>Lokale SLVERR zusammen mit dem Nachweis, dass eine Anfrage nie an UCIe übergeben wurde, kann NOT_COMPLETED in C/D begründen. Ein fehlendes ACK kann das nicht: Das Gegenbeispiel mit zugestellter Anfrage und verlorenem ACK committet und bleibt UNKNOWN. Der Historienvergleich zeigt gleiche A/B-Ereignisfolgen nur nach Entfernung der Zeitstempel; zeitbehaftete Vergleiche werden getrennt ausgewiesen. Die C/D-Projektionen unterscheiden sich.</p>
+<h3>Modellgrenzen</h3>
+<p>Bridge-Mappings sind Modellprofile, kein AoU-Konformitätsnachweis. AXIS folgt dem ausgewählten IHI0051B-Profil; AXI5-MM-P1 wählt AtomicStore(ADD), Poison und Trace aus IHI0022L aus. Vollständiges AXI5 sowie Validierung mit kommerzieller IP oder Silizium liegen außerhalb des Umfangs. Sicherer Retry mit sofortigem Shared-State-Cancel hängt von dieser idealisierten Annahme ab; verzögerter Cancel kann den Wettlauf mit dem Commit verlieren. Duplikatunterdrückung hängt von Identität, Aufbewahrung und Reset-Verhalten ab.</p>
+</section>
 <section id="traces">
 <div class="section-label"><span class="tag">RESULT</span>
 </div>
@@ -106,7 +166,7 @@ Klassifikation: UNKNOWN</code></pre>
 <div class="equivalence"><strong>Unterschiedliche tatsächliche Ausgänge. Gleiche Klassifikation.</strong>
 <p>Die beiden Abläufe führen für das implementierte Observer-Profil zur selben Klassifikation des Transaktionsausgangs.</p>
 </div>
-<p>Die Prüfung im zeitbehafteten Modell vergleicht Klassifikationen und Abschlussstatus. Sie vergleicht keine vollständigen beobachtbaren Ereignishistorien, Zeitverläufe, Statusbits, Retry-Zähler oder Fehlerprotokolle. Vollständige Beobachtungsäquivalenz ist durch diese Prüfung nicht belegt.</p>
+<p>Diese historische Referenzprüfung vergleicht Klassifikationen und Abschlussstatus, keine vollständigen Historien. Das oben beschriebene erweiterte Experiment ergänzt getrennte Vergleiche von Ereignisfolgen und zeitbehafteten Historien; keines belegt universelle Beobachtungsäquivalenz.</p>
 <p>Dies sind schematische Zusammenfassungen der Läufe mit Referenzarchitektur. Ein blindes Software-Retry einer bereits ausgeführten, aber als unbestimmt klassifizierten Operation kann einen doppelten architektonischen Effekt erzeugen. Davon zu unterscheiden ist die Duplikatunterdrückung auf Transportebene.</p><a href="../data/reference_architecture_validation.json">Gepaarte Läufe und Nachweis zum blinden Retry ansehen ↗</a>
 </section>
 <section id="why">
@@ -268,8 +328,8 @@ Tatsächliche Commits = 2</code></pre>
 </tbody>
 </table>
 </div>
-<div class="callout">Der aktuelle Classifier nutzt nicht alle modellierten Diagnoseinformationen. Diese Experimente belegen daher nicht, dass umfassendere Diagnostik den Transaktionsausgang nicht bestimmen könnte.</div>
-<p>Unter der aktuell implementierten Klassifikationsregel ändert zusätzlicher modellierter Diagnosezustand die Klassifikation nicht. Das reine AXI-Profil A wertet keine Diagnoseprotokolle aus. Bei B/C wird zusätzlicher FDI/UCIe-Zustand aufgezeichnet, diese Felder fließen jedoch nicht in die Klassifikationsentscheidung ein. Die Übereinstimmung mit A wird durch die Implementierung erzwungen.</p>
+<div class="callout">Der historische Referenz-Classifier nutzte nicht alle modellierten Diagnosedaten. Die Fehlerbehandlungserweiterung wertet jetzt ausgewählte Bridge-Evidenz aus; sie bestimmt nicht die Grenzen aller weitergehenden Diagnoseverfahren.</div>
+<p>In den historischen Referenzläufen beeinflussten die Diagnosefelder von B/C die Klassifikation nicht. Im erweiterten Modell wird Gleichheit gemessen statt erzwungen: C/D können eine Anfrage erkennen, die nie an UCIe übergeben wurde. Ein fehlendes ACK allein reicht weiterhin nicht aus, auch wenn Zustellung und Commit einem verlorenen ACK vorausgehen.</p>
 <p><span class="tag">ASSUMPTION</span> Profil D speichert einen ACK/NAK-Verlauf, der in diesem Experiment zur Unterscheidung des Verlusts vor dem Target ausreicht. Dies ist zusätzliches Beobachterwissen, keine standardisierte Anzeige eines architektonischen Commits.</p>
 <p><span class="tag">INTERPRETATION</span> Profil D nutzt ausgewählte gespeicherte Zustellmetadaten und unterscheidet den getesteten Verlust vor dem Target. Ob zusätzliche Diagnoseinformationen andere Ausgänge einschließlich des Zustands nach einem Commit bestimmen können, bleibt offen.</p>
 </section>
@@ -442,7 +502,7 @@ Retry-Puffer-Spitze = 3   →   Referenzarchitektur</code></pre>
 <li>Eine ausgeführte Operation mit verlorenem Abschluss und eine nicht ausgeführte Operation erhalten beim implementierten Observer/Classifier beide UNKNOWN.</li>
 <li>Diese Ergebnisse bleiben mit FIFOs, Retry-Pufferung und Credits gemäß Referenzkonfiguration sowie mehreren ausstehenden Flits unter der implementierten Klassifikationsregel erreichbar.</li>
 <li>Ein blindes Retry einer nicht-idempotenten Operation mit unbestimmtem Ausgang kann ihren Effekt duplizieren.</li>
-<li>Der aktuelle Classifier lässt modellierte Diagnoseinformationen ungenutzt. Die Experimente bestimmen nicht die Grenzen umfassenderer Diagnose-Classifier.</li>
+<li>Ausgewählte Bridge-Diagnosen klären den getesteten Fall einer nie übergebenen Anfrage; ein fehlendes ACK beweist keine Nichtausführung. Weitere Diagnosemöglichkeiten liegen außerhalb des untersuchten Profils.</li>
 <li>Unter der Referenzkonfiguration bleiben zeitliche Wechselwirkungen zwischen unabhängigen Verkehrsquellen bestehen.</li>
 <li>Einige Simulationsergebnisse sind implementierungsabhängig.</li>
 </ul>
@@ -482,8 +542,8 @@ Retry-Puffer-Spitze = 3   →   Referenzarchitektur</code></pre>
 <li>Optionale Format-6-Bytes, elektrisches Training und FDI-Zyklusgenauigkeit liegen außerhalb des Modellumfangs.</li>
 <li>Diagnosefelder sind Abstraktionen der Studie, keine standardisierten oder herstellerspezifischen Registerabbildungen.</li>
 <li>Endliche Szenarien belegen Erreichbarkeit, nicht das vollständige Fehlen anderer Ergebnisse.</li>
-<li>Das Äquivalenz-Flag im zeitbehafteten Modell prüft Klassifikationen und Abschlussstatus, nicht vollständige beobachtbare Historien.</li>
-<li>Die Profile B/C nutzen nicht alle aufgezeichneten Diagnosezustände zur Klassifikation. Ein leistungsfähigerer Diagnose-Classifier wurde nicht untersucht.</li>
+<li>Das historische Referenz-Äquivalenzflag vergleicht Klassifikationen und Abschlussstatus. Die Erweiterung vergleicht projizierte Ereignisfolgen und zeitbehaftete Historien getrennt.</li>
+<li>Die Erweiterung wertet ausgewählte Bridge-Diagnosen aus, nicht sämtliche UCIe- oder Hersteller-Diagnosefunktionen. Trace-Signale dienen nicht als Commit-Nachweis.</li>
 </ul>
 </section>
 <section id="reproducibility">
@@ -492,10 +552,13 @@ Retry-Puffer-Spitze = 3   →   Referenzarchitektur</code></pre>
 <h2>Reproduzierbarkeit</h2>
 <p>Aus dem Repository-Stammverzeichnis, mit verfügbarem SystemC, CMake, pkg-config und Python:</p><pre><code>cmake -S . -B build
 cmake --build build -j
-python -m simulation.experiments.reference_architecture_validation</code></pre>
+python -m simulation.experiments.reference_architecture_validation
+python -m simulation.experiments.fault_handling_campaign
+python -m simulation.experiments.axis_campaign
+python -m simulation.experiments.axi5_mm_p1_campaign</code></pre>
 <p>Die Kampagne lädt die internen Referenzkonfigurationen des Repositorys. Die neutralen öffentlichen Exporte unten behalten deren Parameterwerte bei; Namen und identifizierende Kommentare wurden bereinigt. Hier werden gespeicherte Nachweise dargestellt, ohne die Simulation erneut auszuführen oder zu verändern.</p>
-<p>Die Nachweis-Downloads behalten ihre englischen Originaltexte und maschinenlesbaren Feldnamen bei.</p>
-<div class="downloads"><a href="../sources/reference_architecture_validation.md">Referenzbericht ↗</a><a href="../data/reference_architecture_validation.json">Vollständiges JSON ↗</a><a href="../data/reference_architecture_validation.csv">Validierungs-CSV ↗</a><a href="../configs/reference_ucie2x.yaml">configs/reference_ucie2x.yaml ↗</a><a href="../configs/reference_ucie3.yaml">configs/reference_ucie3.yaml ↗</a><a href="../data/ref2x_cross_client_trace.csv">Ereignis-Trace mit Fehlern ↗</a><a href="../data/ref2x_shared_quiet_trace.csv">Ereignis-Trace ohne Fehler ↗</a><a href="../sources/findings.md">Fallbericht zum Transaktionsausgang ↗</a><a href="../sources/comparison_ucie2_vs_ucie3.md">Versionsvergleichsbericht ↗</a><a href="../sources/reference_architecture_validation.py">Kampagnencode (bereinigter Export) ↗</a><a href="../sources/ucie_adapter.cpp">Code des zeitbehafteten Adapters ↗</a>
+<p>Nachweis-Downloads behalten ihre Ausgangssprache und maschinenlesbaren Feldnamen bei; der Audit der Erweiterung ist auf Deutsch.</p>
+<div class="downloads"><a href="../sources/phase3_abschlussbericht.md">Audit der erweiterten Studie (Deutsch) ↗</a><a href="../sources/axis_p1_report.md">AXIS-P1-Bericht ↗</a><a href="../sources/axi5_mm_p1_report.md">AXI5-MM-P1-Bericht ↗</a><a href="../data/fault_handling_summary.json">fault_handling_summary ↗</a><a href="../data/fault_handling_reference_summary.json">fault_handling_reference_summary ↗</a><a href="../data/fault_handling_observer_diff.json">fault_handling_observer_diff ↗</a><a href="../data/axis_p1_summary.json">axis_p1_summary ↗</a><a href="../data/axis_p1_reference_summary.json">axis_p1_reference_summary ↗</a><a href="../data/axi5_mm_p1_summary.json">axi5_mm_p1_summary ↗</a><a href="../data/axi5_mm_p1_reference_summary.json">axi5_mm_p1_reference_summary ↗</a><a href="../sources/reference_architecture_validation.md">Referenzbericht ↗</a><a href="../data/reference_architecture_validation.json">Vollständiges JSON ↗</a><a href="../data/reference_architecture_validation.csv">Validierungs-CSV ↗</a><a href="../configs/reference_ucie2x.yaml">configs/reference_ucie2x.yaml ↗</a><a href="../configs/reference_ucie3.yaml">configs/reference_ucie3.yaml ↗</a><a href="../data/ref2x_cross_client_trace.csv">Ereignis-Trace mit Fehlern ↗</a><a href="../data/ref2x_shared_quiet_trace.csv">Ereignis-Trace ohne Fehler ↗</a><a href="../sources/findings.md">Fallbericht zum Transaktionsausgang ↗</a><a href="../sources/comparison_ucie2_vs_ucie3.md">Versionsvergleichsbericht ↗</a><a href="../sources/reference_architecture_validation.py">Kampagnencode (bereinigter Export) ↗</a><a href="../sources/ucie_adapter.cpp">Code des zeitbehafteten Adapters ↗</a>
 </div>
 <p class="caption">Gespeicherte Berichte und JSON behalten historische Begriffe bei, darunter <code>observational_equivalence_abc</code>. Im zeitbehafteten Prüfer bezeichnet dieses Flag übereinstimmende Klassifikationen und Abschlussstatus; es ist kein Äquivalenztest vollständiger Historien. Diagnoseaussagen in diesen Berichten sind ebenfalls unter den oben genannten Classifier-Einschränkungen zu lesen. Messwerte wurden nicht verändert.</p>
 <details>
@@ -520,7 +583,7 @@ python -m simulation.experiments.reference_architecture_validation</code></pre>
 <div class="section-label"><span class="tag">INTERPRETATION</span>
 </div>
 <h2>Fazit</h2>
-<p>Die Studie zeigt, dass die Wiederherstellung eines UCIe-Links und die Rekonstruktion des architektonischen Ausgangs einer unterbrochenen übergeordneten Operation unterschiedliche Probleme sind. Im Referenzarchitekturmodell erhalten eine ausgeführte nicht-idempotente Operation mit verlorener Antwort und eine Operation, die das Target nie erreicht hat, beim implementierten Observer/Classifier beide UNKNOWN. Ein blindes Retry des bereits ausgeführten Falls kann doppelte architektonische Effekte erzeugen. Vollständige Äquivalenz der beobachtbaren Historien und die Fähigkeit umfassenderer Diagnostik zur Bestimmung des Ausgangs bleiben ungeprüfte stärkere Aussagen.</p>
+<p>Link-Wiederherstellung, Protokollabschluss und Wissen über entfernte Wirkungen sind verschieden. Die erweiterten MM-, Stream- und AXI5-Profile zeigen Mehrdeutigkeit nach Antwortverlust, Stream-Teilwirkungen und doppelte ADD-Ausführung nach Blind Retry. Ausgewählte Diagnosen helfen; endliche Vergleiche projizierter Historien beweisen jedoch weder universelle Ununterscheidbarkeit noch Exactly-once-Verhalten.</p>
 <p>Die Referenzkonfiguration zeigt, dass diese Unbestimmtheit nicht von einer Ein-Flit-Transportvereinfachung abhängt. Zugleich hat die Modellverfeinerung andere Verhaltensweisen als implementierungsabhängig offengelegt. Der nächste Schritt ist die Validierung gegen eine konkrete UCIe-Controller-Implementierung.</p>
 </section>
 </main>

@@ -175,6 +175,61 @@ void Config::overlay_yaml(const std::string& path) {
     else if (n->scalar == "explicit_unknown" || n->scalar == "C") recovery = RecoveryPolicy::ExplicitUnknown;
     else if (n->scalar == "auto_retry" || n->scalar == "D") recovery = RecoveryPolicy::AutoRetry;
     else if (n->scalar == "no_auto_retry" || n->scalar == "E") recovery = RecoveryPolicy::NoAutoRetry;
+    else if (n->scalar == "local_slverr" || n->scalar == "F") recovery = RecoveryPolicy::LocalSlverr;
+  }
+
+  take_b(txn_watchdog_enabled, {"fault_handling", "txn_watchdog_enabled"});
+  take_d(txn_watchdog_ns, {"fault_handling", "txn_watchdog_ns"});
+  take_i(txn_watchdog_escalate_after, {"fault_handling", "txn_watchdog_escalate_after"});
+  take_b(txn_watchdog_during_recovery, {"fault_handling", "txn_watchdog_during_recovery"});
+  take_b(local_slverr_on_link_error, {"fault_handling", "local_slverr_on_link_error"});
+  take_b(discard_late_responses, {"fault_handling", "discard_late_responses"});
+  take_b(expose_bridge_diagnostics, {"fault_handling", "expose_bridge_diagnostics"});
+  take_b(use_diag_in_classifier, {"fault_handling", "use_diag_in_classifier"});
+  take_i(axi_resp_ready_delay_cycles, {"fault_handling", "axi_resp_ready_delay_cycles"});
+  take_b(bridge_token_on_wire, {"fault_handling", "bridge_token_on_wire"});
+  take_b(cancel_remote_on_local_close, {"fault_handling", "cancel_remote_on_local_close"});
+  take_d(cancel_latency_ns, {"fault_handling", "cancel_latency_ns"});
+  take_b(target_duplicate_suppress, {"fault_handling", "target_duplicate_suppress"});
+  if (const Node* n = descend(root, {"fault_handling", "master_retry"})) {
+    if (n->scalar == "abort") master_retry = MasterRetryPolicy::Abort;
+    else if (n->scalar == "blind_retry") master_retry = MasterRetryPolicy::BlindRetry;
+    else if (n->scalar == "retry_only_if_not_completed")
+      master_retry = MasterRetryPolicy::RetryOnlyIfNotCompleted;
+  }
+
+  take_b(axis_profile_enabled, {"axis", "enabled"});
+  take_i(axis_tdata_bytes, {"axis", "tdata_bytes"});
+  take_i(axis_tready_delay_cycles, {"axis", "tready_delay_cycles"});
+  take_i(axis_tvalid_lead_cycles, {"axis", "tvalid_lead_cycles"});
+  take_i(axis_sink_process_start_cycles, {"axis", "sink_process_start_cycles"});
+  take_i(axis_sink_effect_cycles, {"axis", "sink_effect_cycles"});
+  take_b(axis_app_ack_enabled, {"axis", "app_ack_enabled"});
+  take_b(axis_packet_id_enabled, {"axis", "packet_id_enabled"});
+  take_b(axis_dup_suppress, {"axis", "dup_suppress"});
+  take_i(axis_dup_capacity, {"axis", "dup_capacity"});
+  take_d(axis_dup_lifetime_ns, {"axis", "dup_lifetime_ns"});
+  take_b(axis_dup_clear_on_reset, {"axis", "dup_clear_on_reset"});
+  take_d(axis_settle_grace_ns, {"axis", "settle_grace_ns"});
+
+  take_b(axi5_mm_p1_enabled, {"axi5", "enabled"});
+  take_b(axi5_trace_signals_present, {"axi5", "trace_signals_present"});
+  take_b(axi5_use_trace_in_classify, {"axi5", "use_trace_in_classify"});
+  take_i(axi5_atomic_location_init, {"axi5", "atomic_location_init"});
+  if (const Node* n = descend(root, {"axi5", "atomic_address"})) {
+    if (!n->is_map && !n->scalar.empty()) {
+      axi5_atomic_address = static_cast<std::uint64_t>(std::stoull(n->scalar, nullptr, 0));
+    }
+  }
+  if (const Node* n = descend(root, {"axi5", "poison_target_policy"})) {
+    if (n->scalar == "reject_without_commit_slverr" || n->scalar == "reject_without_commit")
+      poison_target_policy = PoisonTargetPolicy::RejectWithoutCommitSlverr;
+    else if (n->scalar == "reject_without_commit_okay")
+      poison_target_policy = PoisonTargetPolicy::RejectWithoutCommitOkay;
+    else if (n->scalar == "accept_marked_okay" || n->scalar == "accept_marked")
+      poison_target_policy = PoisonTargetPolicy::AcceptMarkedOkay;
+    else if (n->scalar == "accept_marked_slverr")
+      poison_target_policy = PoisonTargetPolicy::AcceptMarkedSlverr;
   }
 }
 

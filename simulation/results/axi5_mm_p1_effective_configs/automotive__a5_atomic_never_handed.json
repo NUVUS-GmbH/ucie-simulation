@@ -1,0 +1,41 @@
+{
+  "config_file": "configs/automotive.yaml",
+  "experiment": "a5_atomic_never_handed",
+  "seed": 1,
+  "profile": "AXI5-MM-P1",
+  "spec": "ARM IHI 0022 Issue L",
+  "atomic": "AtomicStore(ADD) only; AWATOP=0x10; no R-channel prior-value return",
+  "poison_default_policy": "reject_without_commit_slverr",
+  "trace": "signals present; never used in classify()/InitiatorView",
+  "bridge_mapping": "MODEL PROFILE only; no AoU conformity claim",
+  "sink_pkt_commit": "N/A (MM path); atomic SINK-PKT remains AXIS assumption",
+  "completed_means": "profile-dependent: OKAY BRESP = transfer classification COMPLETED, not remote-effect proof when Poison reject + OKAY",
+  "atomic_value": 10,
+  "atomic_ops_applied": 0,
+  "axi5_commit_watermark": 0,
+  "ucie_revision": "ucie2x",
+  "transactions_axi5": [
+    {
+      "id": 1,
+      "form": "ATOMIC_STORE",
+      "awatop": 16,
+      "operand": 5,
+      "value_before": 0,
+      "value_after": 0,
+      "atomic_effects": 0,
+      "transfer_attempt": 0,
+      "wpoison": false,
+      "poison_rejected": false,
+      "awtrace": false,
+      "btrace": false,
+      "trace_in_classify": false,
+      "read_resp_created": false,
+      "commit_count": 0,
+      "fate_a": "UNKNOWN",
+      "fate_c": "NOT_COMPLETED",
+      "fate_d": "NOT_COMPLETED",
+      "axi_resp": "SLVERR",
+      "resp_source": "BRIDGE"
+    }
+  ]
+}

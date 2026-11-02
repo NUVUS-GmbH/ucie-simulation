@@ -28,6 +28,21 @@ void LinkStateMachine::reactivate() {
     if (!tx.pending_reissue) continue;
     tx.pending_reissue = false;
     ++tx.software_retry_count;
+    if (tx.axi5.enabled) {
+      ++tx.axi5.transfer_attempt;
+      tx.axi5.atomic_effect_applied = false;
+      tx.axi5.write_response_created = false;
+      tx.axi5.read_response_created = false;
+      // value_before/after / atomic_effects accumulate across attempts (GT).
+    }
+    // ERR-07 / AutoRetry: reopen the logical transaction for a fresh attempt.
+    // Prior SLVERR/OKAY fate remains in observer traces; protocol state resets.
+    tx.visible.classified = false;
+    tx.visible.axi_completed_ok = false;
+    tx.visible.axi_completed_err = false;
+    tx.visible.axi_accepted = false;
+    tx.visible.axi_resp = AxiResp::Okay;
+    tx.visible.axi_resp_source = RespSource::None;
     tx.visible.handed_to_ucie = false;
     tx.visible.data_attempted = false;
     tx.visible.request_ack = false;
@@ -41,8 +56,47 @@ void LinkStateMachine::reactivate() {
     tx.visible.response_timeout = false;
     tx.visible.response_at_local_aou = false;
     tx.visible.stopped = false;
+    tx.visible.txn_watchdog_fired = false;
+    tx.completion_received = false;
+    tx.bridge.local_closed = false;
+    ++tx.bridge.generation;
+    const int saved_burst = std::max(1, tx.proto.burst_len);
+    tx.proto = AxiProtocolRecord{};
+    tx.proto.burst_len = saved_burst;
+    tx.t_watchdog_arm_ns = -1;
+    tx.t_watchdog_fire_ns = -1;
     tx.phase = Phase::Created;
     tx.recovery_epoch = static_cast<int>(w_.link.epoch);
+    if (tx.axis.enabled) {
+      // Preserve packet description; clear transfer / reception / effect staging.
+      // Architectural ground.commit_count is intentionally NOT cleared.
+      const auto offers = tx.axis.offers;
+      const auto sink = tx.axis.sink;
+      const auto beats = tx.axis.beat_count;
+      const auto last_vb = tx.axis.last_beat_valid_bytes;
+      const auto tid = tx.axis.tid;
+      const auto tdest = tx.axis.tdest;
+      const auto tuser = tx.axis.tuser;
+      const auto app_ack = tx.axis.app_ack_mode;
+      const auto pkt_id = tx.axis.packet_op_id;
+      const bool pkt_id_en = tx.axis.packet_id_enabled;
+      const int width = tx.axis.data_width_bytes;
+      tx.axis = AxisRecord{};
+      tx.axis.enabled = true;
+      tx.axis.sink = sink;
+      tx.axis.beat_count = beats;
+      tx.axis.last_beat_valid_bytes = last_vb;
+      tx.axis.data_width_bytes = width;
+      tx.axis.tid = tid;
+      tx.axis.tdest = tdest;
+      tx.axis.tuser = tuser;
+      tx.axis.offers = offers;
+      tx.axis.app_ack_mode = app_ack;
+      tx.axis.packet_op_id = pkt_id;
+      tx.axis.packet_id_enabled = pkt_id_en;
+      tx.axis.continuous_packets = true;
+    }
+    if (i < w_.partial.size()) w_.partial[i] = Partial{};
     w_.reissue.push_back(static_cast<std::uint32_t>(i));
   }
   w_.log(TraceLevel::Summary, "active", "Link", nullptr, "link is Active again");
@@ -78,7 +132,18 @@ void LinkStateMachine::enter_link_error(const std::string& reason) {
   w_.log(TraceLevel::Summary, "aou", "AoU", nullptr,
          "[SPEC] AoU activation FSM returns to DISABLED on FDI link-down");
   w_.flush_destructive();
+  if (w_.cfg.axis_dup_clear_on_reset) w_.target.axis_dup_on_reset();
   w_.apply_policy();
+  // Local SLVERR now traverses the AXI READY/beat path asynchronously. Drain
+  // those handshakes (and ERR-07 arming) before reactivation/reissue.
+  while (true) {
+    bool pending = false;
+    for (const auto& tx : w_.txns) {
+      if (tx.bridge.pending_local_slverr) pending = true;
+    }
+    if (!pending) break;
+    sc_core::wait(w_.progress);
+  }
   if (w_.link.remote_recovers) reactivate();
   else w_.link.converged = false;
 }
@@ -99,6 +164,14 @@ void LinkStateMachine::enter_link_reset() {
   w_.link.aou_b = AouState::Disabled;
   w_.flush_destructive();
   w_.apply_policy();
+  while (true) {
+    bool pending = false;
+    for (const auto& tx : w_.txns) {
+      if (tx.bridge.pending_local_slverr) pending = true;
+    }
+    if (!pending) break;
+    sc_core::wait(w_.progress);
+  }
   w_.set_state(LinkState::Reset);
   reactivate();
 }

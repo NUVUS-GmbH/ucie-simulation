@@ -1,0 +1,31 @@
+{
+  "config_file": "configs/torsten_reference_ucie2x.yaml",
+  "experiment": "ax_clean_packet_pkt",
+  "seed": 1,
+  "axis_profile": "AXIS-P1-Continuous",
+  "bridge_policy": "one_ucie_segment_per_transfer",
+  "aou_mapping_claim": "MODEL PROFILE only; AoU full text absent",
+  "single_inflight_slot": false,
+  "retry_buffer_entries": 16,
+  "tx_buffer_entries": 32,
+  "rx_buffer_entries": 64,
+  "crc_enabled": true,
+  "retry_enabled": true,
+  "ucie_revision": "ucie2x",
+  "transactions_axis": [
+    {
+      "id": 1,
+      "sink": "PKT",
+      "local_beats": 4,
+      "remote_beats": 4,
+      "remote_packet_complete": true,
+      "processing_started": true,
+      "app_effects": 1,
+      "bytes_committed": 64,
+      "commit_count": 1,
+      "fate_a": "UNKNOWN",
+      "fate_c": "UNKNOWN",
+      "fate_d": "UNKNOWN"
+    }
+  ]
+}

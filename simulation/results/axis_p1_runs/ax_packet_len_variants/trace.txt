@@ -1,0 +1,153 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER AXIS beats=1 sink=IMM
+2001.000 ns  AXIS manager begins packet T1
+2002.000 ns  TVALID&TREADY beat=0 tlast=1 bytes=16
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX AXIS segment beat=0
+2011.000 ns  remote endpoint receives AXIS segment
+2011.000 ns  remote TLAST accepted (reception only; not an application effect)
+2013.000 ns  AXIS sink accepts beat 0
+2017.000 ns  AXIS-IMM ARCHITECTURAL EFFECT
+2017.000 ns  AXIS-IMM beat=0 bytes=16 effects=1
+2017.000 ns  AXIS settle fate_a=UNKNOWN commits=1
+2017.000 ns  Guest A creates T2 INCREMENT_COUNTER AXIS beats=4 sink=IMM
+2018.000 ns  AXIS manager begins packet T2
+2019.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+2020.000 ns  TVALID&TREADY beat=1 tlast=0 bytes=16
+2021.000 ns  AoU packet ready
+2021.000 ns  TVALID&TREADY beat=2 tlast=0 bytes=16
+2021.000 ns  queued for the link
+2021.000 ns  UCIe TX AXIS segment beat=0
+2022.000 ns  TVALID&TREADY beat=3 tlast=1 bytes=7
+2023.000 ns  AoU packet ready
+2025.000 ns  AoU packet ready
+2027.000 ns  AoU packet ready
+2028.000 ns  remote endpoint receives AXIS segment
+2030.000 ns  AXIS sink accepts beat 0
+2031.000 ns  queued for the link
+2031.000 ns  UCIe TX AXIS segment beat=1
+2034.000 ns  AXIS-IMM ARCHITECTURAL EFFECT
+2034.000 ns  AXIS-IMM beat=0 bytes=16 effects=1
+2040.000 ns  AXIS sink accepts beat 1
+2041.000 ns  queued for the link
+2041.000 ns  UCIe TX AXIS segment beat=2
+2044.000 ns  AXIS-IMM ARCHITECTURAL EFFECT
+2044.000 ns  AXIS-IMM beat=1 bytes=16 effects=2
+2050.000 ns  AXIS sink accepts beat 2
+2051.000 ns  queued for the link
+2051.000 ns  UCIe TX AXIS segment beat=3
+2054.000 ns  AXIS-IMM ARCHITECTURAL EFFECT
+2054.000 ns  AXIS-IMM beat=2 bytes=16 effects=3
+2058.000 ns  remote TLAST accepted (reception only; not an application effect)
+2060.000 ns  AXIS sink accepts beat 3
+2064.000 ns  AXIS-IMM ARCHITECTURAL EFFECT
+2064.000 ns  AXIS-IMM beat=3 bytes=7 effects=4
+2064.000 ns  AXIS settle fate_a=UNKNOWN commits=4
+2064.000 ns  Guest A creates T3 INCREMENT_COUNTER AXIS beats=16 sink=PKT
+2065.000 ns  AXIS manager begins packet T3
+2066.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+2067.000 ns  TVALID&TREADY beat=1 tlast=0 bytes=16
+2068.000 ns  AoU packet ready
+2068.000 ns  TVALID&TREADY beat=2 tlast=0 bytes=16
+2068.000 ns  queued for the link
+2068.000 ns  UCIe TX AXIS segment beat=0
+2069.000 ns  TVALID&TREADY beat=3 tlast=0 bytes=16
+2070.000 ns  AoU packet ready
+2070.000 ns  TVALID&TREADY beat=4 tlast=0 bytes=16
+2071.000 ns  TVALID&TREADY beat=5 tlast=0 bytes=16
+2072.000 ns  AoU packet ready
+2072.000 ns  TVALID&TREADY beat=6 tlast=0 bytes=16
+2073.000 ns  TVALID&TREADY beat=7 tlast=0 bytes=16
+2074.000 ns  AoU packet ready
+2074.000 ns  TVALID&TREADY beat=8 tlast=0 bytes=16
+2075.000 ns  TVALID&TREADY beat=9 tlast=0 bytes=16
+2075.000 ns  remote endpoint receives AXIS segment
+2076.000 ns  AoU packet ready
+2076.000 ns  TVALID&TREADY beat=10 tlast=0 bytes=16
+2077.000 ns  AXIS sink accepts beat 0
+2077.000 ns  buffered beat=0 bytes=16 sealed=no
+2077.000 ns  TVALID&TREADY beat=11 tlast=0 bytes=16
+2078.000 ns  AoU packet ready
+2078.000 ns  TVALID&TREADY beat=12 tlast=0 bytes=16
+2078.000 ns  queued for the link
+2078.000 ns  UCIe TX AXIS segment beat=1
+2079.000 ns  TVALID&TREADY beat=13 tlast=0 bytes=16
+2080.000 ns  AoU packet ready
+2080.000 ns  TVALID&TREADY beat=14 tlast=0 bytes=16
+2081.000 ns  TVALID&TREADY beat=15 tlast=1 bytes=3
+2082.000 ns  AoU packet ready
+2084.000 ns  AoU packet ready
+2086.000 ns  AoU packet ready
+2087.000 ns  AXIS sink accepts beat 1
+2087.000 ns  buffered beat=1 bytes=16 sealed=no
+2088.000 ns  AoU packet ready
+2088.000 ns  queued for the link
+2088.000 ns  UCIe TX AXIS segment beat=2
+2090.000 ns  AoU packet ready
+2092.000 ns  AoU packet ready
+2094.000 ns  AoU packet ready
+2096.000 ns  AoU packet ready
+2097.000 ns  AXIS sink accepts beat 2
+2097.000 ns  buffered beat=2 bytes=16 sealed=no
+2098.000 ns  AoU packet ready
+2098.000 ns  queued for the link
+2098.000 ns  UCIe TX AXIS segment beat=3
+2107.000 ns  AXIS sink accepts beat 3
+2107.000 ns  buffered beat=3 bytes=16 sealed=no
+2108.000 ns  queued for the link
+2108.000 ns  UCIe TX AXIS segment beat=4
+2117.000 ns  AXIS sink accepts beat 4
+2117.000 ns  buffered beat=4 bytes=16 sealed=no
+2118.000 ns  queued for the link
+2118.000 ns  UCIe TX AXIS segment beat=5
+2127.000 ns  AXIS sink accepts beat 5
+2127.000 ns  buffered beat=5 bytes=16 sealed=no
+2128.000 ns  queued for the link
+2128.000 ns  UCIe TX AXIS segment beat=6
+2137.000 ns  AXIS sink accepts beat 6
+2137.000 ns  buffered beat=6 bytes=16 sealed=no
+2138.000 ns  queued for the link
+2138.000 ns  UCIe TX AXIS segment beat=7
+2147.000 ns  AXIS sink accepts beat 7
+2147.000 ns  buffered beat=7 bytes=16 sealed=no
+2148.000 ns  queued for the link
+2148.000 ns  UCIe TX AXIS segment beat=8
+2157.000 ns  AXIS sink accepts beat 8
+2157.000 ns  buffered beat=8 bytes=16 sealed=no
+2158.000 ns  queued for the link
+2158.000 ns  UCIe TX AXIS segment beat=9
+2167.000 ns  AXIS sink accepts beat 9
+2167.000 ns  buffered beat=9 bytes=16 sealed=no
+2168.000 ns  queued for the link
+2168.000 ns  UCIe TX AXIS segment beat=10
+2177.000 ns  AXIS sink accepts beat 10
+2177.000 ns  buffered beat=10 bytes=16 sealed=no
+2178.000 ns  queued for the link
+2178.000 ns  UCIe TX AXIS segment beat=11
+2187.000 ns  AXIS sink accepts beat 11
+2187.000 ns  buffered beat=11 bytes=16 sealed=no
+2188.000 ns  queued for the link
+2188.000 ns  UCIe TX AXIS segment beat=12
+2197.000 ns  AXIS sink accepts beat 12
+2197.000 ns  buffered beat=12 bytes=16 sealed=no
+2198.000 ns  queued for the link
+2198.000 ns  UCIe TX AXIS segment beat=13
+2207.000 ns  AXIS sink accepts beat 13
+2207.000 ns  buffered beat=13 bytes=16 sealed=no
+2208.000 ns  queued for the link
+2208.000 ns  UCIe TX AXIS segment beat=14
+2217.000 ns  AXIS sink accepts beat 14
+2217.000 ns  buffered beat=14 bytes=16 sealed=no
+2218.000 ns  queued for the link
+2218.000 ns  UCIe TX AXIS segment beat=15
+2225.000 ns  remote TLAST accepted (reception only; not an application effect)
+2227.000 ns  AXIS sink accepts beat 15
+2227.000 ns  buffered beat=15 bytes=3 sealed=pending_tlast
+2229.000 ns  SINK-PKT processing started (separate from packet_complete)
+2231.000 ns  AXIS-PKT ARCHITECTURAL EFFECT
+2231.000 ns  AXIS-PKT effect bytes=243 effects=1
+2231.000 ns  AXIS settle fate_a=UNKNOWN commits=1
+200000000.000 ns  simulation timeout

@@ -1,0 +1,1083 @@
+{
+  "campaign": "fault_handling_reference_ucie2x",
+  "experiments": [
+    {
+      "experiment": "fh_clean_success",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 1,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2033.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2033.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2033.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2033.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2033.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2033.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2033.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2033.000000|RESP_CODE_OKAY",
+            "2033.000000|DISP:RESP_SRC_TARGET"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_commit_then_local_slverr",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR",
+            "16007053.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_no_commit_local_slverr",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 0,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "NOT_COMPLETED",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "NOT_COMPLETED",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16007032.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_watchdog_then_late_okay",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 2,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2202.000000|AXI:LOCAL_SLVERR_VALID",
+            "2203.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2203.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2202.000000|AXI:LOCAL_SLVERR_VALID",
+            "2203.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2203.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2202.000000|AXI:LOCAL_SLVERR_VALID",
+            "2203.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2203.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2202.000000|AXI:LOCAL_SLVERR_VALID",
+            "2203.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2203.000000|RESP_CODE_SLVERR",
+            "2203.000000|DISP:RESP_SRC_WATCHDOG",
+            "7126.000000|LATE_RESP_DISCARD"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_timeout_then_remote_commit",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 2,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR",
+            "2103.000000|DISP:RESP_SRC_WATCHDOG",
+            "2186.000000|LATE_RESP_DISCARD"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_blind_retry_after_slverr",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 9,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 2,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 1,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 1,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR",
+            "16009055.000000|ACCEPT",
+            "16009086.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009086.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR",
+            "16009055.000000|ACCEPT",
+            "16009086.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009086.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR",
+            "16009055.000000|ACCEPT",
+            "16009086.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009086.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR",
+            "16007053.000000|DISP:RESP_SRC_BRIDGE",
+            "16009055.000000|ACCEPT",
+            "16009086.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009086.000000|RESP_CODE_OKAY",
+            "16009086.000000|DISP:RESP_SRC_TARGET"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_read_burst_error_completion",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 4,
+          "beat_handshake_count": 4,
+          "resp_backpressured": true,
+          "burst_len": 4,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007038.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007043.000000|RBEAT_1",
+            "16007044.000000|RBEAT_2",
+            "16007045.000000|RBEAT_3",
+            "16007046.000000|RBEAT_4",
+            "16007046.000000|AXI:RLAST",
+            "16007046.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007046.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007038.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007043.000000|RBEAT_1",
+            "16007044.000000|RBEAT_2",
+            "16007045.000000|RBEAT_3",
+            "16007046.000000|RBEAT_4",
+            "16007046.000000|AXI:RLAST",
+            "16007046.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007046.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007038.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007043.000000|RBEAT_1",
+            "16007044.000000|RBEAT_2",
+            "16007045.000000|RBEAT_3",
+            "16007046.000000|RBEAT_4",
+            "16007046.000000|AXI:RLAST",
+            "16007046.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007046.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007038.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007043.000000|RBEAT_1",
+            "16007044.000000|RBEAT_2",
+            "16007045.000000|RBEAT_3",
+            "16007046.000000|RBEAT_4",
+            "16007046.000000|AXI:RLAST",
+            "16007046.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007046.000000|RESP_CODE_SLVERR",
+            "16007046.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_multi_outstanding_backpressure",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 10,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 1,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2042.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2042.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2042.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2042.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2042.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2042.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2042.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2042.000000|RESP_CODE_OKAY",
+            "2042.000000|DISP:RESP_SRC_TARGET"
+          ]
+        },
+        {
+          "id": 2,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 2,
+          "bridge_token": 2,
+          "completing_token": 2,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2003.000000|ACCEPT",
+            "2052.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2052.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2003.000000|ACCEPT",
+            "2052.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2052.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2003.000000|ACCEPT",
+            "2052.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2052.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2003.000000|ACCEPT",
+            "2052.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2052.000000|RESP_CODE_OKAY",
+            "2052.000000|DISP:RESP_SRC_TARGET"
+          ]
+        },
+        {
+          "id": 3,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 3,
+          "bridge_token": 3,
+          "completing_token": 3,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2004.000000|ACCEPT",
+            "2061.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2061.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2004.000000|ACCEPT",
+            "2061.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2061.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2004.000000|ACCEPT",
+            "2061.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2061.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2004.000000|ACCEPT",
+            "2061.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2061.000000|RESP_CODE_OKAY",
+            "2061.000000|DISP:RESP_SRC_TARGET"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_classifier_diag_compare",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "7102.000000|AXI:LOCAL_SLVERR_VALID",
+            "7103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "7103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "7102.000000|AXI:LOCAL_SLVERR_VALID",
+            "7103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "7103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "7102.000000|AXI:LOCAL_SLVERR_VALID",
+            "7103.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "7103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "7103.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "7103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "7102.000000|AXI:LOCAL_SLVERR_VALID",
+            "7103.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "7103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "7103.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "7103.000000|DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN",
+            "7103.000000|RESP_CODE_SLVERR",
+            "7103.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        },
+        {
+          "id": 2,
+          "commit_count": 0,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "NOT_COMPLETED",
+          "fate_d": "NOT_COMPLETED",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "NOT_COMPLETED",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 2,
+          "bridge_token": 2,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "9105.000000|ACCEPT",
+            "9157.000000|AXI:LOCAL_SLVERR_VALID",
+            "9158.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "9158.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "9105.000000|ACCEPT",
+            "9157.000000|AXI:LOCAL_SLVERR_VALID",
+            "9158.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "9158.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "9105.000000|ACCEPT",
+            "9157.000000|AXI:LOCAL_SLVERR_VALID",
+            "9158.000000|DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+            "9158.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "9158.000000|STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN",
+            "9158.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "9105.000000|ACCEPT",
+            "9157.000000|AXI:LOCAL_SLVERR_VALID",
+            "9158.000000|DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+            "9158.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "9158.000000|STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN",
+            "9158.000000|DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED",
+            "9158.000000|RESP_CODE_SLVERR",
+            "9158.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_diag_ack_loss_after_delivery",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 2,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2402.000000|AXI:LOCAL_SLVERR_VALID",
+            "2403.000000|RBEAT_1",
+            "2403.000000|AXI:RLAST",
+            "2403.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2403.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2402.000000|AXI:LOCAL_SLVERR_VALID",
+            "2403.000000|RBEAT_1",
+            "2403.000000|AXI:RLAST",
+            "2403.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2403.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2402.000000|AXI:LOCAL_SLVERR_VALID",
+            "2403.000000|RBEAT_1",
+            "2403.000000|AXI:RLAST",
+            "2403.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "2403.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2403.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "2403.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2402.000000|AXI:LOCAL_SLVERR_VALID",
+            "2403.000000|RBEAT_1",
+            "2403.000000|AXI:RLAST",
+            "2403.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "2403.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2403.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "2403.000000|DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN",
+            "2403.000000|RESP_CODE_SLVERR",
+            "2403.000000|DISP:RESP_SRC_WATCHDOG",
+            "12153.000000|LATE_RESP_DISCARD"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_safe_retry_cancel_remote",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 1,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 1,
+          "allow_remote_continue": false,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16009034.000000|ACCEPT",
+            "16009065.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009065.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16009034.000000|ACCEPT",
+            "16009065.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009065.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16009034.000000|ACCEPT",
+            "16009065.000000|DIAG:local_slverr=0,never_handed=0,missing_ack=0",
+            "16009065.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009065.000000|STATUS:fate_c=COMPLETED,fate_c_no_diag=COMPLETED",
+            "16009065.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "16007032.000000|DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16007032.000000|DISP:RESP_SRC_BRIDGE",
+            "16009034.000000|ACCEPT",
+            "16009065.000000|DIAG:local_slverr=0,never_handed=0,missing_ack=0",
+            "16009065.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009065.000000|STATUS:fate_c=COMPLETED,fate_c_no_diag=COMPLETED",
+            "16009065.000000|DISP:fate_d=COMPLETED,fate_d_no_diag=COMPLETED",
+            "16009065.000000|RESP_CODE_OKAY",
+            "16009065.000000|DISP:RESP_SRC_TARGET"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_cancel_latency_race",
+      "pass": true,
+      "config": "configs/torsten_reference_ucie2x.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 2,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR",
+            "2103.000000|DISP:RESP_SRC_WATCHDOG",
+            "2186.000000|LATE_RESP_DISCARD"
+          ]
+        }
+      ]
+    }
+  ],
+  "all_pass": true,
+  "watchdog_timing": {
+    "draft_wdt_timeout_start_ns": 1000000,
+    "campaign_shortened_examples_ns": {
+      "fh_watchdog_then_late_okay": 200,
+      "fh_timeout_then_remote_commit": 100,
+      "fh_race_resp_after_timeout": 100
+    },
+    "ucie_link_error_residency_ns_spec": 16000000,
+    "ucie_replay_timeout_flits_spec": 375,
+    "automotive_retrain_ns": 5000,
+    "automotive_link_reset_ns": 10000,
+    "note": "Shortened txn_watchdog_ns values are SIMULATION CONFIGURATION so the watchdog can fire inside a discrete-event run. They are not claims that 1 ms draft WDT is shorter than UCIe retry/recovery. In a real system, WDT_TIMEOUT must exceed max latency including retry + retrain (draft WDT-02)."
+  },
+  "observer_history_compare": {
+    "mode": "cross_run",
+    "experiment": "cross_run",
+    "allowed_observations": {
+      "A": "AXI handshakes + response codes (no internal RESP source)",
+      "B": "A + FDI link-down",
+      "C": "B + standardized status + optional DIAG when exposed",
+      "D": "C + disposition / late-discard / RESP source"
+    },
+    "definitions": {
+      "event_sequence_equal": "Same projected event *names* after removing timestamps (time_ns|event \u2192 event). Valid for observers that ignore timing.",
+      "timed_equal": "Identical full history rows including timestamps. Required for time-observing observers; usually false across independent txs."
+    },
+    "profiles": {
+      "a": {
+        "event_sequence": {
+          "equal": true,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [],
+          "only_right": []
+        },
+        "timed": {
+          "equal": false,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR"
+          ],
+          "only_right": [
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "note": "Full 'time_ns|event' rows; equality requires identical timing."
+        }
+      },
+      "b": {
+        "event_sequence": {
+          "equal": true,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [],
+          "only_right": []
+        },
+        "timed": {
+          "equal": false,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR"
+          ],
+          "only_right": [
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "note": "Full 'time_ns|event' rows; equality requires identical timing."
+        }
+      },
+      "c": {
+        "event_sequence": {
+          "equal": true,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [],
+          "only_right": []
+        },
+        "timed": {
+          "equal": false,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR"
+          ],
+          "only_right": [
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "note": "Full 'time_ns|event' rows; equality requires identical timing."
+        }
+      },
+      "d": {
+        "event_sequence": {
+          "equal": true,
+          "left_len": 5,
+          "right_len": 5,
+          "only_left": [],
+          "only_right": []
+        },
+        "timed": {
+          "equal": false,
+          "left_len": 5,
+          "right_len": 5,
+          "only_left": [
+            "16007052.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007053.000000|RESP_CODE_SLVERR",
+            "16007053.000000|DISP:RESP_SRC_BRIDGE"
+          ],
+          "only_right": [
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16007032.000000|DISP:RESP_SRC_BRIDGE"
+          ],
+          "note": "Full 'time_ns|event' rows; equality requires identical timing."
+        }
+      }
+    }
+  }
+}

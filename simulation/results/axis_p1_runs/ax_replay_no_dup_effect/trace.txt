@@ -1,0 +1,25 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER AXIS beats=2 sink=IMM
+2001.000 ns  AXIS manager begins packet T1
+2002.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+2003.000 ns  TVALID&TREADY beat=1 tlast=1 bytes=16
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX AXIS segment beat=0
+2004.000 ns  fault 1 at TRANSMITTING
+2006.000 ns  AoU packet ready
+2013.000 ns  UCIe CRC failure on the stream_segment flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+2020.000 ns  remote endpoint receives AXIS segment
+2022.000 ns  AXIS sink accepts beat 0
+2023.000 ns  queued for the link
+2023.000 ns  UCIe TX AXIS segment beat=1
+2026.000 ns  AXIS-IMM ARCHITECTURAL EFFECT
+2026.000 ns  AXIS-IMM beat=0 bytes=16 effects=1
+2030.000 ns  remote TLAST accepted (reception only; not an application effect)
+2032.000 ns  AXIS sink accepts beat 1
+2036.000 ns  AXIS-IMM ARCHITECTURAL EFFECT
+2036.000 ns  AXIS-IMM beat=1 bytes=16 effects=2
+2036.000 ns  AXIS settle fate_a=UNKNOWN commits=2
+200000000.000 ns  simulation timeout

@@ -7,26 +7,29 @@ namespace {
 
 void note_nak(Transaction& tx, FlitRole role) {
   if (role == FlitRole::Request && !tx.visible.request_ack) tx.visible.request_nak_only = true;
-  if (role == FlitRole::WriteData && !tx.visible.data_ack) tx.visible.data_nak_only = true;
+  if ((role == FlitRole::WriteData || role == FlitRole::StreamSegment) && !tx.visible.data_ack)
+    tx.visible.data_nak_only = true;
   if (role == FlitRole::Response && !tx.visible.response_ack) tx.visible.response_nak_only = true;
 }
 
 void note_ack(Transaction& tx, FlitRole role) {
-  if (role == FlitRole::Request) {
+  if (role == FlitRole::Request || role == FlitRole::StreamSegment) {
     tx.visible.request_ack = true;
     tx.visible.request_nak_only = false;
-  } else if (role == FlitRole::WriteData) {
+  }
+  if (role == FlitRole::WriteData || role == FlitRole::StreamSegment) {
     tx.visible.data_ack = true;
     tx.visible.data_nak_only = false;
-  } else if (role == FlitRole::Response) {
+  }
+  if (role == FlitRole::Response) {
     tx.visible.response_ack = true;
     tx.visible.response_nak_only = false;
   }
 }
 
 void note_timeout(Transaction& tx, FlitRole role) {
-  if (role == FlitRole::Request) tx.visible.request_timeout = true;
-  if (role == FlitRole::WriteData) tx.visible.data_timeout = true;
+  if (role == FlitRole::Request || role == FlitRole::StreamSegment) tx.visible.request_timeout = true;
+  if (role == FlitRole::WriteData || role == FlitRole::StreamSegment) tx.visible.data_timeout = true;
   if (role == FlitRole::Response) tx.visible.response_timeout = true;
 }
 
@@ -118,9 +121,9 @@ void UcieAdapter::tx() {
 
     if (from_ctrl) {
       if (w_.arm.suppress_ack && flit.role == FlitRole::Ack) {
-        w_.arm.suppress_ack = false;
+        if (!w_.arm.persistent) w_.arm.suppress_ack = false;
         w_.log(TraceLevel::Transactions, "ack_loss", "UCIe", w_.find(flit.logical_id),
-               "[MODEL] ACK withheld so the replay timer can expire");
+               "[MODEL] ACK withheld (delivery may already have occurred)");
         continue;
       }
       flit.link_epoch = w_.link.wire_gen;
@@ -134,28 +137,36 @@ void UcieAdapter::tx() {
     if (!flit.replay) {
       if (flit.slot >= w_.txns.size()) continue;
       auto& tx = w_.slot(flit.slot);
-      if (tx.visible.classified) continue;
+      // Response flits may still be transmitted after local close so WDT-04
+      // can observe and discard a late arrival. Requests/data stop once closed.
+      const bool allow_late_response =
+          flit.role == FlitRole::Response && w_.remote_may_continue(tx);
+      if (tx.visible.classified && !allow_late_response) continue;
       if (!w_.credit[side_].try_acquire()) {
         w_.note(tx, Phase::WaitingForCredit, "AoU", "waiting for an AoU credit");
         const double credit_start = w_.now_ns();
         bool got = false;
         while (!(got = w_.credit[side_].try_acquire())) {
           sc_core::wait(w_.credit_ev[side_] | w_.link.flushed | w_.link.state_ev);
-          if (w_.link.epoch != epoch || tx.visible.classified || !w_.mainband_active()) break;
+          if (w_.link.epoch != epoch || (tx.visible.classified && !allow_late_response) ||
+              !w_.mainband_active())
+            break;
         }
         if (tx.guest_id == 1) w_.attribute_guest_b_wait(WaitCause::Credit, credit_start, w_.now_ns());
         if (!got) continue;
       }
       ++w_.credits_consumed[side_];
-      if (w_.link.epoch != epoch || tx.visible.classified || !w_.mainband_active()) continue;
+      if (w_.link.epoch != epoch || (tx.visible.classified && !allow_late_response) ||
+          !w_.mainband_active())
+        continue;
       while (static_cast<int>(w_.retry[side_].size()) >= w_.max_unacked()) {
         w_.log(TraceLevel::Full, "backpressure", "UCIe", &tx, "retry buffer is at the unacked cap");
         const double bp_start = w_.now_ns();
         sc_core::wait(w_.ack_ev[side_] | w_.link.flushed);
         if (tx.guest_id == 1) w_.attribute_guest_b_wait(WaitCause::Credit, bp_start, w_.now_ns());
-        if (w_.link.epoch != epoch || tx.visible.classified) break;
+        if (w_.link.epoch != epoch || (tx.visible.classified && !allow_late_response)) break;
       }
-      if (w_.link.epoch != epoch || tx.visible.classified) continue;
+      if (w_.link.epoch != epoch || (tx.visible.classified && !allow_late_response)) continue;
 
       // Re-check slot occupancy after credit waits (another guest may have taken it).
       if (w_.tx_slot_blocks(side_, flit)) {
@@ -188,10 +199,17 @@ void UcieAdapter::tx() {
       } else if (flit.role == FlitRole::WriteData) {
         tx.visible.data_attempted = true;
         w_.log(TraceLevel::Transactions, "wdata_tx", "UCIe", &tx, "write-data TX begins");
+      } else if (flit.role == FlitRole::StreamSegment) {
+        tx.visible.handed_to_ucie = true;
+        tx.visible.data_attempted = true;
+        w_.note(tx, Phase::Transmitting, "UCIe",
+                "UCIe TX AXIS segment beat=" + std::to_string(flit.beat_index));
       } else if (flit.role == FlitRole::Response) {
         w_.note(tx, Phase::ResponseTransmitting, "UCIe", "response TX");
       }
-      if (tx.visible.classified || w_.link.destructive || w_.link.epoch != epoch) continue;
+      if ((tx.visible.classified && !allow_late_response) || w_.link.destructive ||
+          w_.link.epoch != epoch)
+        continue;
       if (w_.cfg.retry_enabled) {
         if (!w_.retry[side_].push(flit)) {
           w_.internal_errors.push_back("retry buffer push exceeded capacity");
@@ -222,7 +240,10 @@ void UcieAdapter::tx() {
     w_.apply_tx(flit);
     sc_core::wait(w_.serialization());
     if (w_.link.epoch != epoch) continue;
-    if (flit.slot < w_.txns.size() && w_.slot(flit.slot).visible.classified && !flit.replay) continue;
+    if (flit.slot < w_.txns.size() && w_.slot(flit.slot).visible.classified && !flit.replay &&
+        flit.role != FlitRole::Response) {
+      continue;
+    }
     if (!w_.wire[side_].push(flit)) continue;
     w_.arm_replay_deadline(side_, flit.seq);
   }
@@ -328,9 +349,16 @@ void UcieAdapter::rx() {
 
     if (flit.slot >= w_.txns.size()) continue;
     auto& tx = w_.slot(flit.slot);
-    if (tx.visible.classified) continue;
 
-    if (side_ == 1 && (flit.role == FlitRole::Request || flit.role == FlitRole::WriteData)) {
+    if (side_ == 1 && flit.role == FlitRole::StreamSegment) {
+      if (tx.visible.classified && !w_.remote_may_continue(tx)) continue;
+      if (tx.t_remote_rx_ns < 0) {
+        w_.note(tx, Phase::RemoteReceived, "UCIe", "remote endpoint receives AXIS segment");
+      }
+      w_.accept_axis_segment(tx, flit);
+    } else if (side_ == 1 && (flit.role == FlitRole::Request || flit.role == FlitRole::WriteData)) {
+      // Remote may still accept a request even if the initiator later times out.
+      if (tx.visible.classified && !w_.remote_may_continue(tx)) continue;
       if (tx.t_remote_rx_ns < 0) {
         w_.note(tx, Phase::RemoteReceived, "UCIe", "remote endpoint receives the request");
       }
@@ -342,9 +370,19 @@ void UcieAdapter::rx() {
         w_.target_q.push(flit.slot);
       }
     } else if (side_ == 0 && flit.role == FlitRole::Response) {
-      tx.visible.response_at_local_aou = true;
-      w_.note(tx, Phase::ResponseReceived, "AoU", "response received by the initiating AoU");
-      w_.completion_q.push(flit.slot);
+      const auto disp = w_.handle_incoming_response(tx, flit);
+      if (disp != World::LateDisposition::Accept) {
+        // Still ACK the flit for link credit/seq hygiene; do not complete AXI.
+      } else if (tx.visible.classified) {
+        // Already classified without local_closed path — refuse second completion.
+        continue;
+      } else {
+        tx.visible.response_at_local_aou = true;
+        w_.note(tx, Phase::ResponseReceived, "AoU", "response received by the initiating AoU");
+        w_.completion_q.push(flit.slot);
+      }
+    } else if (tx.visible.classified) {
+      continue;
     }
 
     Flit ack;

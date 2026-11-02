@@ -1,0 +1,57 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER AXIS beats=2 sink=PKT
+2001.000 ns  AXIS manager begins packet T1
+2002.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+2003.000 ns  TVALID&TREADY beat=1 tlast=1 bytes=16
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX AXIS segment beat=0
+2006.000 ns  AoU packet ready
+2011.000 ns  remote endpoint receives AXIS segment
+2013.000 ns  AXIS sink accepts beat 0
+2013.000 ns  buffered beat=0 bytes=16 sealed=no
+2014.000 ns  queued for the link
+2014.000 ns  UCIe TX AXIS segment beat=1
+2021.000 ns  remote TLAST accepted (reception only; not an application effect)
+2023.000 ns  AXIS sink accepts beat 1
+2023.000 ns  buffered beat=1 bytes=16 sealed=pending_tlast
+2025.000 ns  SINK-PKT processing started (separate from packet_complete)
+2027.000 ns  AXIS-PKT ARCHITECTURAL EFFECT
+2027.000 ns  fault 14 at ARCHITECTURAL_COMMIT
+2027.000 ns  AXIS-PKT effect bytes=32 effects=1
+2027.000 ns  LINK_ERROR
+2027.000 ns  LinkError entered
+2027.000 ns  Forced LinkError
+2027.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+2047.000 ns  priority sideband delivered (LinkError)
+2047.000 ns  safety manager received LinkError and records the configured action
+2077.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+2077.000 ns  [SPEC] pipelines and retry buffers flushed
+2077.000 ns  [PROJECT ERR-05] LinkError/Link-Down: complete outstanding AXI with SLVERR
+2077.000 ns  [PROJECT ERR-07] BlindRetry armed after stream local abort
+2077.000 ns  RECOVERING
+2077.000 ns  [MODEL] link reactivation
+4077.000 ns  ACTIVE
+4077.000 ns  link is Active again
+4077.000 ns  automatic retry of the same logical transaction
+4078.000 ns  AXIS manager begins packet T1
+4079.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+4080.000 ns  TVALID&TREADY beat=1 tlast=1 bytes=16
+4081.000 ns  AoU packet ready
+4081.000 ns  queued for the link
+4081.000 ns  UCIe TX AXIS segment beat=0
+4083.000 ns  AoU packet ready
+4090.000 ns  AXIS sink accepts beat 0
+4090.000 ns  buffered beat=0 bytes=16 sealed=no
+4091.000 ns  queued for the link
+4091.000 ns  UCIe TX AXIS segment beat=1
+4098.000 ns  remote TLAST accepted (reception only; not an application effect)
+4100.000 ns  AXIS sink accepts beat 1
+4100.000 ns  buffered beat=1 bytes=16 sealed=pending_tlast
+4102.000 ns  SINK-PKT processing started (separate from packet_complete)
+4104.000 ns  AXIS-PKT ARCHITECTURAL EFFECT
+4104.000 ns  axis dup suppress packet_op_id=42
+12080.000 ns  AXIS settle fate_a=UNKNOWN commits=1
+200000000.000 ns  simulation timeout

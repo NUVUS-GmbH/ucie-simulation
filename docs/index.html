@@ -3,7 +3,7 @@
 </head>
 <body><a class="skip" href="#content">Skip to content</a>
 <header><a class="brand" href="index.html"><span class="wordmark" role="img" aria-label="NUVUS"></span><span class="brand-caption">/ UCIe · AoU research</span></a>
-<nav aria-label="Study sections"><a href="#problem">Problem</a><a href="#traces">Traces</a><a href="#architecture">Architecture</a><a href="#robustness">Robustness</a><a href="#claims">Claims</a><a href="#reproducibility">Evidence</a>
+<nav aria-label="Study sections"><a href="#problem">Problem</a><a href="#extensions">New findings</a><a href="#architecture">Architecture</a><a href="#robustness">Robustness</a><a href="#claims">Claims</a><a href="#reproducibility">Evidence</a>
 </nav>
 <nav class="language" aria-label="Language"><a href="index.html?lang=en" data-lang-link="en" lang="en" hreflang="en" aria-current="page">EN</a><a href="de/index.html?lang=de" data-lang-link="de" lang="de" hreflang="de">DE</a>
 </nav>
@@ -16,6 +16,7 @@
 <h1>An Interrupted AXI Transaction Can Have an Indeterminate Architectural Outcome</h1>
 <p class="lead">In the modeled UCIe recovery scenarios, a committed operation with lost completion and an operation that never reached the target both receive UNKNOWN under the implemented observer/classifier.</p>
 <p>The ground-truth outcomes differ; the implemented fate classifications match. This does not establish equality of the complete observer-visible histories or that richer diagnostics cannot determine fate. The study uses three fate classifications: <code>COMPLETED</code>, <code>NOT_COMPLETED</code>, and <code class="unknown">UNKNOWN</code>. These are study labels, not UCIe-defined protocol states.</p>
+<p>Extended results: AXI4-Stream, AtomicStore(ADD), Poison and a corrected separation of transfer completion from effect knowledge.</p>
 <div class="summary">
 <div><span>Transaction fate</span><small>UNKNOWN reachable</small><strong class="positive">Yes</strong>
 </div>
@@ -62,6 +63,65 @@
 <div class="formula"><span>different architectural outcome</span><b>+</b><span>same implemented fate classification</span><b>=</b><strong>transaction-fate ambiguity</strong>
 </div>
 </section>
+<section id="extensions">
+<div class="section-label"><span class="tag">RESULT</span>
+</div>
+<h2>Extended protocol study</h2>
+<p>The study now covers AXI4 Memory-Mapped fault handling, AXI4-Stream as a separate interface, and the bounded AXI5-MM-P1 profile. UCIe streaming transport is not the same thing as an AXI4-Stream interface.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Profile</th><th scope="col">Automotive scenarios</th><th scope="col">Reference scenarios</th><th scope="col">Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>AXI4 Memory-Mapped</td><td>19/19 PASS</td><td>12/12 PASS</td><td>Local SLVERR, watchdog, late responses and retry</td>
+</tr>
+<tr><td>AXIS-P1</td><td>24/24 PASS</td><td>7/7 PASS</td><td>Immediate and atomic packet sinks; optional App-ACK and duplicate suppression</td>
+</tr>
+<tr><td>AXI5-MM-P1</td><td>20/20 PASS</td><td>7/7 PASS</td><td>AtomicStore(ADD), Poison policies and Trace; separate from AXIS</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>PASS means that the specified scenario assertions passed, including expected counterexamples. These finite campaigns are not a protocol-conformance certificate or an exhaustive safety proof.</p>
+</section>
+<section id="effect-knowledge">
+<div class="section-label"><span class="tag">INTERPRETATION</span>
+</div>
+<h2>Completion is not effect knowledge</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Dimension</th><th scope="col">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Protocol completion</td><td>COMPLETED records a successful transfer response; it does not universally prove a remote effect.</td>
+</tr>
+<tr><td>Architectural effect</td><td>Target state, commit counts and partial effects are ground truth used for evaluation, never hidden classifier inputs.</td>
+</tr>
+<tr><td>Observer knowledge</td><td>SURE_EFFECT, SURE_NO_EFFECT and INDETERMINATE are derived separately from permitted observations and explicit profile assumptions.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Poison + OKAY: the tested RejectWithoutCommitOkay policy completes the transfer without applying the ADD. Observers A–D now report INDETERMINATE rather than SURE_EFFECT. This expected policy outcome is not a protocol inconsistency.</p>
+<p>For unpoisoned MM responses and the modeled Stream App-ACK, effect knowledge relies on the explicit endpoint contract. SURE_EFFECT means the intended effect occurred; it does not mean exactly once. Duplicate execution remains a separate at-most-once violation.</p>
+</section>
+<section id="protocol-findings">
+<div class="section-label"><span class="tag">RESULT / SCOPE</span>
+</div>
+<h2>What the new experiments establish</h2>
+<h3>AXI4-Stream: packet reception is not application commit</h3>
+<p>AXIS-P1 models VALID/READY handshakes, stable offers under backpressure and packet boundaries. SINK-IMM can produce partial effects before interruption. SINK-PKT separates complete reception, processing start and an explicitly assumed atomic packet effect. Local TLAST alone is not a remote-effect acknowledgement. Without App-ACK, this profile does not classify the remote effect as known completed.</p>
+<h3>AXI5: atomic does not mean retry-safe</h3>
+<p>AtomicStore(ADD) starts at 10 with operand +5. The first execution produces 15; after response loss and blind retry, a second execution produces 20. Without retry the value remains 15. This profile uses a B-response and no returned prior value. Poison and Trace are examined separately; Trace is not commit evidence.</p>
+<h3>Diagnostics, histories and safe retry</h3>
+<p>A local SLVERR plus evidence that a request was never handed to UCIe can support NOT_COMPLETED in C/D. Missing ACK cannot: the delivered-request/lost-ACK counterexample commits and remains UNKNOWN. The paired-history experiment reports matching A/B event sequences only after removing timestamps; timed comparisons are reported separately. C/D projections differ.</p>
+<h3>Model boundaries</h3>
+<p>Bridge mappings are model profiles, not an AoU conformity claim. AXIS follows the selected IHI0051B profile; AXI5-MM-P1 selects AtomicStore(ADD), Poison and Trace from IHI0022L. Full AXI5, commercial-IP validation and silicon validation are outside scope. Safe retry with instant shared-state cancel depends on that idealized assumption; delayed cancel can lose the race with commit. Duplicate suppression depends on identity, retention and reset behavior.</p>
+</section>
 <section id="traces">
 <div class="section-label"><span class="tag">RESULT</span>
 </div>
@@ -106,7 +166,7 @@ classification: UNKNOWN</code></pre>
 <div class="equivalence"><strong>Different ground truth. Same fate classification.</strong>
 <p>The two traces collapse to the same transaction-fate classification for the implemented observer profile.</p>
 </div>
-<p>The timed check compares fate labels and completion status. It does not compare complete observer-visible event histories, timing, status bits, retry counters, or error logs. Full observational equivalence has not been established by this check.</p>
+<p>This historical reference check compares fate labels and completion status, not full histories. The extended paired-history experiment above adds separate event-sequence and timed comparisons; neither establishes universal observational equivalence.</p>
 <p>These are schematic summaries of the reference-architecture runs. Blind software retry of a committed, indeterminate operation can produce a duplicate architectural effect; that is distinct from transport duplicate suppression.</p><a href="data/reference_architecture_validation.json">Inspect the paired runs and blind-retry evidence ↗</a>
 </section>
 <section id="why">
@@ -268,8 +328,8 @@ actual commits = 2</code></pre>
 </tbody>
 </table>
 </div>
-<div class="callout">The current classifier does not exploit all modeled diagnostic information. Therefore these experiments do not establish that richer diagnostics cannot resolve transaction fate.</div>
-<p>Under the currently implemented classification policy, adding the modeled diagnostic state does not change the fate classification. AXI-only profile A does not consume diagnostic logs. Profiles B/C record additional FDI/UCIe state, but those fields are not passed into the classification decision; their agreement with A is enforced by the implementation.</p>
+<div class="callout">The historical reference classifier did not exploit all modeled diagnostics. The fault-handling extension now evaluates selected bridge evidence; it does not establish the limits of all richer diagnostics.</div>
+<p>In the historical reference runs, B/C diagnostic fields did not influence classification. In the extended model, equality is measured rather than enforced: C/D can identify a request that was never handed to UCIe. Missing ACK alone remains insufficient, including when delivery and commit precede a lost ACK.</p>
 <p><span class="tag">ASSUMPTION</span> Profile D retains ACK/NAK history sufficient to distinguish the pre-target loss in this experiment. This is extra observer knowledge, not a standardized architectural commit indication.</p>
 <p><span class="tag">INTERPRETATION</span> Profile D uses selected retained disposition metadata and separates the tested pre-target loss. Whether additional diagnostic information can determine other outcomes, including post-commit fate, remains an open question.</p>
 </section>
@@ -442,7 +502,7 @@ retry-buffer peak = 3   →   reference architecture</code></pre>
 <li>A committed operation with lost completion and a non-committed operation both receive UNKNOWN under the implemented observer/classifier.</li>
 <li>These outcomes remain reachable with reference-configured FIFOs, retry buffering, credits and multiple outstanding flits, under the implemented classification policy.</li>
 <li>Blind retry of an indeterminate non-idempotent operation can duplicate its effect.</li>
-<li>The current classifier leaves modeled diagnostic information unused; the experiments do not establish the limits of richer diagnostic classifiers.</li>
+<li>Selected bridge diagnostics resolve the tested never-handed case; missing ACK does not prove non-execution. Other diagnostic capabilities remain outside the evaluated profile.</li>
 <li>Some timing coupling between independent traffic sources remains under the reference configuration.</li>
 <li>Some simulator outcomes are implementation-dependent.</li>
 </ul>
@@ -482,8 +542,8 @@ retry-buffer peak = 3   →   reference architecture</code></pre>
 <li>Format-6 optional bytes, electrical training, and FDI cycle accuracy are out of scope.</li>
 <li>Diagnostic fields are study abstractions, not standardized or vendor register maps.</li>
 <li>Finite scenarios establish reachability, not exhaustive absence of other outcomes.</li>
-<li>The timed equivalence flag checks fate labels and completion status, not complete observer-visible histories.</li>
-<li>Profiles B/C do not use all recorded diagnostic state for classification; a stronger diagnostic classifier has not been evaluated.</li>
+<li>The historical reference equivalence flag compares fate labels and completion status. The extension separately compares projected event sequences and timed histories.</li>
+<li>The extension evaluates selected bridge diagnostics, not every UCIe or vendor diagnostic feature. Trace signals do not serve as commit evidence.</li>
 </ul>
 </section>
 <section id="reproducibility">
@@ -492,10 +552,13 @@ retry-buffer peak = 3   →   reference architecture</code></pre>
 <h2>Reproducibility</h2>
 <p>From the repository root, with SystemC, CMake, pkg-config, and Python available:</p><pre><code>cmake -S . -B build
 cmake --build build -j
-python -m simulation.experiments.reference_architecture_validation</code></pre>
+python -m simulation.experiments.reference_architecture_validation
+python -m simulation.experiments.fault_handling_campaign
+python -m simulation.experiments.axis_campaign
+python -m simulation.experiments.axi5_mm_p1_campaign</code></pre>
 <p>The campaign loads the repository’s internal reference configurations. The neutral public exports below preserve their parameter values; naming and identifying comments are sanitized. Stored evidence is presented here without rerunning or changing the simulation.</p>
-<p>Evidence downloads retain their original English text and machine-readable field names.</p>
-<div class="downloads"><a href="sources/reference_architecture_validation.md">Reference report ↗</a><a href="data/reference_architecture_validation.json">Complete JSON ↗</a><a href="data/reference_architecture_validation.csv">Validation CSV ↗</a><a href="configs/reference_ucie2x.yaml">configs/reference_ucie2x.yaml ↗</a><a href="configs/reference_ucie3.yaml">configs/reference_ucie3.yaml ↗</a><a href="data/ref2x_cross_client_trace.csv">Faulted event trace ↗</a><a href="data/ref2x_shared_quiet_trace.csv">Quiet event trace ↗</a><a href="sources/findings.md">Transaction-fate case report ↗</a><a href="sources/comparison_ucie2_vs_ucie3.md">Revision comparison report ↗</a><a href="sources/reference_architecture_validation.py">Campaign code (sanitized export) ↗</a><a href="sources/ucie_adapter.cpp">Timed adapter code ↗</a>
+<p>Evidence downloads retain their source language and machine-readable field names; the extended audit is in German.</p>
+<div class="downloads"><a href="sources/phase3_abschlussbericht.md">Extended study audit (German) ↗</a><a href="sources/axis_p1_report.md">AXIS-P1 report ↗</a><a href="sources/axi5_mm_p1_report.md">AXI5-MM-P1 report ↗</a><a href="data/fault_handling_summary.json">fault_handling_summary ↗</a><a href="data/fault_handling_reference_summary.json">fault_handling_reference_summary ↗</a><a href="data/fault_handling_observer_diff.json">fault_handling_observer_diff ↗</a><a href="data/axis_p1_summary.json">axis_p1_summary ↗</a><a href="data/axis_p1_reference_summary.json">axis_p1_reference_summary ↗</a><a href="data/axi5_mm_p1_summary.json">axi5_mm_p1_summary ↗</a><a href="data/axi5_mm_p1_reference_summary.json">axi5_mm_p1_reference_summary ↗</a><a href="sources/reference_architecture_validation.md">Reference report ↗</a><a href="data/reference_architecture_validation.json">Complete JSON ↗</a><a href="data/reference_architecture_validation.csv">Validation CSV ↗</a><a href="configs/reference_ucie2x.yaml">configs/reference_ucie2x.yaml ↗</a><a href="configs/reference_ucie3.yaml">configs/reference_ucie3.yaml ↗</a><a href="data/ref2x_cross_client_trace.csv">Faulted event trace ↗</a><a href="data/ref2x_shared_quiet_trace.csv">Quiet event trace ↗</a><a href="sources/findings.md">Transaction-fate case report ↗</a><a href="sources/comparison_ucie2_vs_ucie3.md">Revision comparison report ↗</a><a href="sources/reference_architecture_validation.py">Campaign code (sanitized export) ↗</a><a href="sources/ucie_adapter.cpp">Timed adapter code ↗</a>
 </div>
 <p class="caption">Stored reports and JSON retain historical terminology, including <code>observational_equivalence_abc</code>. In the timed checker this flag means matching fate labels and completion status; it is not a full-history equivalence test. Diagnostic claims in those reports must likewise be read subject to the classifier limitations above. Measurements have not been changed.</p>
 <details>
@@ -520,7 +583,7 @@ python -m simulation.experiments.reference_architecture_validation</code></pre>
 <div class="section-label"><span class="tag">INTERPRETATION</span>
 </div>
 <h2>Conclusion</h2>
-<p>The study demonstrates that recovering a UCIe link and reconstructing the architectural fate of an interrupted higher-layer operation are different problems. In the reference-architecture model, a committed non-idempotent operation whose response is lost and an operation that never reached the target both receive UNKNOWN under the implemented observer/classifier. Blind retry of the committed case can create duplicate architectural effects. Full observer-history equivalence and the ability of richer diagnostics to resolve fate remain untested stronger claims.</p>
+<p>Link recovery, protocol completion and knowledge of remote effects are distinct. The extended MM, Stream and AXI5 profiles demonstrate lost-response ambiguity, partial stream effects and duplicate ADD execution after blind retry. Selected diagnostics help, but finite projected-history comparisons do not prove universal indistinguishability or exactly-once behavior.</p>
 <p>The reference configuration shows that this ambiguity is not dependent on a one-flit transport simplification. At the same time, model refinement exposed other behaviors as implementation-dependent. The next step is validation against a concrete UCIe controller implementation.</p>
 </section>
 </main>

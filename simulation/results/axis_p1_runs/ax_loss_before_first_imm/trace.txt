@@ -1,0 +1,19 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER AXIS beats=4 sink=IMM
+2001.000 ns  AXIS manager begins packet T1
+2001.000 ns  fault 14 at AXI_ACCEPTED
+2001.000 ns  [MODEL] AXIS abort immediately after accept (pre-transfer)
+2001.000 ns  LINK_ERROR
+2001.000 ns  LinkError entered
+2001.000 ns  Forced LinkError
+2001.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+2021.000 ns  priority sideband delivered (LinkError)
+2021.000 ns  safety manager received LinkError and records the configured action
+2051.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+2051.000 ns  [SPEC] pipelines and retry buffers flushed
+2051.000 ns  RECOVERING
+2051.000 ns  [MODEL] link reactivation
+4051.000 ns  ACTIVE
+4051.000 ns  link is Active again

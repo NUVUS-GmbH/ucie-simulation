@@ -1,0 +1,33 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2002.000 ns  arm transaction watchdog id=1 addr=0x4096 dir=W timeout_ns=50000.000000
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2011.000 ns  remote endpoint receives the request
+2014.000 ns  queued for the link
+2014.000 ns  write-data TX begins
+2023.000 ns  target accepts T1
+2027.000 ns  ARCHITECTURAL COMMIT
+2027.000 ns  counter 7 -> 8
+2029.000 ns  response created
+2029.000 ns  fault 14 at RESPONSE_CREATED
+2029.000 ns  LINK_ERROR
+2029.000 ns  LinkError entered
+2029.000 ns  Forced LinkError
+2029.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+2031.000 ns  response queued
+2049.000 ns  priority sideband delivered (LinkError)
+2049.000 ns  safety manager received LinkError and records the configured action
+2079.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+2079.000 ns  [SPEC] pipelines and retry buffers flushed
+2079.000 ns  [PROJECT ERR-05] LinkError/Link-Down: complete outstanding AXI with SLVERR
+2084.000 ns  AXI SLVERR from BRIDGE, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 5
+2084.000 ns  RECOVERING
+2084.000 ns  [MODEL] link reactivation
+4084.000 ns  ACTIVE
+4084.000 ns  link is Active again
+200000000.000 ns  simulation timeout

@@ -1,0 +1,148 @@
+{
+  "mode": "single_run_two_txs",
+  "experiment": "fh_observer_history_compare",
+  "allowed_observations": {
+    "A": "AXI handshakes + response codes (no internal RESP source)",
+    "B": "A + FDI link-down",
+    "C": "B + standardized status + optional DIAG when exposed",
+    "D": "C + disposition / late-discard / RESP source"
+  },
+  "definitions": {
+    "event_sequence_equal": "Same projected event *names* after removing timestamps (time_ns|event \u2192 event). Valid for observers that ignore timing.",
+    "timed_equal": "Identical full history rows including timestamps. Required for time-observing observers; usually false across independent txs."
+  },
+  "profiles": {
+    "a": {
+      "event_sequence": {
+        "equal": true,
+        "left_len": 4,
+        "right_len": 4,
+        "only_left": [],
+        "only_right": []
+      },
+      "timed": {
+        "equal": false,
+        "left_len": 4,
+        "right_len": 4,
+        "only_left": [
+          "2002.000000|ACCEPT",
+          "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+          "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "16007059.000000|RESP_CODE_SLVERR"
+        ],
+        "only_right": [
+          "16009061.000000|ACCEPT",
+          "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+          "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "32014091.000000|RESP_CODE_SLVERR"
+        ],
+        "note": "Full 'time_ns|event' rows; equality requires identical timing."
+      }
+    },
+    "b": {
+      "event_sequence": {
+        "equal": true,
+        "left_len": 4,
+        "right_len": 4,
+        "only_left": [],
+        "only_right": []
+      },
+      "timed": {
+        "equal": false,
+        "left_len": 4,
+        "right_len": 4,
+        "only_left": [
+          "2002.000000|ACCEPT",
+          "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+          "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "16007059.000000|RESP_CODE_SLVERR"
+        ],
+        "only_right": [
+          "16009061.000000|ACCEPT",
+          "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+          "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "32014091.000000|RESP_CODE_SLVERR"
+        ],
+        "note": "Full 'time_ns|event' rows; equality requires identical timing."
+      }
+    },
+    "c": {
+      "event_sequence": {
+        "equal": false,
+        "left_len": 6,
+        "right_len": 6,
+        "only_left": [
+          "DIAG:local_slverr=1,never_handed=0,missing_ack=0"
+        ],
+        "only_right": [
+          "DIAG:local_slverr=1,never_handed=0,missing_ack=1"
+        ]
+      },
+      "timed": {
+        "equal": false,
+        "left_len": 6,
+        "right_len": 6,
+        "only_left": [
+          "2002.000000|ACCEPT",
+          "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+          "16007059.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "16007059.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+          "16007059.000000|RESP_CODE_SLVERR"
+        ],
+        "only_right": [
+          "16009061.000000|ACCEPT",
+          "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+          "32014091.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+          "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "32014091.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+          "32014091.000000|RESP_CODE_SLVERR"
+        ],
+        "note": "Full 'time_ns|event' rows; equality requires identical timing."
+      }
+    },
+    "d": {
+      "event_sequence": {
+        "equal": false,
+        "left_len": 8,
+        "right_len": 8,
+        "only_left": [
+          "DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN"
+        ],
+        "only_right": [
+          "DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+          "DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED"
+        ]
+      },
+      "timed": {
+        "equal": false,
+        "left_len": 8,
+        "right_len": 8,
+        "only_left": [
+          "2002.000000|ACCEPT",
+          "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+          "16007059.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "16007059.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+          "16007059.000000|DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN",
+          "16007059.000000|RESP_CODE_SLVERR",
+          "16007059.000000|DISP:RESP_SRC_BRIDGE"
+        ],
+        "only_right": [
+          "16009061.000000|ACCEPT",
+          "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+          "32014091.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+          "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "32014091.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+          "32014091.000000|DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED",
+          "32014091.000000|RESP_CODE_SLVERR",
+          "32014091.000000|DISP:RESP_SRC_BRIDGE"
+        ],
+        "note": "Full 'time_ns|event' rows; equality requires identical timing."
+      }
+    }
+  },
+  "fate_equal_abc": true,
+  "fate_equal_d": false
+}

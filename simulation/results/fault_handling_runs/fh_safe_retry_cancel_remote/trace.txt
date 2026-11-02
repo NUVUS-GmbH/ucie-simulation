@@ -1,0 +1,49 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2004.000 ns  fault 2 at TRANSMITTING
+2013.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+2022.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 2
+2031.000 ns  UCIe CRC failure on the request flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 3
+2031.000 ns  Retry threshold exceeded
+2031.000 ns  RETRAIN
+2031.000 ns  UCIe enters Retrain
+2031.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+7031.000 ns  Recovery fails
+7031.000 ns  LINK_ERROR
+7031.000 ns  LinkError entered
+7031.000 ns  Retrain did not restore the link
+7031.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+7051.000 ns  priority sideband delivered (LinkError)
+7051.000 ns  safety manager received LinkError and records the configured action
+16007031.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+16007031.000 ns  [SPEC] pipelines and retry buffers flushed
+16007031.000 ns  [PROJECT ERR-05] LinkError/Link-Down: complete outstanding AXI with SLVERR
+16007032.000 ns  AXI SLVERR from BRIDGE, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 1
+16007032.000 ns  [PROJECT ERR-07] RetryOnlyIfNotCompleted armed (remote cancelled or dup-suppress)
+16007032.000 ns  RECOVERING
+16007032.000 ns  [MODEL] link reactivation
+16009032.000 ns  ACTIVE
+16009032.000 ns  link is Active again
+16009032.000 ns  automatic retry of the same logical transaction
+16009034.000 ns  AXI accepts T1
+16009036.000 ns  AoU packet ready
+16009036.000 ns  queued for the link
+16009036.000 ns  UCIe TX begins
+16009043.000 ns  remote endpoint receives the request
+16009046.000 ns  queued for the link
+16009046.000 ns  write-data TX begins
+16009055.000 ns  target accepts T1
+16009059.000 ns  ARCHITECTURAL COMMIT
+16009059.000 ns  counter 7 -> 8
+16009061.000 ns  response created
+16009063.000 ns  response queued
+16009063.000 ns  queued for the link
+16009063.000 ns  response TX
+16009070.000 ns  response received by the initiating AoU
+16009071.000 ns  AXI OKAY from TARGET, proto COMPLETED_OK, observer A COMPLETED knowledge SURE_EFFECT, ready_to_hs_ns 0

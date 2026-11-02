@@ -1,0 +1,44 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_READ
+2002.000 ns  AXI accepts T1
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2011.000 ns  remote endpoint receives the request
+2013.000 ns  target accepts T1
+2017.000 ns  ARCHITECTURAL COMMIT
+2017.000 ns  memory read
+2019.000 ns  response created
+2021.000 ns  response queued
+2021.000 ns  queued for the link
+2021.000 ns  response TX
+2021.000 ns  fault 2 at RESPONSE_TRANSMITTING
+2025.000 ns  queued for the link
+2025.000 ns  response TX
+2029.000 ns  queued for the link
+2029.000 ns  response TX
+2030.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 1
+2034.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 2
+2038.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 3 flit(s), streak 3
+2038.000 ns  Retry threshold exceeded
+2038.000 ns  RETRAIN
+2038.000 ns  UCIe enters Retrain
+2038.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+7038.000 ns  Recovery fails
+7038.000 ns  LINK_ERROR
+7038.000 ns  LinkError entered
+7038.000 ns  Retrain did not restore the link
+7038.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+7058.000 ns  priority sideband delivered (LinkError)
+7058.000 ns  safety manager received LinkError and records the configured action
+16007038.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+16007038.000 ns  [SPEC] pipelines and retry buffers flushed
+16007038.000 ns  [PROJECT ERR-05] LinkError/Link-Down: complete outstanding AXI with SLVERR
+16007046.000 ns  AXI SLVERR from BRIDGE, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 8
+16007046.000 ns  RECOVERING
+16007046.000 ns  [MODEL] link reactivation
+16009046.000 ns  ACTIVE
+16009046.000 ns  link is Active again
+200000000.000 ns  simulation timeout

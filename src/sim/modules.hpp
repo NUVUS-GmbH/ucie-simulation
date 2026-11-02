@@ -120,6 +120,16 @@ class FaultInjector : public sc_core::sc_module {
   World& w_;
 };
 
+// Per-transaction AXI watchdog (WDT-03). Distinct from ChipletSystem::watchdog
+// (global simulation timeout).
+class TxnWatchdog : public sc_core::sc_module {
+ public:
+  TxnWatchdog(sc_core::sc_module_name name, World& world);
+ private:
+  void run();
+  World& w_;
+};
+
 class ChipletSystem : public sc_core::sc_module {
  public:
   ChipletSystem(sc_core::sc_module_name name, Config config, Scenario scenario, std::string output);
@@ -139,6 +149,7 @@ class ChipletSystem : public sc_core::sc_module {
   Sideband sideband_;
   SafetyManager safety_;
   FaultInjector faults_;
+  TxnWatchdog txn_watchdog_;
   RunResult result_;
   std::string output_;
   void campaign();

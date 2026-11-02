@@ -76,6 +76,20 @@ Uses `configs/torsten_reference_ucie2x.yaml` and
 `observational_equivalence` must report `OBSERVATIONAL_EQUIVALENCE = true`
 for observers A–C.
 
+### Fault-handling draft V0.1 (ERR-05 / WDT-03 / WDT-04 / ERR-07)
+
+Separate campaign for local AXI SLVERR on LinkError/timeout, late-response
+discard, and master retry policy. Does not modify historical result trees or
+the public website by itself:
+
+```bash
+python -m simulation.experiments.fault_handling_campaign
+```
+
+Writes `simulation/results/fault_handling_runs/`,
+`simulation/results/fault_handling_summary.{md,json}`, and
+`simulation/results/fault_handling_report.md`.
+
 ## Run
 
 From this directory:

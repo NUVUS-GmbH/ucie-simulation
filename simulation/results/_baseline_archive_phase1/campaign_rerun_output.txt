@@ -1,0 +1,6 @@
+{
+  "automotive_all_pass": true,
+  "reference_all_pass": true,
+  "n_auto": 19,
+  "n_ref": 12
+}

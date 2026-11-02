@@ -1,0 +1,40 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER AXIS beats=4 sink=PKT
+2001.000 ns  AXIS manager begins packet T1
+2002.000 ns  TVALID&TREADY beat=0 tlast=0 bytes=16
+2003.000 ns  TVALID&TREADY beat=1 tlast=0 bytes=16
+2004.000 ns  AoU packet ready
+2004.000 ns  TVALID&TREADY beat=2 tlast=0 bytes=16
+2004.000 ns  queued for the link
+2004.000 ns  fault 2 at QUEUED_FOR_LINK
+2004.000 ns  UCIe TX AXIS segment beat=0
+2004.000 ns  fault 4 at TRANSMITTING
+2005.000 ns  TVALID&TREADY beat=3 tlast=1 bytes=16
+2006.000 ns  AoU packet ready
+2008.000 ns  AoU packet ready
+2010.000 ns  flit dropped
+2010.000 ns  AoU packet ready
+4008.000 ns  [SPEC] replay timeout reached (REPLAY_TIMEOUT_FLIT_COUNT >= 375, UCIe 2.0 3.8)
+4017.000 ns  UCIe CRC failure on the stream_segment flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 2
+4026.000 ns  UCIe CRC failure on the stream_segment flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 3
+4026.000 ns  Retry threshold exceeded
+4026.000 ns  RETRAIN
+4026.000 ns  UCIe enters Retrain
+4026.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+9026.000 ns  Recovery fails
+9026.000 ns  LINK_ERROR
+9026.000 ns  LinkError entered
+9026.000 ns  Retrain did not restore the link
+9026.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+9046.000 ns  priority sideband delivered (LinkError)
+9046.000 ns  safety manager received LinkError and records the configured action
+9076.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+9076.000 ns  [SPEC] pipelines and retry buffers flushed
+9076.000 ns  [PROJECT ERR-05] LinkError/Link-Down: complete outstanding AXI with SLVERR
+9076.000 ns  RECOVERING
+9076.000 ns  [MODEL] link reactivation
+11076.000 ns  ACTIVE
+11076.000 ns  link is Active again
+200000000.000 ns  simulation timeout

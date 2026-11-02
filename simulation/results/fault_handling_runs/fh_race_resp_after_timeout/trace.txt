@@ -1,0 +1,50 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 INCREMENT_COUNTER
+2002.000 ns  AXI accepts T1
+2002.000 ns  arm transaction watchdog id=1 addr=0x4096 dir=W timeout_ns=100.000000
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2011.000 ns  remote endpoint receives the request
+2014.000 ns  queued for the link
+2014.000 ns  write-data TX begins
+2023.000 ns  target accepts T1
+2063.000 ns  ARCHITECTURAL COMMIT
+2063.000 ns  fault 14 at ARCHITECTURAL_COMMIT
+2063.000 ns  counter 7 -> 8
+2063.000 ns  LINK_ERROR
+2063.000 ns  LinkError entered
+2063.000 ns  Forced LinkError
+2063.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+2083.000 ns  priority sideband delivered (LinkError)
+2083.000 ns  safety manager received LinkError and records the configured action
+2102.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=W cause=txn_watchdog
+2102.000 ns  [PROJECT WDT-03] local SLVERR after transaction watchdog
+2102.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=W cause=txn_watchdog
+2103.000 ns  response created
+2103.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=W cause=txn_watchdog
+2103.000 ns  [PROJECT CONFIG] escalate after repeated transaction timeouts
+2105.000 ns  response queued
+2105.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=W cause=txn_watchdog
+2107.000 ns  AXI SLVERR from WATCHDOG, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 5
+2113.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+2113.000 ns  [SPEC] pipelines and retry buffers flushed
+2113.000 ns  RECOVERING
+2113.000 ns  [MODEL] link reactivation
+4113.000 ns  ACTIVE
+4113.000 ns  link is Active again
+4113.000 ns  LINK_ERROR
+4113.000 ns  LinkError entered
+4113.000 ns  Forced LinkError
+4113.000 ns  [SPEC] LinkError minimum residency elapses (UCIe 2.0 10.3.3.7)
+4133.000 ns  priority sideband delivered (LinkError)
+4133.000 ns  safety manager received LinkError and records the configured action
+4163.000 ns  [SPEC] AoU activation FSM returns to DISABLED on FDI link-down
+4163.000 ns  [SPEC] pipelines and retry buffers flushed
+4163.000 ns  RECOVERING
+4163.000 ns  [MODEL] link reactivation
+6163.000 ns  ACTIVE
+6163.000 ns  link is Active again
+200000000.000 ns  simulation timeout

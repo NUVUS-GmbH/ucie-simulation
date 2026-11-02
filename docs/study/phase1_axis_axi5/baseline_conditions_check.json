@@ -1,0 +1,22 @@
+{
+  "checked_utc_note": "See simulation/results/_baseline_archive_phase1/archived_at_utc.txt and campaign_rerun_output.txt",
+  "automotive": {"n": 19, "all_pass": true},
+  "reference": {"n": 12, "all_pass": true},
+  "archive_fate_commit_identical_to_rerun": true,
+  "scientific_conditions": {
+    "fh_diag_ack_loss_after_delivery": "commit=1, diag_missing_ack=true, diag_never_handed=false, fate_c=UNKNOWN, fate_d=UNKNOWN",
+    "fh_classifier_diag_compare": "tx0 commit=1 !never_handed C=UNKNOWN; tx1 commit=0 never_handed C=NOT_COMPLETED without_diag=UNKNOWN",
+    "fh_commit_then_local_slverr": "commit=1 SLVERR/BRIDGE A=UNKNOWN",
+    "fh_timeout_then_remote_commit": "commit=1 WATCHDOG allow_remote_continue A=UNKNOWN",
+    "fh_blind_retry_after_slverr": "commit=2 software_retries>=1",
+    "fh_safe_retry_cancel_remote": "cancel_requested !allow_remote_continue software_retries>=1 commit=1 COMPLETED",
+    "fh_cancel_latency_race": "cancel_requested allow_remote_continue commit=1 A=UNKNOWN",
+    "fh_observer_history_compare": "A/B event_sequence equal; A/B timed unequal"
+  },
+  "commands": [
+    "cmake -S . -B build",
+    "cmake --build build -j",
+    "ctest --test-dir build --output-on-failure -R 'core|fh_|baseline_unknown|precommit|blind_retry|observational'",
+    "python3 -m simulation.experiments.fault_handling_campaign"
+  ]
+}

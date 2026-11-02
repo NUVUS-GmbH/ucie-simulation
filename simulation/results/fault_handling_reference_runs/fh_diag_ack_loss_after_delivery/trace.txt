@@ -1,0 +1,36 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_READ
+2002.000 ns  AXI accepts T1
+2002.000 ns  arm transaction watchdog id=1 addr=0x4096 dir=R timeout_ns=400.000000
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2011.000 ns  remote endpoint receives the request
+2011.000 ns  fault 9 at REMOTE_RECEIVED
+2011.000 ns  [MODEL] ACK withheld (delivery may already have occurred)
+2013.000 ns  target accepts T1
+2017.000 ns  ARCHITECTURAL COMMIT
+2017.000 ns  memory read
+2117.000 ns  response created
+2119.000 ns  response queued
+2119.000 ns  queued for the link
+2119.000 ns  response TX
+2119.000 ns  fault 6 at RESPONSE_TRANSMITTING
+2402.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=R cause=txn_watchdog
+2402.000 ns  [PROJECT WDT-03] local SLVERR after transaction watchdog
+2402.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x4096 dir=R cause=txn_watchdog
+2403.000 ns  AXI SLVERR from WATCHDOG, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 1
+7128.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 1
+7137.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 2
+7146.000 ns  UCIe CRC failure on the response flit (1-bit corruption); go-back-N replay of 1 flit(s), streak 3
+7146.000 ns  Retry threshold exceeded
+7146.000 ns  RETRAIN
+7146.000 ns  UCIe enters Retrain
+7146.000 ns  AoU remains enabled across Retrain (FDI link-down is not signaled)
+12146.000 ns  Retrain completes and both adapters return to Active
+12146.000 ns  ACTIVE
+12153.000 ns  [PROJECT WDT-04] late response discarded after local close
+12153.000 ns  duplicate request suppressed
+12153.000 ns  [MODEL] ACK withheld (delivery may already have occurred)

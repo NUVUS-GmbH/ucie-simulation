@@ -1,0 +1,25 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_WRITE
+2002.000 ns  AXI accepts T1
+2002.000 ns  arm transaction watchdog id=1 addr=0x40960 dir=W timeout_ns=200.000000
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2011.000 ns  remote endpoint receives the request
+2014.000 ns  queued for the link
+2014.000 ns  write-data TX begins
+2023.000 ns  target accepts T1
+2073.000 ns  ATOMICSTORE ARCHITECTURAL EFFECT
+2073.000 ns  AtomicStore(ADD) 10+5 -> 15 ops=1
+2123.000 ns  response created
+2125.000 ns  response queued
+2125.000 ns  queued for the link
+2125.000 ns  response TX
+2125.000 ns  fault 6 at RESPONSE_TRANSMITTING
+2202.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x40960 dir=W cause=txn_watchdog
+2202.000 ns  [PROJECT WDT-03] local SLVERR after transaction watchdog
+2202.000 ns  [PROJECT WDT-03] transaction timeout id=1 addr=0x40960 dir=W cause=txn_watchdog
+2203.000 ns  AXI SLVERR from WATCHDOG, proto COMPLETED_ERROR, observer A UNKNOWN knowledge INDETERMINATE, ready_to_hs_ns 1
+7132.000 ns  [PROJECT WDT-04] late response discarded after local close

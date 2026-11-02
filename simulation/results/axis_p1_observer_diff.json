@@ -1,0 +1,195 @@
+{
+  "mode": "single_run_two_txs",
+  "experiment": "ax_observer_timed_vs_seq",
+  "ground_truth": {
+    "tx0_commit": 1,
+    "tx1_commit": 0
+  },
+  "projection": {
+    "event_sequence": "strip timestamp before '|'; compare event tokens",
+    "timed": "full 'time_ns|event' rows",
+    "normalization_allowed": [
+      "strip absolute timestamps for event_sequence",
+      "retain order",
+      "no classifier-output as independent HW diagnostic"
+    ]
+  },
+  "profiles": {
+    "a": {
+      "event_sequence": {
+        "equal": true,
+        "left_len": 6,
+        "right_len": 6,
+        "only_left": [],
+        "only_right": [],
+        "missing_in_right": [],
+        "extra_in_right": [],
+        "reordered": false
+      },
+      "timed": {
+        "equal": false,
+        "left_len": 6,
+        "right_len": 6,
+        "only_left": [
+          "2001.000000|ACCEPT",
+          "2002.000000|AXI:STREAM_TRANSFER_0",
+          "2003.000000|AXI:STREAM_TRANSFER_1",
+          "2003.000000|AXI:STREAM_TLAST",
+          "2067.000000|AXI:STREAM_LOCAL_ABORT",
+          "2067.000000|AXI:CLASSIFY_A=UNKNOWN"
+        ],
+        "only_right": [
+          "4068.000000|ACCEPT",
+          "4069.000000|AXI:STREAM_TRANSFER_0",
+          "4070.000000|AXI:STREAM_TRANSFER_1",
+          "4070.000000|AXI:STREAM_TLAST",
+          "4121.000000|AXI:STREAM_LOCAL_ABORT",
+          "4121.000000|AXI:CLASSIFY_A=UNKNOWN"
+        ]
+      },
+      "classification_equal": true
+    },
+    "b": {
+      "event_sequence": {
+        "equal": true,
+        "left_len": 6,
+        "right_len": 6,
+        "only_left": [],
+        "only_right": [],
+        "missing_in_right": [],
+        "extra_in_right": [],
+        "reordered": false
+      },
+      "timed": {
+        "equal": false,
+        "left_len": 6,
+        "right_len": 6,
+        "only_left": [
+          "2001.000000|ACCEPT",
+          "2002.000000|AXI:STREAM_TRANSFER_0",
+          "2003.000000|AXI:STREAM_TRANSFER_1",
+          "2003.000000|AXI:STREAM_TLAST",
+          "2067.000000|AXI:STREAM_LOCAL_ABORT",
+          "2067.000000|AXI:CLASSIFY_A=UNKNOWN"
+        ],
+        "only_right": [
+          "4068.000000|ACCEPT",
+          "4069.000000|AXI:STREAM_TRANSFER_0",
+          "4070.000000|AXI:STREAM_TRANSFER_1",
+          "4070.000000|AXI:STREAM_TLAST",
+          "4121.000000|AXI:STREAM_LOCAL_ABORT",
+          "4121.000000|AXI:CLASSIFY_A=UNKNOWN"
+        ]
+      },
+      "classification_equal": true
+    },
+    "c": {
+      "event_sequence": {
+        "equal": false,
+        "left_len": 8,
+        "right_len": 8,
+        "only_left": [
+          "DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN"
+        ],
+        "only_right": [
+          "DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+          "STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN"
+        ],
+        "missing_in_right": [
+          "DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN"
+        ],
+        "extra_in_right": [
+          "DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+          "STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN"
+        ],
+        "reordered": false
+      },
+      "timed": {
+        "equal": false,
+        "left_len": 8,
+        "right_len": 8,
+        "only_left": [
+          "2001.000000|ACCEPT",
+          "2002.000000|AXI:STREAM_TRANSFER_0",
+          "2003.000000|AXI:STREAM_TRANSFER_1",
+          "2003.000000|AXI:STREAM_TLAST",
+          "2067.000000|AXI:STREAM_LOCAL_ABORT",
+          "2067.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "2067.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "2067.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN"
+        ],
+        "only_right": [
+          "4068.000000|ACCEPT",
+          "4069.000000|AXI:STREAM_TRANSFER_0",
+          "4070.000000|AXI:STREAM_TRANSFER_1",
+          "4070.000000|AXI:STREAM_TLAST",
+          "4121.000000|AXI:STREAM_LOCAL_ABORT",
+          "4121.000000|DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+          "4121.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "4121.000000|STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN"
+        ]
+      },
+      "classification_equal": false
+    },
+    "d": {
+      "event_sequence": {
+        "equal": false,
+        "left_len": 10,
+        "right_len": 10,
+        "only_left": [
+          "DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+          "DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN"
+        ],
+        "only_right": [
+          "DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+          "STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN",
+          "DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED"
+        ],
+        "missing_in_right": [
+          "DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+          "DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN"
+        ],
+        "extra_in_right": [
+          "DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+          "STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN",
+          "DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED"
+        ],
+        "reordered": false
+      },
+      "timed": {
+        "equal": false,
+        "left_len": 10,
+        "right_len": 10,
+        "only_left": [
+          "2001.000000|ACCEPT",
+          "2002.000000|AXI:STREAM_TRANSFER_0",
+          "2003.000000|AXI:STREAM_TRANSFER_1",
+          "2003.000000|AXI:STREAM_TLAST",
+          "2067.000000|AXI:STREAM_LOCAL_ABORT",
+          "2067.000000|DISP:RESP_SRC_BRIDGE",
+          "2067.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+          "2067.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "2067.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+          "2067.000000|DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN"
+        ],
+        "only_right": [
+          "4068.000000|ACCEPT",
+          "4069.000000|AXI:STREAM_TRANSFER_0",
+          "4070.000000|AXI:STREAM_TRANSFER_1",
+          "4070.000000|AXI:STREAM_TLAST",
+          "4121.000000|AXI:STREAM_LOCAL_ABORT",
+          "4121.000000|DISP:RESP_SRC_BRIDGE",
+          "4121.000000|DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+          "4121.000000|AXI:CLASSIFY_A=UNKNOWN",
+          "4121.000000|STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN",
+          "4121.000000|DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED"
+        ]
+      },
+      "classification_equal": false
+    }
+  }
+}

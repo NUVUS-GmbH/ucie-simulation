@@ -1,0 +1,42 @@
+# Named model profiles for Phase 2 implementation.
+# These are MODEL PROFILE choices, not claims that Arm mandates these widths.
+
+axis_p1_continuous:
+  interface_class: AXI4-Stream
+  spec: "ARM IHI 0051B"
+  continuous_packets: true
+  axi5_stream_extensions: false
+  signals:
+    tdata_width_bits: 128
+    tkeep: true
+    tstrb: false
+    tlast: true
+    tid_width: 4
+    tdest_width: 4
+    tuser_width: 8
+    twakeup: false
+    parity_check: false
+  default_tid_tdest: [0, 0]
+  sinks:
+    - id: SINK-IMM
+      commit: per_accepted_transfer
+    - id: SINK-PKT
+      commit: after_tlast_accept
+  app_ack: optional_separate_interface
+  bridge_policy: one_ucie_segment_per_transfer
+
+axi5_mm_p1:
+  interface_class: AXI5-MM-subset
+  spec: "ARM IHI 0022 Issue L"
+  atomic:
+    enabled_forms: [AtomicStore]
+    operators: [ADD]
+    excluded: [AtomicLoad, AtomicSwap, AtomicCompare, Exclusive]
+  poison:
+    signals: [WPOISON, RPOISON]
+    undo_after_commit: false
+    default_target_policy: reject_without_commit
+  trace:
+    signals_present: true
+    used_in_classify: false
+    used_in_retry: false

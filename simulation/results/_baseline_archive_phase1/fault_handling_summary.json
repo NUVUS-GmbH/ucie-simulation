@@ -1,0 +1,1649 @@
+{
+  "campaign": "fault_handling_v0.1",
+  "experiments": [
+    {
+      "experiment": "fh_clean_success",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 1,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2039.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2039.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2039.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2039.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2039.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2039.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2039.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2039.000000|RESP_CODE_OKAY",
+            "2039.000000|DISP:RESP_SRC_TARGET"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_loss_before_accept",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 0,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "NOT_COMPLETED",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "NOT_COMPLETED",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16007032.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_commit_then_local_slverr",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR",
+            "16007059.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_no_commit_local_slverr",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 0,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "NOT_COMPLETED",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "NOT_COMPLETED",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16007032.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_watchdog_then_late_okay",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 2,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2202.000000|AXI:LOCAL_SLVERR_VALID",
+            "2203.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2203.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2202.000000|AXI:LOCAL_SLVERR_VALID",
+            "2203.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2203.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2202.000000|AXI:LOCAL_SLVERR_VALID",
+            "2203.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2203.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2202.000000|AXI:LOCAL_SLVERR_VALID",
+            "2203.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2203.000000|RESP_CODE_SLVERR",
+            "2203.000000|DISP:RESP_SRC_WATCHDOG",
+            "7132.000000|LATE_RESP_DISCARD"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_timeout_then_remote_commit",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 2,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR",
+            "2103.000000|DISP:RESP_SRC_WATCHDOG",
+            "2192.000000|LATE_RESP_DISCARD"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_blind_retry_after_slverr",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 9,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 2,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 1,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 1,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR",
+            "16009061.000000|ACCEPT",
+            "16009098.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009098.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR",
+            "16009061.000000|ACCEPT",
+            "16009098.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009098.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR",
+            "16009061.000000|ACCEPT",
+            "16009098.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009098.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR",
+            "16007059.000000|DISP:RESP_SRC_BRIDGE",
+            "16009061.000000|ACCEPT",
+            "16009098.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009098.000000|RESP_CODE_OKAY",
+            "16009098.000000|DISP:RESP_SRC_TARGET"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_no_retry_after_slverr",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR",
+            "16007059.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_axi_id_reuse_late_resp",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 5,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 7,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2152.000000|AXI:LOCAL_SLVERR_VALID",
+            "2153.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2153.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2152.000000|AXI:LOCAL_SLVERR_VALID",
+            "2153.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2153.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2152.000000|AXI:LOCAL_SLVERR_VALID",
+            "2153.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2153.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2152.000000|AXI:LOCAL_SLVERR_VALID",
+            "2153.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2153.000000|RESP_CODE_SLVERR",
+            "2153.000000|DISP:RESP_SRC_WATCHDOG",
+            "10112.000000|LATE_RESP_DISCARD"
+          ]
+        },
+        {
+          "id": 2,
+          "commit_count": 0,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "NOT_COMPLETED",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "NOT_COMPLETED",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 7,
+          "bridge_token": 2,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2402.000000|ACCEPT",
+            "2552.000000|AXI:LOCAL_SLVERR_VALID",
+            "2553.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2553.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2402.000000|ACCEPT",
+            "2552.000000|AXI:LOCAL_SLVERR_VALID",
+            "2553.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2553.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2402.000000|ACCEPT",
+            "2552.000000|AXI:LOCAL_SLVERR_VALID",
+            "2553.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2553.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2402.000000|ACCEPT",
+            "2552.000000|AXI:LOCAL_SLVERR_VALID",
+            "2553.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2553.000000|RESP_CODE_SLVERR",
+            "2553.000000|DISP:RESP_SRC_WATCHDOG"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_multi_outstanding_backpressure",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 10,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 1,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2041.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2041.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2041.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2041.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2041.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2041.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2041.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2041.000000|RESP_CODE_OKAY",
+            "2041.000000|DISP:RESP_SRC_TARGET"
+          ]
+        },
+        {
+          "id": 2,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 2,
+          "bridge_token": 2,
+          "completing_token": 2,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2003.000000|ACCEPT",
+            "2051.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2051.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2003.000000|ACCEPT",
+            "2051.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2051.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2003.000000|ACCEPT",
+            "2051.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2051.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2003.000000|ACCEPT",
+            "2051.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2051.000000|RESP_CODE_OKAY",
+            "2051.000000|DISP:RESP_SRC_TARGET"
+          ]
+        },
+        {
+          "id": 3,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 3,
+          "bridge_token": 3,
+          "completing_token": 3,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2004.000000|ACCEPT",
+            "2061.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2061.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2004.000000|ACCEPT",
+            "2061.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2061.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2004.000000|ACCEPT",
+            "2061.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2061.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2004.000000|ACCEPT",
+            "2061.000000|AXI:CLASSIFY_A=COMPLETED",
+            "2061.000000|RESP_CODE_OKAY",
+            "2061.000000|DISP:RESP_SRC_TARGET"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_read_burst_error_completion",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 4,
+          "beat_handshake_count": 4,
+          "resp_backpressured": true,
+          "burst_len": 4,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007048.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|RBEAT_1",
+            "16007054.000000|RBEAT_2",
+            "16007055.000000|RBEAT_3",
+            "16007056.000000|RBEAT_4",
+            "16007056.000000|AXI:RLAST",
+            "16007056.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007056.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007048.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|RBEAT_1",
+            "16007054.000000|RBEAT_2",
+            "16007055.000000|RBEAT_3",
+            "16007056.000000|RBEAT_4",
+            "16007056.000000|AXI:RLAST",
+            "16007056.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007056.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007048.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|RBEAT_1",
+            "16007054.000000|RBEAT_2",
+            "16007055.000000|RBEAT_3",
+            "16007056.000000|RBEAT_4",
+            "16007056.000000|AXI:RLAST",
+            "16007056.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007056.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007048.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007053.000000|RBEAT_1",
+            "16007054.000000|RBEAT_2",
+            "16007055.000000|RBEAT_3",
+            "16007056.000000|RBEAT_4",
+            "16007056.000000|AXI:RLAST",
+            "16007056.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007056.000000|RESP_CODE_SLVERR",
+            "16007056.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_race_resp_before_timeout",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2079.000000|AXI:LOCAL_SLVERR_VALID",
+            "2084.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2084.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2079.000000|AXI:LOCAL_SLVERR_VALID",
+            "2084.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2084.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2079.000000|AXI:LOCAL_SLVERR_VALID",
+            "2084.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2084.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2079.000000|AXI:LOCAL_SLVERR_VALID",
+            "2084.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2084.000000|RESP_CODE_SLVERR",
+            "2084.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_race_resp_simultaneous",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 3,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2082.000000|AXI:LOCAL_SLVERR_VALID",
+            "2087.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2087.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2082.000000|AXI:LOCAL_SLVERR_VALID",
+            "2087.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2087.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2082.000000|AXI:LOCAL_SLVERR_VALID",
+            "2087.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2087.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2082.000000|AXI:LOCAL_SLVERR_VALID",
+            "2087.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2087.000000|RESP_CODE_SLVERR",
+            "2087.000000|DISP:RESP_SRC_WATCHDOG"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_race_resp_after_timeout",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 4,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": true,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2107.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2107.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2107.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2107.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2107.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2107.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2107.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2107.000000|RESP_CODE_SLVERR",
+            "2107.000000|DISP:RESP_SRC_WATCHDOG"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_classifier_diag_compare",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "7108.000000|AXI:LOCAL_SLVERR_VALID",
+            "7109.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "7109.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "7108.000000|AXI:LOCAL_SLVERR_VALID",
+            "7109.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "7109.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "7108.000000|AXI:LOCAL_SLVERR_VALID",
+            "7109.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "7109.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "7109.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "7109.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "7108.000000|AXI:LOCAL_SLVERR_VALID",
+            "7109.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "7109.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "7109.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "7109.000000|DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN",
+            "7109.000000|RESP_CODE_SLVERR",
+            "7109.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        },
+        {
+          "id": 2,
+          "commit_count": 0,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "NOT_COMPLETED",
+          "fate_d": "NOT_COMPLETED",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "NOT_COMPLETED",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 2,
+          "bridge_token": 2,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "9111.000000|ACCEPT",
+            "9163.000000|AXI:LOCAL_SLVERR_VALID",
+            "9164.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "9164.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "9111.000000|ACCEPT",
+            "9163.000000|AXI:LOCAL_SLVERR_VALID",
+            "9164.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "9164.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "9111.000000|ACCEPT",
+            "9163.000000|AXI:LOCAL_SLVERR_VALID",
+            "9164.000000|DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+            "9164.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "9164.000000|STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN",
+            "9164.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "9111.000000|ACCEPT",
+            "9163.000000|AXI:LOCAL_SLVERR_VALID",
+            "9164.000000|DIAG:local_slverr=1,never_handed=1,missing_ack=1",
+            "9164.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "9164.000000|STATUS:fate_c=NOT_COMPLETED,fate_c_no_diag=UNKNOWN",
+            "9164.000000|DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED",
+            "9164.000000|RESP_CODE_SLVERR",
+            "9164.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_diag_ack_loss_after_delivery",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 2,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": false,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2402.000000|AXI:LOCAL_SLVERR_VALID",
+            "2403.000000|RBEAT_1",
+            "2403.000000|AXI:RLAST",
+            "2403.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2403.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2402.000000|AXI:LOCAL_SLVERR_VALID",
+            "2403.000000|RBEAT_1",
+            "2403.000000|AXI:RLAST",
+            "2403.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2403.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2402.000000|AXI:LOCAL_SLVERR_VALID",
+            "2403.000000|RBEAT_1",
+            "2403.000000|AXI:RLAST",
+            "2403.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "2403.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2403.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "2403.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2402.000000|AXI:LOCAL_SLVERR_VALID",
+            "2403.000000|RBEAT_1",
+            "2403.000000|AXI:RLAST",
+            "2403.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "2403.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2403.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "2403.000000|DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN",
+            "2403.000000|RESP_CODE_SLVERR",
+            "2403.000000|DISP:RESP_SRC_WATCHDOG",
+            "12153.000000|LATE_RESP_DISCARD"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_observer_history_compare",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 7,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "16007059.000000|DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR",
+            "16007059.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        },
+        {
+          "id": 2,
+          "commit_count": 0,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "NOT_COMPLETED",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "NOT_COMPLETED",
+          "axi_resp": "SLVERR",
+          "resp_source": "BRIDGE",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 0,
+          "software_retries": 0,
+          "axi_id": 2,
+          "bridge_token": 2,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "16009061.000000|ACCEPT",
+            "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+            "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "32014091.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "16009061.000000|ACCEPT",
+            "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+            "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "32014091.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "16009061.000000|ACCEPT",
+            "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+            "32014091.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "32014091.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "32014091.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "16009061.000000|ACCEPT",
+            "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+            "32014091.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "32014091.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "32014091.000000|DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED",
+            "32014091.000000|RESP_CODE_SLVERR",
+            "32014091.000000|DISP:RESP_SRC_BRIDGE"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_safe_retry_cancel_remote",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 0,
+      "late_responses_discarded": 0,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "COMPLETED",
+          "fate_b": "COMPLETED",
+          "fate_c": "COMPLETED",
+          "fate_d": "COMPLETED",
+          "fate_c_without_diag": "COMPLETED",
+          "fate_d_without_diag": "COMPLETED",
+          "axi_resp": "OKAY",
+          "resp_source": "TARGET",
+          "proto_state": "COMPLETED_OK",
+          "knowledge_a": "SURE_EFFECT",
+          "late_responses_discarded": 0,
+          "software_retries": 1,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 1,
+          "allow_remote_continue": false,
+          "beats_responded": 1,
+          "beat_handshake_count": 0,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16009034.000000|ACCEPT",
+            "16009071.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009071.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16009034.000000|ACCEPT",
+            "16009071.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009071.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16009034.000000|ACCEPT",
+            "16009071.000000|DIAG:local_slverr=0,never_handed=0,missing_ack=0",
+            "16009071.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009071.000000|STATUS:fate_c=COMPLETED,fate_c_no_diag=COMPLETED",
+            "16009071.000000|RESP_CODE_OKAY"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "16007031.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007032.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "16007032.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007032.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "16007032.000000|DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED",
+            "16007032.000000|RESP_CODE_SLVERR",
+            "16007032.000000|DISP:RESP_SRC_BRIDGE",
+            "16009034.000000|ACCEPT",
+            "16009071.000000|DIAG:local_slverr=0,never_handed=0,missing_ack=0",
+            "16009071.000000|AXI:CLASSIFY_A=COMPLETED",
+            "16009071.000000|STATUS:fate_c=COMPLETED,fate_c_no_diag=COMPLETED",
+            "16009071.000000|DISP:fate_d=COMPLETED,fate_d_no_diag=COMPLETED",
+            "16009071.000000|RESP_CODE_OKAY",
+            "16009071.000000|DISP:RESP_SRC_TARGET"
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "fh_cancel_latency_race",
+      "pass": true,
+      "config": "configs/automotive.yaml",
+      "failures": [],
+      "counter": 8,
+      "txn_watchdog_fires": 2,
+      "late_responses_discarded": 1,
+      "single_inflight_slot": true,
+      "transactions": [
+        {
+          "id": 1,
+          "commit_count": 1,
+          "fate_a": "UNKNOWN",
+          "fate_b": "UNKNOWN",
+          "fate_c": "UNKNOWN",
+          "fate_d": "UNKNOWN",
+          "fate_c_without_diag": "UNKNOWN",
+          "fate_d_without_diag": "UNKNOWN",
+          "axi_resp": "SLVERR",
+          "resp_source": "WATCHDOG",
+          "proto_state": "COMPLETED_ERROR",
+          "knowledge_a": "INDETERMINATE",
+          "late_responses_discarded": 1,
+          "software_retries": 0,
+          "axi_id": 1,
+          "bridge_token": 1,
+          "completing_token": 0,
+          "allow_remote_continue": true,
+          "beats_responded": 1,
+          "beat_handshake_count": 1,
+          "resp_backpressured": false,
+          "burst_len": 1,
+          "observer_trace_a": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_b": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_c": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR"
+          ],
+          "observer_trace_d": [
+            "2002.000000|ACCEPT",
+            "2102.000000|AXI:LOCAL_SLVERR_VALID",
+            "2103.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "2103.000000|RESP_CODE_SLVERR",
+            "2103.000000|DISP:RESP_SRC_WATCHDOG",
+            "2192.000000|LATE_RESP_DISCARD"
+          ]
+        }
+      ]
+    }
+  ],
+  "all_pass": true,
+  "watchdog_timing": {
+    "draft_wdt_timeout_start_ns": 1000000,
+    "campaign_shortened_examples_ns": {
+      "fh_watchdog_then_late_okay": 200,
+      "fh_timeout_then_remote_commit": 100,
+      "fh_race_resp_after_timeout": 100
+    },
+    "ucie_link_error_residency_ns_spec": 16000000,
+    "ucie_replay_timeout_flits_spec": 375,
+    "automotive_retrain_ns": 5000,
+    "automotive_link_reset_ns": 10000,
+    "note": "Shortened txn_watchdog_ns values are SIMULATION CONFIGURATION so the watchdog can fire inside a discrete-event run. They are not claims that 1 ms draft WDT is shorter than UCIe retry/recovery. In a real system, WDT_TIMEOUT must exceed max latency including retry + retrain (draft WDT-02)."
+  },
+  "observer_history_compare": {
+    "mode": "single_run_two_txs",
+    "experiment": "fh_observer_history_compare",
+    "allowed_observations": {
+      "A": "AXI handshakes + response codes (no internal RESP source)",
+      "B": "A + FDI link-down",
+      "C": "B + standardized status + optional DIAG when exposed",
+      "D": "C + disposition / late-discard / RESP source"
+    },
+    "definitions": {
+      "event_sequence_equal": "Same projected event *names* after removing timestamps (time_ns|event \u2192 event). Valid for observers that ignore timing.",
+      "timed_equal": "Identical full history rows including timestamps. Required for time-observing observers; usually false across independent txs."
+    },
+    "profiles": {
+      "a": {
+        "event_sequence": {
+          "equal": true,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [],
+          "only_right": []
+        },
+        "timed": {
+          "equal": false,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "only_right": [
+            "16009061.000000|ACCEPT",
+            "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+            "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "32014091.000000|RESP_CODE_SLVERR"
+          ],
+          "note": "Full 'time_ns|event' rows; equality requires identical timing."
+        }
+      },
+      "b": {
+        "event_sequence": {
+          "equal": true,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [],
+          "only_right": []
+        },
+        "timed": {
+          "equal": false,
+          "left_len": 4,
+          "right_len": 4,
+          "only_left": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "only_right": [
+            "16009061.000000|ACCEPT",
+            "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+            "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "32014091.000000|RESP_CODE_SLVERR"
+          ],
+          "note": "Full 'time_ns|event' rows; equality requires identical timing."
+        }
+      },
+      "c": {
+        "event_sequence": {
+          "equal": false,
+          "left_len": 6,
+          "right_len": 6,
+          "only_left": [
+            "DIAG:local_slverr=1,never_handed=0,missing_ack=0"
+          ],
+          "only_right": [
+            "DIAG:local_slverr=1,never_handed=0,missing_ack=1"
+          ]
+        },
+        "timed": {
+          "equal": false,
+          "left_len": 6,
+          "right_len": 6,
+          "only_left": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR"
+          ],
+          "only_right": [
+            "16009061.000000|ACCEPT",
+            "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+            "32014091.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "32014091.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "32014091.000000|RESP_CODE_SLVERR"
+          ],
+          "note": "Full 'time_ns|event' rows; equality requires identical timing."
+        }
+      },
+      "d": {
+        "event_sequence": {
+          "equal": false,
+          "left_len": 8,
+          "right_len": 8,
+          "only_left": [
+            "DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN"
+          ],
+          "only_right": [
+            "DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED"
+          ]
+        },
+        "timed": {
+          "equal": false,
+          "left_len": 8,
+          "right_len": 8,
+          "only_left": [
+            "2002.000000|ACCEPT",
+            "16007058.000000|AXI:LOCAL_SLVERR_VALID",
+            "16007059.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=0",
+            "16007059.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "16007059.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "16007059.000000|DISP:fate_d=UNKNOWN,fate_d_no_diag=UNKNOWN",
+            "16007059.000000|RESP_CODE_SLVERR",
+            "16007059.000000|DISP:RESP_SRC_BRIDGE"
+          ],
+          "only_right": [
+            "16009061.000000|ACCEPT",
+            "32014090.000000|AXI:LOCAL_SLVERR_VALID",
+            "32014091.000000|DIAG:local_slverr=1,never_handed=0,missing_ack=1",
+            "32014091.000000|AXI:CLASSIFY_A=UNKNOWN",
+            "32014091.000000|STATUS:fate_c=UNKNOWN,fate_c_no_diag=UNKNOWN",
+            "32014091.000000|DISP:fate_d=NOT_COMPLETED,fate_d_no_diag=NOT_COMPLETED",
+            "32014091.000000|RESP_CODE_SLVERR",
+            "32014091.000000|DISP:RESP_SRC_BRIDGE"
+          ],
+          "note": "Full 'time_ns|event' rows; equality requires identical timing."
+        }
+      }
+    },
+    "fate_equal_abc": true,
+    "fate_equal_d": false
+  }
+}

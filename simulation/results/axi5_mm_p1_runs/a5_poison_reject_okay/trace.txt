@@ -1,0 +1,20 @@
+0.000 ns  RESET
+2000.000 ns  ACTIVE
+2000.000 ns  link is Active
+2000.000 ns  Guest A creates T1 MEMORY_WRITE
+2002.000 ns  AXI accepts T1
+2004.000 ns  AoU packet ready
+2004.000 ns  queued for the link
+2004.000 ns  UCIe TX begins
+2011.000 ns  remote endpoint receives the request
+2014.000 ns  queued for the link
+2014.000 ns  write-data TX begins
+2023.000 ns  target accepts T1
+2027.000 ns  ATOMICSTORE ARCHITECTURAL EFFECT
+2027.000 ns  poison reject_without_commit_okay; atomic_value unchanged=10
+2029.000 ns  response created
+2031.000 ns  response queued
+2031.000 ns  queued for the link
+2031.000 ns  response TX
+2038.000 ns  response received by the initiating AoU
+2039.000 ns  AXI OKAY from TARGET, proto COMPLETED_OK, observer A COMPLETED knowledge INDETERMINATE, ready_to_hs_ns 0

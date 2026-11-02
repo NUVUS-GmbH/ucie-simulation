@@ -62,6 +62,17 @@ void Hypervisor::run() {
     bool terminal = w_.all_issued && !w_.link.busy && w_.reissue.empty();
     for (const auto& tx : w_.txns) {
       if (!tx.visible.classified) terminal = false;
+      if (tx.pending_reissue) terminal = false;
+      // Keep the campaign alive briefly while a locally closed txn may still
+      // commit or deliver a late response on the wire (WDT-03/04 window).
+      // response_created at the remote is not enough — wait for local arrival
+      // or an explicit late-discard, else the grace timeout.
+      if (tx.bridge.local_closed && w_.remote_may_continue(tx) &&
+          tx.visible.handed_to_ucie && tx.bridge.late_responses_discarded == 0 &&
+          !tx.visible.response_at_local_aou && tx.t_completion_ns >= 0 &&
+          (w_.now_ns() - tx.t_completion_ns) < 100000.0) {
+        terminal = false;
+      }
     }
     if (terminal) {
       w_.quiescent.notify(sc_core::SC_ZERO_TIME);

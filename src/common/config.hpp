@@ -1,7 +1,9 @@
 #pragma once
 
+#include "axi/axi5_types.hpp"
 #include "enums.hpp"
 
+#include <cstdint>
 #include <string>
 
 namespace ucie {
@@ -101,6 +103,69 @@ struct Config {
   double l1_entry_ns = 100;
   double l1_exit_ns = 100;
   double l1_hold_ns = 500;
+
+  // --- Fault-handling draft V0.1 (PROJECT REQUIREMENT / REFERENCE CONFIG) ---
+  // Transaction watchdog (WDT-03). Distinct from sim_timeout_ns.
+  // Draft suggests ~1 ms start value and escalation after 3 timeouts — both
+  // are project configuration, not AXI/UCIe constants.
+  bool txn_watchdog_enabled = false;
+  double txn_watchdog_ns = 1e6;  // 1 ms REFERENCE CONFIGURATION from draft
+  int txn_watchdog_escalate_after = 3;
+  bool txn_watchdog_during_recovery = true;  // may fire while link recovers
+  // ERR-05 local SLVERR on LinkError/Link-Down for outstanding AXI.
+  bool local_slverr_on_link_error = false;
+  // WDT-04 discard late responses after local close.
+  bool discard_late_responses = true;
+  // ERR-07 master retry after error completion.
+  MasterRetryPolicy master_retry = MasterRetryPolicy::Abort;
+  // When true, classifier profiles C/D may *read* bridge diagnostic fields.
+  // Presence of fields ≠ use; see use_diag_in_classifier.
+  bool expose_bridge_diagnostics = false;
+  bool use_diag_in_classifier = false;
+  // Manager response READY delay (cycles) to exercise backpressure.
+  int axi_resp_ready_delay_cycles = 0;
+  // [MODEL ASSUMPTION] Bridge maps one AXI beat group to one AoU/UCIe message
+  // pair (request [+wdata] / response). Not a full AXI4-Stream implementation.
+  bool bridge_token_on_wire = true;  // MODEL: flit carries bridge token/generation
+  // When true, local SLVERR/close requests remote cancel so the old attempt
+  // cannot commit later. Instant effect (cancel_latency_ns==0) is a
+  // MODEL ASSUMPTION (shared state), not a confirmed wire cancel protocol.
+  bool cancel_remote_on_local_close = false;
+  // Delay before cancel becomes effective at the remote. 0 = instantaneous.
+  double cancel_latency_ns = 0;
+  // Optional target-side duplicate suppression by bridge token (MODEL).
+  bool target_duplicate_suppress = false;
+
+  // --- AXIS-P1-Continuous (MODEL PROFILE; see docs/study/phase1_axis_axi5/) ---
+  // Bridge-AXIS-P1: one UCIe segment per AXIS transfer. AoU normative mapping
+  // remains ungeklärt (AoU full text absent); this is a named bridge policy.
+  bool axis_profile_enabled = false;
+  int axis_tdata_bytes = 16;
+  int axis_tready_delay_cycles = 0;       // receiver backpressure
+  int axis_tvalid_lead_cycles = 0;       // transmitter asserts TVALID first
+  int axis_sink_process_start_cycles = 2;  // SINK-PKT: gap after packet_complete
+  int axis_sink_effect_cycles = 2;         // time to apply one atomic effect
+  bool axis_app_ack_enabled = false;
+  bool axis_packet_id_enabled = false;
+  bool axis_dup_suppress = false;
+  int axis_dup_capacity = 16;
+  double axis_dup_lifetime_ns = 0;
+  bool axis_dup_clear_on_reset = true;
+  // After local TLAST without App-ACK: wait for remote progress before settle.
+  double axis_settle_grace_ns = 5000;
+
+  // --- AXI5-MM-P1 (IHI0022L subset; see docs/study/phase1_axis_axi5/) ---
+  // Bridge packing of AWATOP/WPOISON/Trace onto UCIe flits is MODEL PROFILE
+  // only — no AoU conformity claim.
+  bool axi5_mm_p1_enabled = false;
+  PoisonTargetPolicy poison_target_policy = PoisonTargetPolicy::RejectWithoutCommitSlverr;
+  bool axi5_trace_signals_present = true;
+  // Hard constraint: classify()/InitiatorView must never read Trace.
+  bool axi5_use_trace_in_classify = false;
+  // Initial value at the AtomicStore address (evaluation GT).
+  int axi5_atomic_location_init = 0;
+  // Address used by AtomicStore(ADD) experiments when not overridden by Issue.
+  std::uint64_t axi5_atomic_address = 0xA000;
 
   static Config defaults();
   void overlay_yaml(const std::string& path);

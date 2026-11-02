@@ -1,0 +1,13 @@
+time_ns,queue,occupancy
+2004.000,error_log,1
+2024.000,sideband,0
+4058.000,tx_a,1
+4058.000,retry_0,1
+4058.000,tx_0,0
+4058.000,queue_guest_0,0
+4060.000,tx_a,1
+4062.000,retry_0,2
+4062.000,tx_0,0
+4062.000,queue_guest_0,0
+4065.000,rx_1,0
+4069.000,rx_1,0

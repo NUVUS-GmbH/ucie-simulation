@@ -1,0 +1,31 @@
+{
+  "config_file": "configs/automotive.yaml",
+  "experiment": "ax_reset_partial_packet",
+  "seed": 1,
+  "axis_profile": "AXIS-P1-Continuous",
+  "bridge_policy": "one_ucie_segment_per_transfer",
+  "aou_mapping_claim": "MODEL PROFILE only; AoU full text absent",
+  "single_inflight_slot": true,
+  "retry_buffer_entries": 32,
+  "tx_buffer_entries": 16,
+  "rx_buffer_entries": 16,
+  "crc_enabled": true,
+  "retry_enabled": true,
+  "ucie_revision": "ucie2x",
+  "transactions_axis": [
+    {
+      "id": 1,
+      "sink": "IMM",
+      "local_beats": 4,
+      "remote_beats": 1,
+      "remote_packet_complete": false,
+      "processing_started": false,
+      "app_effects": 0,
+      "bytes_committed": 0,
+      "commit_count": 0,
+      "fate_a": "UNKNOWN",
+      "fate_c": "UNKNOWN",
+      "fate_d": "UNKNOWN"
+    }
+  ]
+}
